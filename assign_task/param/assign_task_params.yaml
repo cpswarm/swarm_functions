@@ -1,0 +1,3 @@
+timeout: 15.0                                 # Max time to wait for incoming cost from CPSs
+cost_topic: bridge/events/cps_selection       # Topic to receive the computed costs to reach target.
+cps_selected_topic: cps_selected              # Topic to send selected cps to reach target

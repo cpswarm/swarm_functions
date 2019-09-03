@@ -1,0 +1,10 @@
+# Define the goal
+uint32 target_id					         # ID of the target
+geometry_msgs/Pose target_pose               # Local position of the found target
+---
+# Define the result
+uint32 target_id					         # ID of the target
+string selected_cps_UUID			         # UUID of the selected CPS
+geometry_msgs/Pose target_pose               # Local position of the target (if assignement failed, use as input)
+---
+# Define the feeeback
