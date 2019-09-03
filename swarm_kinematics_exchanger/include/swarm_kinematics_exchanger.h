@@ -10,9 +10,11 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
+#include <cpswarm_msgs/ArrayOfPositions.h>
 #include <cpswarm_msgs/Position.h>
 #include <cpswarm_msgs/Velocity.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
+#include <cpswarm_msgs/VectorStamped.h>
 
 using namespace std;
 using namespace ros;
@@ -20,12 +22,22 @@ using namespace ros;
 /**
  * @brief A vector type in polar format containing UUID of the corresponding CPS together with last updated time stamp.
  */
-typedef struct vector_t {
+typedef struct polar_vector_t {
     string uuid;
     vector<float> mag;
     vector<float> dir;
     Time stamp;
-} vector_t;
+} polar_vector_t;
+
+/**
+ * @brief A vector type in Cartesian format containing UUID of the corresponding CPS together with last updated time stamp.
+ */
+typedef struct cartesian_vector_t {
+    string uuid;
+    vector<float> x;
+    vector<float> y;
+    Time stamp;
+} cartesian_vector_t;
 
 /**
  * @brief Current position of the CPS.
@@ -48,14 +60,19 @@ geometry_msgs::Twist velo;
 bool vel_valid;
 
 /**
- * @brief The positions of all known swarm members.
+ * @brief The absolute positions of all known swarm members.
  */
-map<string, vector_t> swarm_positions;
+map<string, cartesian_vector_t> swarm_positions;
+
+/**
+ * @brief The relative positions of all known swarm members.
+ */
+map<string, polar_vector_t> swarm_positions_rel;
 
 /**
  * @brief The velocities of all known swarm members.
  */
-map<string, vector_t> swarm_velocities;
+map<string, polar_vector_t> swarm_velocities;
 
 /**
  * @brief The number of data samples to average over for reliable results.
