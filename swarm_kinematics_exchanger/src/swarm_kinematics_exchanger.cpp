@@ -109,7 +109,7 @@ void swarm_position_callback (cpswarm_msgs::Position msg) {
     swarm_positions[uuid].y.push_back(msg.pose.position.y);
     swarm_positions[uuid].stamp = Time::now();
     swarm_positions_rel[uuid].mag.push_back(hypot(msg.pose.position.x - pose.position.x, msg.pose.position.y - pose.position.y));
-    swarm_positions_rel[uuid].dir.push_back(remainder((atan2(msg.pose.position.y - pose.position.y, msg.pose.position.x - pose.position.x) - get_yaw()), 2 * M_PI));
+    swarm_positions_rel[uuid].dir.push_back(remainder((atan2(msg.pose.position.y - pose.position.y, msg.pose.position.x - pose.position.x) - get_yaw()), 2*M_PI));
     swarm_positions_rel[uuid].stamp = Time::now();
 
     // remove old samples
@@ -189,7 +189,7 @@ int main (int argc, char **argv)
     Publisher outgoing_velocity_publisher = nh.advertise<cpswarm_msgs::Velocity>("velocity", queue_size);
     Publisher incoming_position_publisher = nh.advertise<cpswarm_msgs::ArrayOfPositions>("swarm_position", queue_size);
     Publisher incoming_rel_position_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_position_rel", queue_size);
-    Publisher incoming_velocity_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_velocity", queue_size);
+    Publisher incoming_rel_velocity_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_velocity_rel", queue_size);
 
     // init loop rate
     Rate rate(loop_rate);
@@ -206,14 +206,14 @@ int main (int argc, char **argv)
     // init swarm kinematics messages
     cpswarm_msgs::ArrayOfPositions swarm_position;
     cpswarm_msgs::ArrayOfVectors swarm_position_rel;
-    cpswarm_msgs::ArrayOfVectors swarm_velocity;
+    cpswarm_msgs::ArrayOfVectors swarm_velocity_rel;
 
     // continuously exchange kinematics between swarm members
     while (ok()) {
         // reset swarm kinematics messages
         swarm_position.positions.clear();
         swarm_position_rel.vectors.clear();
-        swarm_velocity.vectors.clear();
+        swarm_velocity_rel.vectors.clear();
 
         // update absolute swarm position
         for (auto member=swarm_positions.begin(); member!=swarm_positions.end();) {
@@ -297,7 +297,7 @@ int main (int argc, char **argv)
                 velocity.vector.direction = atan2(sines, cosines);
 
                 // store averaged velocity of swarm member
-                swarm_velocity.vectors.push_back(velocity);
+                swarm_velocity_rel.vectors.push_back(velocity);
             }
 
             // next member
@@ -307,7 +307,7 @@ int main (int argc, char **argv)
         // publish swarm kinematics locally
         incoming_position_publisher.publish(swarm_position);
         incoming_rel_position_publisher.publish(swarm_position_rel);
-        incoming_velocity_publisher.publish(swarm_velocity);
+        incoming_rel_velocity_publisher.publish(swarm_velocity_rel);
 
         // publish local kinematics to swarm
         cpswarm_msgs::Position position;
