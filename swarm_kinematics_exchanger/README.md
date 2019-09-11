@@ -58,3 +58,6 @@ The `swarm_kinematics_exchanger` node publishes position and velocity of this CP
   The positions of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the position of this CPS.
 * `swarm_velocity_rel` ([cpswarm_msgs/ArrayOfVectors](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfVectors.html))
   The velocities of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the velocity of this CPS.
+
+## Code API
+[swarm_kinematics_exchanger package code API documentation](https://cpswarm.github.io/swarm_functions/swarm_kinematics_exchanger/docs/html/files.html)

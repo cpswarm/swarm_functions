@@ -85,3 +85,6 @@ The bid_action node provides an implementation of the SimpleActionServer to prov
 #### Published Topics
 * `cps_selection` ([cpswarm_msgs/TaskAllocationEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/TaskAllocationEvent.html))
   The topic for submitting the auction bid to the aucioneer CPS. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
+
+## Code API
+[task_allocation package code API documentation](https://cpswarm.github.io/swarm_functions/task_allocation/docs/html/files.html)
