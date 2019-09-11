@@ -181,8 +181,8 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/init", vel_init, 30);
 
     // publishers and subscribers
-    Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    Subscriber vel_sub = nh.subscribe("vel_provider/velocity", queue_size, vel_callback);
+    Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+    Subscriber vel_subscriber = nh.subscribe("vel_provider/velocity", queue_size, vel_callback);
     Subscriber incoming_position_subscriber = nh.subscribe("bridge/events/position", queue_size, swarm_position_callback);
     Subscriber incoming_velocity_subscriber = nh.subscribe("bridge/events/velocity", queue_size, swarm_velocity_callback);
     Publisher outgoing_position_publisher = nh.advertise<cpswarm_msgs::Position>("position", queue_size);

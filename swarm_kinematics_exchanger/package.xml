@@ -2,7 +2,7 @@
 <package format="2">
     <name>swarm_kinematics_exchanger</name>
     <version>1.0.0</version>
-    <description>A package that allows to exchange kinematic properties such as relative velocity or relative position between multiple cyber physical systems (CPSs) in a swarm.</description>
+    <description>A package that allows to exchange kinematic properties such as velocity or position between multiple cyber physical systems (CPSs) in a swarm.</description>
 
     <!-- One maintainer tag required, multiple allowed, one person per tag -->
     <!-- Example:  -->
