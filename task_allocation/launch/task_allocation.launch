@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="id" default="1" />
+    <arg name="output" default="screen" />
+
+    <!-- Assign Task Action NODE -->
+    <node pkg="task_allocation" type="auction_action" name="task_allocation_auction_$(arg id)" output="$(arg output)">
+        <rosparam command="load" file="$(find task_allocation)/param/task_allocation.yaml" />
+    </node>
+
+    <!-- ComputeCost Action Server NODE -->
+    <node pkg="task_allocation" type="bid_action" name="task_allocation_bid_$(arg id)" output="$(arg output)">
+        <rosparam command="load" file="$(find task_allocation)/param/task_allocation.yaml" />
+    </node>
+
+</launch>

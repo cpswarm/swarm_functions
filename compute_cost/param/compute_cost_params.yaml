@@ -1,4 +1,0 @@
-gps_topic:          mavros/global_position/global    # Topic for receiving the position of the CPS.
-target_cost_topic:  cps_selection                    # Topic to send the computed cost to reach target.
-cps_selected_topic: bridge/events/cps_selected       # Topic to receive selection response
-UUID_topic:         bridge/uuid                      # Topic to receive node UUID 
