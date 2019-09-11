@@ -33,25 +33,25 @@ The auction_action node offers the `task_allocation_auction` action server that 
 The auction_action node provides an implementation of the SimpleActionServer to provide the task allocation auction process. It takes in goals containing cpswarm_msgs/TaskAllocation messages.
 
 ##### Action Subscribed Topics
-* `cmd/task_allocation_auction/goal` ([cpswarm_msgs/TaskAllocationActionGoal](TODO))
+* `cmd/task_allocation_auction/goal` ([cpswarm_msgs/TaskAllocationActionGoal](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   A goal to start an auction containing the universally unique ID (UUID) of the auctioneer together with the ID and the position of the task that is auctioned.
 * `cmd/task_allocation_auction/cancel` ([actionlib_msgs/GoalID](https://docs.ros.org/api/actionlib_msgs/html/msg/GoalID.html))
   A request to cancel a specific auction goal.
 
 ##### Action Published Topics
-* `cmd/task_allocation_auction/feedback` ([cpswarm_msgs/TaskAllocationActionFeedback](TODO))
+* `cmd/task_allocation_auction/feedback` ([cpswarm_msgs/TaskAllocationActionFeedback](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   The feedback is empty for the `task_allocation_auction` action.
 * `cmd/task_allocation_auction/status` ([actionlib_msgs/GoalStatusArray](https://docs.ros.org/api/actionlib_msgs/html/msg/GoalStatusArray.html))
   Provides status information on the goals that are sent to the `task_allocation_auction` action.
-* `cmd/task_allocation_auction/result` ([cpswarm_msgs/TaskAllocationActionResult](TODO))
+* `cmd/task_allocation_auction/result` ([cpswarm_msgs/TaskAllocationActionResult](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   The result of the auction contains the UUID of the winning CPS, together with ID and position of the task that has been auctioned.
 
 #### Subscribed Topics
-* `bridge/events/cps_selection` ([cpswarm_msgs/TaskAllocationEvent](TODO))
+* `bridge/events/cps_selection` ([cpswarm_msgs/TaskAllocationEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/TaskAllocationEvent.html))
   The topic for receiving the bids of the auction from other CPSs. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
 #### Published Topics
-* `cps_selected` ([cpswarm_msgs/TaskAllocatedEvent](TODO))
+* `cps_selected` ([cpswarm_msgs/TaskAllocatedEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/TaskAllocatedEvent.html))
   The topic for announcing the UUID of the CPS that won the auction to the other CPSs. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
 ### bid_action
@@ -61,27 +61,27 @@ The bid_action node offers the `task_allocation_bid` action server that acts as 
 The bid_action node provides an implementation of the SimpleActionServer to provide the task allocation auction process. It takes in goals containing cpswarm_msgs/TaskAllocation messages.
 
 ##### Action Subscribed Topics
-* `cmd/task_allocation_bid/goal` ([cpswarm_msgs/TaskAllocationActionGoal](TODO))
+* `cmd/task_allocation_bid/goal` ([cpswarm_msgs/TaskAllocationActionGoal](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   A goal to compute a bid containing the universally unique ID (UUID) of the auctioneer together with the ID and the position of the task that is auctioned.
 * `cmd/task_allocation_bid/cancel` ([actionlib_msgs/GoalID](https://docs.ros.org/api/actionlib_msgs/html/msg/GoalID.html))
   A request to cancel a specific bidding goal.
 
 ##### Action Published Topics
-* `cmd/task_allocation_bid/feedback` ([cpswarm_msgs/TaskAllocationActionFeedback](TODO))
+* `cmd/task_allocation_bid/feedback` ([cpswarm_msgs/TaskAllocationActionFeedback](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   The feedback is empty for the `task_allocation_bid` action.
 * `cmd/task_allocation_bid/status` ([actionlib_msgs/GoalStatusArray](https://docs.ros.org/api/actionlib_msgs/html/msg/GoalStatusArray.html))
   Provides status information on the goals that are sent to the `task_allocation_bid` action.
-* `cmd/task_allocation_bid/result` ([cpswarm_msgs/TaskAllocationActionResult](TODO))
+* `cmd/task_allocation_bid/result` ([cpswarm_msgs/TaskAllocationActionResult](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   The result of the auction contains ID and position of the task that has been auctioned.
 
 #### Subscribed Topics
 * `pos_provider/pose` ([geometry_msgs/PoseStamped](https://docs.ros.org/api/geometry_msgs/html/msg/PoseStamped.html))
   The topic for receiving the current position of the CPS.
-* `bridge/uuid` ([swarmros/String](TODO))
+* `bridge/uuid` ([swarmros/String](https://cpswarm.github.io/swarmio/swarmros/docs/html/msg/String.html))
   The topic for receiving the UUID of this CPS. It is published by the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
-* `bridge/events/cps_selected` ([cpswarm_msgs/TaskAllocatedEvent](TODO))
+* `bridge/events/cps_selected` ([cpswarm_msgs/TaskAllocatedEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/TaskAllocatedEvent.html))
   The topic for receiving the UUID of the CPS that won the auction. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
 #### Published Topics
-* `cps_selection` ([cpswarm_msgs/TaskAllocationEvent](TODO))
+* `cps_selection` ([cpswarm_msgs/TaskAllocationEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/TaskAllocationEvent.html))
   The topic for submitting the auction bid to the aucioneer CPS. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).

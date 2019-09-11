@@ -42,19 +42,19 @@ The `swarm_kinematics_exchanger` node publishes position and velocity of this CP
   The topic for receiving the current position of this CPS.
 * `vel_provider/velocity` ([geometry_msgs/TwistStamped](https://docs.ros.org/api/geometry_msgs/html/msg/TwistStamped.html))
   The topic for receiving the current velocity of this CPS.
-* `bridge/events/position` ([cpswarm_msgs/Position](TODO))
+* `bridge/events/position` ([cpswarm_msgs/Position](https://cpswarm.github.io/cpswarm_msgs/html/msg/Position.html))
   The topic for receiving the current position from another CPS. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
-* `bridge/events/velocity` ([cpswarm_msgs/Velocity](TODO))
+* `bridge/events/velocity` ([cpswarm_msgs/Velocity](https://cpswarm.github.io/cpswarm_msgs/html/msg/Velocity.html))
   The topic for receiving the current velocity from another CPS. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
 #### Published Topics
-* `position` ([cpswarm_msgs/Position](TODO))
+* `position` ([cpswarm_msgs/Position](https://cpswarm.github.io/cpswarm_msgs/html/msg/Position.html))
   The current position of this CPS that is forwarded by the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) to the other swarm members.
-* `velocity` ([cpswarm_msgs/Velocity](TODO))
+* `velocity` ([cpswarm_msgs/Velocity](https://cpswarm.github.io/cpswarm_msgs/html/msg/Velocity.html))
   The current velocity of this CPS that is forwarded by the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) to the other swarm members.
-* `swarm_position` ([cpswarm_msgs/ArrayOfPositions](TODO))
+* `swarm_position` ([cpswarm_msgs/ArrayOfPositions](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfPositions.html))
   The positions of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
-* `swarm_position_rel` ([cpswarm_msgs/ArrayOfVectors](TODO))
+* `swarm_position_rel` ([cpswarm_msgs/ArrayOfVectors](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfVectors.html))
   The positions of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the position of this CPS.
-* `swarm_velocity_rel` ([cpswarm_msgs/ArrayOfVectors](TODO))
+* `swarm_velocity_rel` ([cpswarm_msgs/ArrayOfVectors](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfVectors.html))
   The velocities of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the velocity of this CPS.
