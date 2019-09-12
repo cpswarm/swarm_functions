@@ -1,4 +1,4 @@
-# swarm_kinematics_exchanger
+# kinematics_exchanger
 
 This ROS package that allows to exchange kinematic properties such as velocity or position between multiple cyber physical systems (CPSs) in a swarm.
 
@@ -8,9 +8,9 @@ This package depends on the [CPSwarm ROS Messages](https://github.com/cpswarm/cp
 ## Execution
 Run the launch file
 ```
-roslaunch swarm_kinematics_exchanger swarm_kinematics_exchanger.launch
+roslaunch kinematics_exchanger kinematics_exchanger.launch
 ```
-to launch the `swarm_kinematics_exchanger` node.
+to launch the `kinematics_exchanger` node.
 
 ### Launch File Parameters
 The launch file can be configured with following parameters:
@@ -20,7 +20,7 @@ The launch file can be configured with following parameters:
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
 ### Parameter Files
-In the `param` subdirectory there is the parameter file `swarm_kinematics_exchanger.yaml` that allows to configure the behavior of the `swarm_kinematics_exchanger` node. It contains the following parameters:
+In the `param` subdirectory there is the parameter file `kinematics_exchanger.yaml` that allows to configure the behavior of the `kinematics_exchanger` node. It contains the following parameters:
 * `loop_rate` (real)
   The frequency in Hz at which to run the control loops.
 * `queue_size` (integer)
@@ -34,8 +34,8 @@ In the `param` subdirectory there is the parameter file `swarm_kinematics_exchan
 
 ## Nodes
 
-### swarm_kinematics_exchanger
-The `swarm_kinematics_exchanger` node publishes position and velocity of this CPS to the rest of the swarm and publishes the position and velocity received from the other swarm members locally.
+### kinematics_exchanger
+The `kinematics_exchanger` node publishes position and velocity of this CPS to the rest of the swarm and publishes the position and velocity received from the other swarm members locally.
 
 #### Subscribed Topics
 * `pos_provider/pose` ([geometry_msgs/PoseStamped](https://docs.ros.org/api/geometry_msgs/html/msg/PoseStamped.html))
@@ -60,4 +60,4 @@ The `swarm_kinematics_exchanger` node publishes position and velocity of this CP
   The velocities of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the velocity of this CPS.
 
 ## Code API
-[swarm_kinematics_exchanger package code API documentation](https://cpswarm.github.io/swarm_functions/swarm_kinematics_exchanger/docs/html/files.html)
+[kinematics_exchanger package code API documentation](https://cpswarm.github.io/swarm_functions/kinematics_exchanger/docs/html/files.html)

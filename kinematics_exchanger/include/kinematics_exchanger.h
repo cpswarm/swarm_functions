@@ -1,5 +1,5 @@
-#ifndef SWARM_KINEMATICS_EXCHANGER_H
-#define SWARM_KINEMATICS_EXCHANGER_H
+#ifndef KINEMATICS_EXCHANGER_H
+#define KINEMATICS_EXCHANGER_H
 
 #include <map>
 #include <vector>
@@ -89,4 +89,4 @@ int pos_init;
  */
 int vel_init;
 
-#endif // SWARM_KINEMATICS_EXCHANGER_H
+#endif // KINEMATICS_EXCHANGER_H

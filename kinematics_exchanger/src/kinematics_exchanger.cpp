@@ -1,4 +1,4 @@
-#include "swarm_kinematics_exchanger.h"
+#include "kinematics_exchanger.h"
 
 /**
  * @brief Accumulate sines.
@@ -166,7 +166,7 @@ void swarm_velocity_callback (cpswarm_msgs::Velocity msg) {
 int main (int argc, char **argv)
 {
     // init ros node
-    init(argc, argv, "swarm_kinematics_exchanger");
+    init(argc, argv, "kinematics_exchanger");
     NodeHandle nh;
 
     // read parameters
