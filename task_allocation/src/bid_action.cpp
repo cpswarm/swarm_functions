@@ -164,7 +164,6 @@ int main(int argc, char **argv)
     }
 
     // start action server and wait
-    ROS_ERROR("test");
     Server server(nh, "cmd/task_allocation_bid", boost::bind(&bid_callback, _1, &server), false);
     server.start();
     ROS_INFO("TASK_BID - Task allocation bid action available");
