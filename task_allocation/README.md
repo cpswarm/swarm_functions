@@ -77,7 +77,7 @@ The bid_action node provides an implementation of the SimpleActionServer to prov
 #### Subscribed Topics
 * `pos_provider/pose` ([geometry_msgs/PoseStamped](https://docs.ros.org/api/geometry_msgs/html/msg/PoseStamped.html))
   The topic for receiving the current position of the CPS.
-* `bridge/uuid` ([swarmros/String](https://cpswarm.github.io/swarmio/swarmros/docs/html/msg/String.html))
+* `bridge/uuid` ([swarmros/String](https://cpswarm.github.io/swarmio/swarmros/msg/String.html))
   The topic for receiving the UUID of this CPS. It is published by the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 * `bridge/events/cps_selected` ([cpswarm_msgs/TaskAllocatedEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/TaskAllocatedEvent.html))
   The topic for receiving the UUID of the CPS that won the auction. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
