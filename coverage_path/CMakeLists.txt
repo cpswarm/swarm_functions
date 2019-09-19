@@ -7,7 +7,7 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp tf2 random_numbers geometry_msgs nav_msgs cpswarm_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp random_numbers geometry_msgs nav_msgs cpswarm_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,10 +117,10 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(
-#   ${PROJECT_NAME}_lib
-#   src/lib/${PROJECT_NAME}.cpp
-# )
+add_library(
+  edge
+  src/lib/edge.cpp
+)
 add_library(
   area_division
   src/lib/area_division.cpp
@@ -132,6 +132,10 @@ add_library(
 add_library(
   spanning_tree
   src/lib/spanning_tree.cpp
+)
+add_library(
+  mst_path
+  src/lib/mst_path.cpp
 )
 
 
@@ -161,13 +165,22 @@ add_executable(
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
   ${PROJECT_NAME}
-#   area_division
+  area_division
+  spanning_tree
+  mst_path
   ${catkin_LIBRARIES}
 )
 target_link_libraries(
   area_division
   connected_components
-  ${catkin_LIBRARIES}
+)
+target_link_libraries(
+  spanning_tree
+  edge
+)
+target_link_libraries(
+  mst_path
+  edge
 )
 
 #############

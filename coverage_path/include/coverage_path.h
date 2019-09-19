@@ -3,8 +3,9 @@
 
 #include <ros/ros.h>
 #include <deque>
-// #include <map>
+#include <map>
 #include <vector>
+#include <valarray>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -15,6 +16,11 @@
 #include <cpswarm_msgs/Velocity.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
 #include <cpswarm_msgs/VectorStamped.h>
+#include <swarmros/String.h>
+
+#include "lib/area_division.h"
+#include "lib/spanning_tree.h"
+#include "lib/mst_path.h"
 
 using namespace std;
 using namespace ros;
@@ -30,6 +36,11 @@ typedef struct cartesian_vector_t {
 } cartesian_vector_t;
 
 /**
+ * @brief UUID of this CPS.
+ */
+string uuid;
+
+/**
  * @brief TODO
  */
 Publisher path_publisher;
@@ -42,7 +53,7 @@ Subscriber swarm_pose_sub;
 /**
  * @brief The positions of the other swarm members.
  */
-vector<cpswarm_msgs::Position> swarm_pose;
+map<string, geometry_msgs::PoseStamped> swarm_pose;
 
 /**
  * @brief TODO
@@ -75,14 +86,29 @@ nav_msgs::OccupancyGrid gridmap;
 bool map_valid;
 
 /**
- * @brief The coverage path.
+ * @brief TODO
  */
-deque<geometry_msgs::Point> path;
+area_division division;
+
+/**
+ * @brief TODO
+ */
+spanning_tree tree;
+
+/**
+ * @brief TODO
+ */
+mst_path path;
 
 /**
  * @brief TODO
  */
 double position_tolerance;
+
+/**
+ * @brief Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
+ */
+double swarm_timeout;
 
 /**
  * @brief TODO
