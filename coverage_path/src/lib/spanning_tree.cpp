@@ -13,12 +13,30 @@ spanning_tree::spanning_tree()
 {
 }
 
-vector<edge> spanning_tree::get_mst_edges()
+vector<edge> spanning_tree::get_mst_edges ()
 {
     return new_edges;
 }
 
-void spanning_tree::initialize_graph(int rows, int cols, valarray<bool> graph, bool connect4)
+nav_msgs::Path spanning_tree::get_path (nav_msgs::OccupancyGrid gridmap)
+{
+    nav_msgs::Path path;
+    vector<geometry_msgs::PoseStamped> poses;
+    geometry_msgs::PoseStamped pose;
+
+    for (auto e : new_edges) {
+        pose.pose.position.x = e.to % (2*gridmap.info.width) * gridmap.info.resolution + gridmap.info.origin.position.x;
+        pose.pose.position.y = e.to / (2*gridmap.info.width) * gridmap.info.resolution + gridmap.info.origin.position.y;
+        poses.push_back(pose);
+    }
+
+    path.poses = poses;
+    path.header.stamp = Time::now();
+    path.header.frame_id = "local_origin_ned";
+    return path;
+}
+
+void spanning_tree::initialize_graph (int rows, int cols, valarray<bool> graph, bool connect4)
 {
     nodes.resize(rows*cols);
 
@@ -61,7 +79,7 @@ void spanning_tree::initialize_graph(int rows, int cols, valarray<bool> graph, b
     }
 }
 
-void spanning_tree::construct()
+void spanning_tree::construct ()
 {
     while (!edges.empty()) {
         // select shortest edge
@@ -93,7 +111,7 @@ void spanning_tree::construct()
     }
 }
 
-void spanning_tree::add_edge(int from, int to, int cost)
+void spanning_tree::add_edge (int from, int to, int cost)
 {
     // add edge to priority queue
     edges.push(edge(from, to, cost));
@@ -107,7 +125,7 @@ void spanning_tree::add_edge(int from, int to, int cost)
     }
 }
 
-bool spanning_tree::different_sets(int a, int b)
+bool spanning_tree::different_sets (int a, int b)
 {
     return nodes[a] != nodes[b];
 }

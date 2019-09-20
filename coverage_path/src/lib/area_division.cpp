@@ -19,21 +19,7 @@ void area_division::initialize_map(int r, int c, vector<signed char> src)
     rows = r;
     cols = c;
     ob = 0;
-    GridEnv.resize(rows*cols);
-
-    // initialize graph
-    for (int i=0; i<rows*cols; ++i) {
-        // known cells are treated as obstacle (no coverage needed)
-        if (src[i] >= 0) {
-            GridEnv[i] = -2;
-            ob++;
-        }
-
-        // unknown is treated as free
-        else {
-            GridEnv = -1;
-        }
-    }
+    GridEnv = src;
 }
 
 void area_division::initialize_cps(map<string, vector<int>> cpss)
@@ -54,7 +40,7 @@ void area_division::initialize_cps(map<string, vector<int>> cpss)
 
         // place cps in data structures
         robotBinary[idx] = true;
-        GridEnv[idx] = nr;
+        GridEnv[idx] = numeric_limits<signed char>::max();
         A[idx] = nr;
 
         // store cps position and mapping of uuid
@@ -80,18 +66,15 @@ void area_division::divide()
         termThr=0;
     }
 
+    // initialize distance to cps and importance of all tiles
     vector<valarray<double>> AllDistances(nr, valarray<double>(rows*cols));
     vector<valarray<double>> TilesImportance(nr, valarray<double>(rows*cols));
-
     double MaximumDist[nr];
     double MaximumImportance[nr];
     double MinimumImportance[nr];
     for (int r=0; r<nr; r++) {
         MinimumImportance[r] = numeric_limits<double>::max();
     }
-
-    valarray<float> ONES2D(1, rows*cols);
-
     for (int i=0; i<rows; i++) {
         for (int j=0; j<cols;j++) {
             double tempSum=0.0;
@@ -114,17 +97,16 @@ void area_division::divide()
         }
     }
 
-    success = false;
 
     vector<valarray<double>> MetricMatrix = AllDistances;
 
-    valarray<double> criterionMatrix(rows*cols);
-
+    // perform area division
+    success = false;
+    valarray<double> criterionMatrix;
     while (termThr<=discr && !success) {
         // initializations
         double downThres = ((double)NoTiles-(double)termThr*(nr-1)) / (double)(NoTiles*nr);
         double upperThres = ((double)NoTiles+termThr) / (double)(NoTiles*nr);
-
         success = true;
 
         // main optimization loop
@@ -132,13 +114,12 @@ void area_division::divide()
         while (iter <= maxIter) {
             assign(MetricMatrix);
 
+            // find connected areas
             vector<valarray<float>> ConnectedMultiplierList(nr);
             double plainErrors[nr];
             double divFairError[nr];
-
-            //Connected Areas Component
             for (int r=0; r<nr; r++) {
-                valarray<float> ConnectedMultiplier = ONES2D;
+                valarray<float> ConnectedMultiplier(1, rows*cols);
                 ConnectedRobotRegions[r] = true;
 
                 connected_components cc(BWlist[r], rows, cols, true);
@@ -170,9 +151,9 @@ void area_division::divide()
                 break;
             }
 
+            // check fairness among different partitions
             double TotalNegPerc = 0.0, totalNegPlainErrors = 0.0;
             double correctionMult[nr];
-
             for (int r=0; r<nr; r++) {
                 if (divFairError[r] < 0) {
                     TotalNegPerc += abs(divFairError[r]);
@@ -181,7 +162,7 @@ void area_division::divide()
                 correctionMult[r] = 1.0;
             }
 
-            // restore fairness among the different partitions
+            // restore fairness
             for (int r=0; r<nr; r++) {
                 if (totalNegPlainErrors != 0.0) {
                     if (divFairError[r]<0.0) {
@@ -191,7 +172,7 @@ void area_division::divide()
                         correctionMult[r] = 1.0 - (plainErrors[r] / totalNegPlainErrors) * (TotalNegPerc / 2.0);
                     }
 
-                    criterionMatrix = calculateCriterionMatrix(TilesImportance[r], MinimumImportance[r], MaximumImportance[r], correctionMult[r], (divFairError[r] < 0));
+                    valarray<double> criterionMatrix = calculateCriterionMatrix(TilesImportance[r], MinimumImportance[r], MaximumImportance[r], correctionMult[r], (divFairError[r] < 0));
                 }
                 MetricMatrix[r] = FinalUpdateOnMetricMatrix(criterionMatrix, generateRandomMatrix(), MetricMatrix[r], ConnectedMultiplierList[r]);
             }
@@ -206,12 +187,32 @@ void area_division::divide()
         }
     }
 
+    // convert robot assignment to binary matrix
     calculateRobotBinaryArrays();
 }
 
 valarray<bool> area_division::get_region(string cps)
 {
     return BinaryRobotRegions[uuid_map[cps]];
+}
+
+nav_msgs::OccupancyGrid area_division::get_grid(nav_msgs::OccupancyGrid map, string cps)
+{
+    nav_msgs::OccupancyGrid assigned;
+    assigned = map;
+
+    // mark assigned cells as obstacles
+    for (int i=0; i<BinaryRobotRegions[uuid_map[cps]].size(); ++i) {
+        if (BinaryRobotRegions[uuid_map[cps]][i])
+            assigned.data[i] = 0;
+        else
+            assigned.data[i] = 100;
+    }
+
+    assigned.header.stamp = Time::now();
+    assigned.info.map_load_time == Time::now();
+
+    return assigned;
 }
 
 bool area_division::getSuccess()
@@ -404,6 +405,7 @@ void area_division::assign(vector<valarray<double>> Q)
     ArrayOfElements.resize(nr);
     for (int i=0; i<rows; i++) {
         for (int j=0; j<cols; j++) {
+            // unknown grid cell (treat as free)
             if (GridEnv[i*cols+j] == -1) {
                 double minV = Q[0][i*cols+j];
                 int indMin = 0;
@@ -417,7 +419,9 @@ void area_division::assign(vector<valarray<double>> Q)
                 BWlist[indMin][i*cols+j] = 1;
                 ArrayOfElements[indMin]++;
             }
-            else if (GridEnv[i*cols+j] == -2) {
+
+            // obstacle
+            else if (GridEnv[i*cols+j] < numeric_limits<signed char>::max()) {
                 A[i*cols+j] = nr;
             }
         }

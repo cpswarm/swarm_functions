@@ -4,9 +4,13 @@
 #include <queue>
 #include <unordered_set>
 #include <valarray>
+#include <ros/ros.h>
+#include <nav_msgs/Path.h>
+#include <nav_msgs/OccupancyGrid.h>
 #include "lib/edge.h"
 
 using namespace std;
+using namespace ros;
 
 /**
  * @brief A class that generates a minimum-spanning-tree of a graph (MST).
@@ -23,7 +27,12 @@ public:
      * @brief Get the edges of the MST.
      * @return A vector with all edges of the MST.
      */
-    vector<edge> get_mst_edges();
+    vector<edge> get_mst_edges ();
+
+    /**
+     * @brief TODO
+     */
+    nav_msgs::Path get_path (nav_msgs::OccupancyGrid gridmap);
 
     /**
      * @brief Initialize the internal tree structure from a given graph.
@@ -32,12 +41,12 @@ public:
      * @param graph The graph array that defines vertices of the tree.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph(int rows, int cols, valarray<bool> graph, bool connect4 = true);
+    void initialize_graph (int rows, int cols, valarray<bool> graph, bool connect4 = true);
 
     /**
      * @brief Generate the MST using Kruskal's algorithm.
      */
-    void construct();
+    void construct ();
 
 private:
     /**
@@ -46,7 +55,7 @@ private:
      * @param to The ending vertex.
      * @param cost The cost of the edge.
      */
-    void add_edge(int from, int to, int cost);
+    void add_edge (int from, int to, int cost);
 
     /**
      * @brief Check whether two vertices are in different sets.
@@ -54,7 +63,7 @@ private:
      * @param b The second vertex.
      * @return True if the vertices are in different connected components, i.e., the set for vertex a is different from that for vertex b.
      */
-     bool different_sets(int a, int b);
+     bool different_sets (int a, int b);
 
     /**
      * @brief The sets of connected vertices.

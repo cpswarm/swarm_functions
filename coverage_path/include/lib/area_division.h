@@ -4,11 +4,14 @@
 #include <vector>
 #include <valarray>
 #include <map>
+#include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <nav_msgs/OccupancyGrid.h>
 #include <random_numbers/random_numbers.h>
 #include "lib/connected_components.h"
 
 using namespace std;
+using namespace ros;
 
 /**
  * @brief A class to divide the environment optimally among multiple cyber physical systems (CPSs).
@@ -52,10 +55,19 @@ public:
 
     /**
      * @brief Get the region assigned to a CPS.
-     * @param cps The UUID of the CPS.
-     * @return The array which
+     * @param cps UUID of the CPS.
+     * @return Array which contains true in cells assigned to the CPS.
      */
     valarray<bool> get_region(string cps);
+
+    /**
+     * @brief Get the region assigned to a CPS.
+     * @param map Original grid map.
+     * @param cps UUID of the CPS.
+     * @return Grid map which contains obstacles in cells assigned to the CPS.
+     */
+    nav_msgs::OccupancyGrid get_grid(nav_msgs::OccupancyGrid map, string cps);
+
 
     bool getSuccess();
     int getNr();
@@ -125,7 +137,7 @@ private:
     /**
      * @brief The environment grid map. Robots are represented by 2, obstacles by 1/-2, empty cells by -1.
      */
-    valarray<int> GridEnv;
+    vector<signed char> GridEnv;
 
     /**
      * @brief Robot positions.

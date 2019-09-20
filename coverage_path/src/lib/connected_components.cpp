@@ -86,7 +86,7 @@ vector<int> connected_components::labeling ()
     next_label = 1;
     for (int i = 0; i < cols*rows; i++ ) {
         if (image[i]!=0 || !zeroAsBg) {
-            rst[i] = uf_find( rst[i], parent, labels );
+            rst[i] = uf_find(rst[i], parent, labels);
             // The labels are from 1, if label 0 should be considered, then
             // all the label should minus 1
             if (!zeroAsBg) rst[i]--;

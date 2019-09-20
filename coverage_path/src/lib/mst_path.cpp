@@ -14,7 +14,18 @@ void mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     geometry_msgs::Point wp = start;
     path.push_back(wp);
-    int current = wp.y / res * 2*cols + wp.x / res;
+    int(round((wp.x - origin.x) / res));
+    int(round((wp.y - origin.y) / res));
+    int current = 2 * round((wp.y - origin.y) / res) * 2*cols + 2 * round((wp.x - origin.x) / res);
+
+//     for (int i=0; i<500; ++i) {
+//         if (nodes[i].size() > 0) {
+//             cout << i << ": ";
+//             for (auto n : nodes[i])
+//                 cout << n << ",";
+//             cout << endl;
+//         }
+//     }
 
     // visited vertices
     unordered_set<int> removed;
@@ -46,6 +57,7 @@ void mst_path::generate_path (geometry_msgs::Point start)
 
     // no valid first step found
     if (!found) {
+        ROS_ERROR("No path found!");
         return;
     }
 
@@ -62,11 +74,11 @@ void mst_path::generate_path (geometry_msgs::Point start)
         previous = current;
         for (int idx=0; idx<movement.size(); idx++){
             if (nodes[previous].count(previous + movement[(idx+offset) % movement.size()]) > 0 &&
-                removed.count(previous+movement[(idx+offset) % movement.size()]) <= 0) {
+                removed.count(previous + movement[(idx+offset) % movement.size()]) <= 0) {
                 current = previous + movement[(idx+offset) % movement.size()];
-            found = true;
-            break;
-                }
+                found = true;
+                break;
+            }
         }
         if (!found) {
             return;
@@ -77,14 +89,30 @@ void mst_path::generate_path (geometry_msgs::Point start)
         nodes[previous].erase(current);
 
         // add vertex to path
-        wp.x = current % (2*cols) * res;
-        wp.y = current / (2*cols) * res;
+        wp.x = (current % (2*cols)) / 2.0 * res + origin.x;
+        wp.y = (current / (2*cols)) / 2.0 * res + origin.y;
+
         path.push_back(wp);
     } while (found);
 
     // final waypoint
     wp = path.front();
     path.push_back(wp);
+}
+
+nav_msgs::Path mst_path::get_path ()
+{
+    nav_msgs::Path nav_path;
+    vector<geometry_msgs::PoseStamped> poses;
+    geometry_msgs::PoseStamped pose;
+    for (auto p : path) {
+        pose.pose.position = p;
+        poses.push_back(pose);
+    }
+    nav_path.poses = poses;
+    nav_path.header.stamp = Time::now();
+    nav_path.header.frame_id = "local_origin_ned";
+    return nav_path;
 }
 
 void mst_path::initialize_graph (valarray<bool> graph, bool connect4)
@@ -98,7 +126,7 @@ void mst_path::initialize_graph (valarray<bool> graph, bool connect4)
     valarray<bool> inflated(2*rows*2*cols);
     for (int i=0; i<2*rows; i++) {
         for (int j=0; j<2*cols; j++) {
-            inflated[i*cols + j] = graph[(i/2)*cols + j/2];
+            inflated[i*2*cols + j] = graph[(i/2)*cols + j/2];
         }
     }
 
@@ -106,34 +134,34 @@ void mst_path::initialize_graph (valarray<bool> graph, bool connect4)
     for (int i=0; i<2*rows; i++) {
         for (int j=0; j<2*cols; j++) {
             // found a vertex
-            if (inflated[i*cols+j]) {
+            if (inflated[2*i*cols+j]) {
                 // check von neumann neighborhood for connected vertices
-                if (i>0 && inflated[(i-1)*cols+j]) {
-                    add_edge(2*i*cols+j, 2*(i-1)*cols+j, 1);
+                if (i>0 && inflated[(i-1)*2*cols+j]) {
+                    add_edge(i*2*cols+j, (i-1)*2*cols+j, 1);
                 }
-                if (i<2*rows-1 && inflated[(i+1)*cols+j]) {
-                    add_edge(2*i*cols+j, 2*(i+1)*cols+j, 1);
+                if (i<2*rows-1 && inflated[(i+1)*2*cols+j]) {
+                    add_edge(i*2*cols+j, (i+1)*2*cols+j, 1);
                 }
-                if (j>0 && inflated[i*cols+j-1]) {
-                    add_edge(2*i*cols+j, 2*i*cols+j-1, 1);
+                if (j>0 && inflated[i*2*cols+j-1]) {
+                    add_edge(i*2*cols+j, i*2*cols+j-1, 1);
                 }
-                if (j<2*cols-1 && inflated[i*cols+j+1]) {
-                    add_edge(2*i*cols+j, 2*i*cols+j+1, 1);
+                if (j<2*cols-1 && inflated[i*2*cols+j+1]) {
+                    add_edge(i*2*cols+j, i*2*cols+j+1, 1);
                 }
 
                 // check moore neighborhood for connected vertices
                 if (!connect4) {
-                    if (i>0 && j>0 && inflated[(i-1)*cols+j-1]) {
-                        add_edge(2*i*cols+j, 2*(i-1)*cols+j-1, 1);
+                    if (i>0 && j>0 && inflated[(i-1)*2*cols+j-1]) {
+                        add_edge(i*2*cols+j, (i-1)*2*cols+j-1, 1);
                     }
-                    if (i<2*rows-1 && j<2*cols-1 && inflated[(i+1)*cols+j+1]) {
-                        add_edge(2*i*cols+j, 2*(i+1)*cols+j+1, 1);
+                    if (i<2*rows-1 && j<2*cols-1 && inflated[(i+1)*2*cols+j+1]) {
+                        add_edge(i*2*cols+j, (i+1)*2*cols+j+1, 1);
                     }
-                    if (i<2*rows-1 && j>0 && inflated[(i+1)*cols+j-1]) {
-                        add_edge(2*i*cols+j, 2*(i+1)*cols+j-1, 1);
+                    if (i<2*rows-1 && j>0 && inflated[(i+1)*2*cols+j-1]) {
+                        add_edge(i*2*cols+j, (i+1)*2*cols+j-1, 1);
                     }
-                    if (i>0 && j<2*cols-1 && inflated[(i-1)*cols+j+1]) {
-                        add_edge(2*i*cols+j, 2*(i-1)*cols+j+1, 1);
+                    if (i>0 && j<2*cols-1 && inflated[(i-1)*2*cols+j+1]) {
+                        add_edge(i*2*cols+j, (i-1)*2*cols+j+1, 1);
                     }
                 }
             }
@@ -143,9 +171,12 @@ void mst_path::initialize_graph (valarray<bool> graph, bool connect4)
 
 void mst_path::initialize_map(nav_msgs::OccupancyGrid gridmap)
 {
-    rows = gridmap.info.width;
-    cols = gridmap.info.height;
+//     rows = gridmap.info.width;
+//     cols = gridmap.info.height;
+    rows = gridmap.info.height;
+    cols = gridmap.info.width;
     res = gridmap.info.resolution;
+    origin = gridmap.info.origin.position;
 }
 
 void mst_path::initialize_tree (vector<edge> mst)
@@ -213,7 +244,6 @@ geometry_msgs::Point mst_path::get_wp (int idx)
 
     return waypoint;
 }
-
 
 void mst_path::remove_edge (edge e)
 {

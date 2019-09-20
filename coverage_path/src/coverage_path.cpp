@@ -6,29 +6,40 @@ void generate_paths ()
     map<string, vector<int>> swarm_grid;
     for (auto cps : swarm_pose) {
         vector<int> pos(2);
-        pos[0] = int(round(cps.second.pose.position.x / gridmap.info.resolution));
-        pos[1] = int(round(cps.second.pose.position.y / gridmap.info.resolution));
+        pos[0] = int(round((cps.second.pose.position.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
+        pos[1] = int(round((cps.second.pose.position.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
         swarm_grid.emplace(cps.first, pos);
     }
 
+    // add this robot to swarm grid
+    vector<int> pos(2);
+    pos[0] = int(round((pose.position.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
+    pos[1] = int(round((pose.position.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
+    swarm_grid.emplace(uuid, pos);
+
     // divide area
-    division.initialize_cps(swarm_grid);
+    ROS_ERROR("Dividing area...");
     vector<signed char, allocator<signed char>> map = gridmap.data;
     division.initialize_map((int)gridmap.info.width, (int)gridmap.info.height, map);
+    division.initialize_cps(swarm_grid);
     division.divide();
     valarray<bool> assignment = division.get_region(uuid);
 
     // construct minimum spanning tree
+    ROS_ERROR("Construct minimum-spanning-tree...");
     tree.initialize_graph((int)gridmap.info.width, (int)gridmap.info.height, assignment);
     tree.construct();
     vector<edge> mst = tree.get_mst_edges();
 
     // generate path
+    ROS_ERROR("Generate coverage path...");
     path.initialize_map(gridmap);
     path.initialize_tree(mst);
     path.initialize_graph(assignment);
-    path.remove_edges();
+//     path.remove_edges();
     path.generate_path(pose.position);
+
+    reconfigure = false;
 }
 
 /**
@@ -46,12 +57,12 @@ void uuid_callback (const swarmros::String::ConstPtr& msg)
  */
 void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
+    // store new position and orientation in class variables
+    pose = msg->pose;
+
     // valid pose received
     if (msg->header.stamp.isValid())
         pose_valid = true;
-
-    // store new position and orientation in class variables
-    pose = msg->pose;
 }
 
 /**
@@ -95,6 +106,8 @@ void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
             ++cps;
         }
     }
+
+    swarm_valid = true;
 }
 
 /**
@@ -103,8 +116,8 @@ void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
  */
 void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
+    gridmap = *msg;
     map_valid = true;
-//     gridmap = *msg;
 }
 
 /**
@@ -130,27 +143,32 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/position_tolerance", position_tolerance, 0.5);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
 
+    // initialize flags
+    uuid = "";
+    pose_valid = false;
+    swarm_valid = false;
+    map_valid = false;
+
     // publishers and subscribers
     Subscriber uuid_sub = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
     Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     Subscriber swarm_subscriber = nh.subscribe("swarm_position", queue_size, swarm_callback);
     Subscriber map_subscriber = nh.subscribe("map", queue_size, map_callback); // TODO: use merged map
-    Publisher waypoint_publisher = nh.advertise<geometry_msgs::Point>("waypoint", queue_size, true);
-    path_publisher = nh.advertise<nav_msgs::Path>("path", queue_size, true);
+    Publisher waypoint_publisher = nh.advertise<geometry_msgs::PointStamped>("waypoint", queue_size, true);
+    Publisher path_publisher = nh.advertise<nav_msgs::Path>("path", queue_size, true);
+    Publisher area_publisher = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
 
     // init loop rate
     Rate rate(loop_rate);
 
     // init uuid
-    uuid = "";
     while (ok() && uuid == "") {
+        ROS_DEBUG_ONCE("Waiting for UUID...");
         rate.sleep();
         spinOnce();
     }
 
     // init position
-    pose_valid = false;
-    swarm_valid = true; // TODO
     while (ok() && (pose_valid == false || swarm_valid == false)) {
         ROS_DEBUG_ONCE("Waiting for valid position information...");
         rate.sleep();
@@ -158,34 +176,39 @@ int main (int argc, char **argv)
     }
 
     // init map
-    map_valid = false;
-//     while (ok() && map_valid == false) {
-//         ROS_ERROR_THROTTLE(1, "Waiting for grid map...");
-//         rate.sleep();
-//         spinOnce();
-//     }
+    while (ok() && map_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for grid map...");
+        rate.sleep();
+        spinOnce();
+    }
 
     // configure area division optimizer
-    division.setup(80000, 0.01, 1e-4, 30, false); // TODO: define parameters
+    division.setup(1, 0.01, 1e-4, 30, false); // TODO: define parameters
 
     // publish path waypoints
+    geometry_msgs::PointStamped waypoint;
     while (ok()) {
         // compute new path if swarm configuration changed
         if (reconfigure) {
             generate_paths();
         }
+        area_publisher.publish(division.get_grid(gridmap, uuid));
+//         path_publisher.publish(tree.get_path(gridmap));
+        path_publisher.publish(path.get_path());
 
         // get current waypoint
-        geometry_msgs::Point waypoint;// = path.current_wp();
+//         waypoint = path.current_wp();
 
-        // reached waypoint
-        if (hypot(waypoint.x - pose.position.x, waypoint.y - pose.position.y) < position_tolerance) {
+        // reached waypoint TODO
+//         if (hypot(waypoint.x - pose.position.x, waypoint.y - pose.position.y) < position_tolerance) {
             // get next waypoint
-            //waypoint = path.next_wp();
+//             waypoint.header.stamp = Time::now();
+//             waypoint.point = path.next_wp();
+//         }
 
-            // publish waypoint
-            waypoint_publisher.publish(waypoint);
-        }
+        // publish waypoint
+//         ROS_ERROR("Publish waypoint %.2f, %2.f", waypoint.point.x, waypoint.point.y);
+//         waypoint_publisher.publish(waypoint);
 
         rate.sleep();
         spinOnce();

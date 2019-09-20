@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 #include <valarray>
-#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Path.h>
@@ -39,11 +39,6 @@ typedef struct cartesian_vector_t {
  * @brief UUID of this CPS.
  */
 string uuid;
-
-/**
- * @brief TODO
- */
-Publisher path_publisher;
 
 /**
  * @brief Subscriber for the positions of the other CPSs.

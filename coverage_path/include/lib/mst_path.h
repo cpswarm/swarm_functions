@@ -4,8 +4,10 @@
 #include <deque>
 #include <valarray>
 #include <unordered_set>
+#include <ros/ros.h>
 #include <geometry_msgs/Point.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Path.h>
 #include "lib/edge.h"
 
 using namespace std;
@@ -33,6 +35,12 @@ public:
      * @param start The current position of the CPS.
      */
     void generate_path (geometry_msgs::Point);
+
+    /**
+     * @brief Get the complete path.
+     * @return The path as vector of poses.
+     */
+    nav_msgs::Path get_path ();
 
     /**
      * @brief Initialize the internal graph structure that represents the area division.
@@ -128,9 +136,14 @@ private:
     int cols;
 
     /**
-     * @brief The resolution of the grid map in meter / cell.
+     * @brief Resolution of the grid map in meter / cell.
      */
     double res;
+
+    /**
+     * @brief Origin of cell (0,0) of the grid map.
+     */
+    geometry_msgs::Point origin;
 
     /**
      * @brief The current way point.
