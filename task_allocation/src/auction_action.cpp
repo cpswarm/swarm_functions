@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 
     // publishers and subscribers
     Subscriber cost_subscriber = nh.subscribe<cpswarm_msgs::TaskAllocationEvent>("bridge/events/cps_selection", 10, bid_callback);
-    publisher = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("cps_selected", 1);
+    publisher = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("cps_selected", 1, true);
 
     // start the action server and wait
     Server server(nh, "cmd/task_allocation_auction", boost::bind(&auction_callback, _1, &server), false);
