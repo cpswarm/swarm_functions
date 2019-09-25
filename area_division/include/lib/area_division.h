@@ -1,5 +1,5 @@
-#ifndef AREA_DIVISION_H
-#define AREA_DIVISION_H
+#ifndef AREA_DIVISION_LIB_H
+#define AREA_DIVISION_LIB_H
 
 #include <vector>
 #include <valarray>
@@ -205,5 +205,5 @@ private:
     bool UseImportance;
 };
 
-#endif // AREA_DIVISION_H
+#endif // AREA_DIVISION_LIB_H
 

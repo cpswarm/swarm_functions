@@ -14,18 +14,9 @@ void mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     geometry_msgs::Point wp = start;
     path.push_back(wp);
-    int(round((wp.x - origin.x) / res));
-    int(round((wp.y - origin.y) / res));
-    int current = 2 * round((wp.y - origin.y) / res) * 2*cols + 2 * round((wp.x - origin.x) / res);
-
-//     for (int i=0; i<500; ++i) {
-//         if (nodes[i].size() > 0) {
-//             cout << i << ": ";
-//             for (auto n : nodes[i])
-//                 cout << n << ",";
-//             cout << endl;
-//         }
-//     }
+    int(round((wp.x - map.info.origin.position.x) / map.info.resolution));
+    int(round((wp.y - map.info.origin.position.y) / map.info.resolution));
+    int current = 2 * round((wp.y - map.info.origin.position.y) / map.info.resolution) * 2*map.info.width + 2 * round((wp.x - map.info.origin.position.x) / map.info.resolution);
 
     // visited vertices
     unordered_set<int> removed;
@@ -38,9 +29,9 @@ void mst_path::generate_path (geometry_msgs::Point start)
 
     // possible movements
     vector<int> movement;
-    movement.push_back(2*cols);
+    movement.push_back(2*map.info.width);
     movement.push_back(-1);
-    movement.push_back(-2*cols);
+    movement.push_back(-2*map.info.width);
     movement.push_back(1);
 
     // valid movement
@@ -81,16 +72,19 @@ void mst_path::generate_path (geometry_msgs::Point start)
             }
         }
         if (!found) {
+            ROS_DEBUG("Path terminated at %d (%.2f,%.2f)", current, (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x, (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y);
             return;
         }
+
+        ROS_DEBUG("Path at %d (%.2f,%.2f)", current, (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x, (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y);
 
         // remove vertices from sets
         nodes[current].erase(previous);
         nodes[previous].erase(current);
 
         // add vertex to path
-        wp.x = (current % (2*cols)) / 2.0 * res + origin.x;
-        wp.y = (current / (2*cols)) / 2.0 * res + origin.y;
+        wp.x = (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x;
+        wp.y = (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y;
 
         path.push_back(wp);
     } while (found);
@@ -98,6 +92,35 @@ void mst_path::generate_path (geometry_msgs::Point start)
     // final waypoint
     wp = path.front();
     path.push_back(wp);
+}
+
+geometry_msgs::PoseArray mst_path::get_grid ()
+{
+    geometry_msgs::PoseArray grid;
+    vector<geometry_msgs::Pose> poses;
+    geometry_msgs::Pose pose;
+
+    for (int i=0; i<nodes.size(); ++i) {
+        // from
+        pose.position.x = (i % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x;
+        pose.position.y = (i / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y;
+
+        // orientation
+        for (auto it=nodes[i].begin(); it!=nodes[i].end(); ++it) {
+            double dx = (*it % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x - pose.position.x;
+            double dy = (*it / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y - pose.position.y;
+            tf2::Quaternion direction;
+            direction.setRPY(0, 0, atan2(dy, dx));
+            pose.orientation = tf2::toMsg(direction);
+
+            poses.push_back(pose);
+        }
+    }
+
+    grid.poses = poses;
+    grid.header.stamp = Time::now();
+    grid.header.frame_id = "local_origin_ned";
+    return grid;
 }
 
 nav_msgs::Path mst_path::get_path ()
@@ -115,18 +138,21 @@ nav_msgs::Path mst_path::get_path ()
     return nav_path;
 }
 
-void mst_path::initialize_graph (valarray<bool> graph, bool connect4)
+void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
 {
+    map = gridmap;
+    int rows = gridmap.info.height;
+    int cols = gridmap.info.width;
     nodes.clear();
     nodes.resize(2*rows*2*cols);
     edges.clear();
     path.clear();
 
-    // inflate graph
+    // double graph resolution
     valarray<bool> inflated(2*rows*2*cols);
     for (int i=0; i<2*rows; i++) {
         for (int j=0; j<2*cols; j++) {
-            inflated[i*2*cols + j] = graph[(i/2)*cols + j/2];
+            inflated[i*2*cols + j] = (gridmap.data[(i/2)*cols + j/2] == 0);
         }
     }
 
@@ -169,39 +195,15 @@ void mst_path::initialize_graph (valarray<bool> graph, bool connect4)
     }
 }
 
-void mst_path::initialize_map(nav_msgs::OccupancyGrid gridmap)
-{
-//     rows = gridmap.info.width;
-//     cols = gridmap.info.height;
-    rows = gridmap.info.height;
-    cols = gridmap.info.width;
-    res = gridmap.info.resolution;
-    origin = gridmap.info.origin.position;
-}
-
 void mst_path::initialize_tree (vector<edge> mst)
 {
-    this->mst = mst;
-}
-
-geometry_msgs::Point mst_path::next_wp ()
-{
-    return get_wp(++wp);
-}
-
-geometry_msgs::Point mst_path::previous_wp ()
-{
-    return get_wp(wp-1);
-}
-
-void mst_path::remove_edges ()
-{
+    int cols = map.info.width;
     int alpha, vmax, vmin;
     for (int i=0; i<mst.size(); i++) {
         vmax = max(mst[i].from, mst[i].to);
         vmin = min(mst[i].from, mst[i].to);
 
-        if (abs(mst[i].from - mst[i].to) == 1) {
+        if (vmax - vmin == 1) {
             alpha = (4*vmin + 3) - 2 * (vmax % cols);
             remove_edge(edge(alpha, alpha + 2*cols, 1));
             remove_edge(edge(alpha + 2*cols, alpha, 1));
@@ -219,6 +221,16 @@ void mst_path::remove_edges ()
     }
 }
 
+geometry_msgs::Point mst_path::next_wp ()
+{
+    return get_wp(++wp);
+}
+
+geometry_msgs::Point mst_path::previous_wp ()
+{
+    return get_wp(wp-1);
+}
+
 void mst_path::step ()
 {
     ++wp;
@@ -227,7 +239,8 @@ void mst_path::step ()
 void mst_path::add_edge (int from, int to, int cost)
 {
     // add edge to priority queue
-    edges.insert(edge(from, to, cost));
+    edge e(from,to,cost);
+    edges.insert(e);
 
     // add vertices to sets
     nodes[from].insert(to);

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- Swarm area division -->
+    <node pkg="area_division" type="area_division" name="area_division_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find area_division)/param/area_division.yaml" command="load" />
+    </node>
+
+</launch>

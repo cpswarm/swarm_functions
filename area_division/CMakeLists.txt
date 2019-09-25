@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(coverage_path)
+project(area_division)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -7,7 +7,7 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp tf2 random_numbers geometry_msgs nav_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp random_numbers geometry_msgs nav_msgs cpswarm_msgs swarmros)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -101,7 +101,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp tf2 random_numbers geometry_msgs 
 catkin_package(
 #   INCLUDE_DIRS include
 #   LIBRARIES
-#   CATKIN_DEPENDS
+  CATKIN_DEPENDS cpswarm_msgs
 #  DEPENDS system_lib
 )
 
@@ -118,16 +118,12 @@ include_directories(
 
 ## Declare a C++ library
 add_library(
-  edge
-  src/lib/edge.cpp
+  ${PROJECT_NAME}_lib
+  src/lib/${PROJECT_NAME}.cpp
 )
 add_library(
-  spanning_tree
-  src/lib/spanning_tree.cpp
-)
-add_library(
-  mst_path
-  src/lib/mst_path.cpp
+  connected_components
+  src/lib/connected_components.cpp
 )
 
 
@@ -157,17 +153,12 @@ add_executable(
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
   ${PROJECT_NAME}
-  spanning_tree
-  mst_path
+  ${PROJECT_NAME}_lib
   ${catkin_LIBRARIES}
 )
 target_link_libraries(
-  spanning_tree
-  edge
-)
-target_link_libraries(
-  mst_path
-  edge
+  ${PROJECT_NAME}_lib
+  connected_components
 )
 
 #############

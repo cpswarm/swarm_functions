@@ -4,6 +4,11 @@ edge::edge (int f, int t, int c) : from(f), to(t), cost(c)
 {
 }
 
+bool edge::operator== (const edge &e) const
+{
+    return from == e.from && to == e.to && cost == e.cost;
+}
+
 bool compare_edge::operator() (const edge& a, const edge& b) const
 {
     return a.cost < b.cost;

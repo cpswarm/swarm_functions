@@ -18,6 +18,13 @@ public:
     edge(int f, int t, int c);
 
     /**
+     * @brief Compare this edge to another one.
+     * @param e The other edge to compare.
+     * @return True, of both edges are identical, false otherwise.
+     */
+    bool operator== (const edge &e) const;
+
+    /**
      * @brief The starting vertex of the edge.
      */
     int from;

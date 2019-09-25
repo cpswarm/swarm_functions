@@ -1,14 +1,5 @@
 #include "lib/spanning_tree.h"
 
-edge::edge (int f, int t, int c) : from(f), to(t), cost(c)
-{
-}
-
-bool compare_edge::operator() (const edge& a, const edge& b) const
-{
-    return a.cost < b.cost;
-}
-
 spanning_tree::spanning_tree()
 {
 }
@@ -18,15 +9,24 @@ vector<edge> spanning_tree::get_mst_edges ()
     return new_edges;
 }
 
-nav_msgs::Path spanning_tree::get_path (nav_msgs::OccupancyGrid gridmap)
+geometry_msgs::PoseArray spanning_tree::get_tree ()
 {
-    nav_msgs::Path path;
-    vector<geometry_msgs::PoseStamped> poses;
-    geometry_msgs::PoseStamped pose;
+    geometry_msgs::PoseArray path;
+    vector<geometry_msgs::Pose> poses;
+    geometry_msgs::Pose pose;
 
     for (auto e : new_edges) {
-        pose.pose.position.x = e.to % (2*gridmap.info.width) * gridmap.info.resolution + gridmap.info.origin.position.x;
-        pose.pose.position.y = e.to / (2*gridmap.info.width) * gridmap.info.resolution + gridmap.info.origin.position.y;
+        // from
+        pose.position.x = e.from % map.info.width * map.info.resolution + map.info.origin.position.x;
+        pose.position.y = e.from / map.info.width * map.info.resolution + map.info.origin.position.y;
+
+        // orientation
+        double dx = e.to % map.info.width * map.info.resolution + map.info.origin.position.x - pose.position.x;
+        double dy = e.to / map.info.width * map.info.resolution + map.info.origin.position.y - pose.position.y;
+        tf2::Quaternion direction;
+        direction.setRPY(0, 0, atan2(dy, dx));
+        pose.orientation = tf2::toMsg(direction);
+
         poses.push_back(pose);
     }
 
@@ -36,41 +36,44 @@ nav_msgs::Path spanning_tree::get_path (nav_msgs::OccupancyGrid gridmap)
     return path;
 }
 
-void spanning_tree::initialize_graph (int rows, int cols, valarray<bool> graph, bool connect4)
+void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
 {
+    map = gridmap;
+    int rows = gridmap.info.height;
+    int cols = gridmap.info.width;
     nodes.resize(rows*cols);
 
     // iterate all rows and columns
     for (int i=0; i<rows; i++) {
         for (int j=0; j<cols; j++) {
             // found a vertex
-            if (graph[i*cols+j]) {
+            if (map.data[i*cols+j] == 0) {
                 // check von neumann neighborhood for connected vertices
-                if (i>0 && graph[(i-1)*cols+j]) {
+                if (i>0 && map.data[(i-1)*cols+j] == 0) {
                     add_edge(i*cols+j, (i-1)*cols+j, 1);
                 }
-                if (i<rows-1 && graph[(i+1)*cols+j]) {
+                if (i<rows-1 && map.data[(i+1)*cols+j] == 0) {
                     add_edge(i*cols+j, (i+1)*cols+j, 1);
                 }
-                if (j>0 && graph[i*cols+j-1]) {
+                if (j>0 && map.data[i*cols+j-1] == 0) {
                     add_edge(i*cols+j, i*cols+j-1, 1);
                 }
-                if (j<cols-1 && graph[i*cols+j+1]) {
+                if (j<cols-1 && map.data[i*cols+j+1] == 0) {
                     add_edge(i*cols+j, i*cols+j+1, 1);
                 }
 
                 // check moore neighborhood for connected vertices
                 if (!connect4) {
-                    if (i>0 && j>0 && graph[(i-1)*cols+j-1]) {
+                    if (i>0 && j>0 && map.data[(i-1)*cols+j-1] == 0) {
                         add_edge(i*cols+j, (i-1)*cols+j-1, 1);
                     }
-                    if (i<rows-1 && j<cols-1 && graph[(i+1)*cols+j+1]) {
+                    if (i<rows-1 && j<cols-1 && map.data[(i+1)*cols+j+1] == 0) {
                         add_edge(i*cols+j, (i+1)*cols+j+1, 1);
                     }
-                    if (i<rows-1 && j>0 && graph[(i+1)*cols+j-1]) {
+                    if (i<rows-1 && j>0 && map.data[(i+1)*cols+j-1] == 0) {
                         add_edge(i*cols+j, (i+1)*cols+j-1, 1);
                     }
-                    if (i>0 && j<cols-1 && graph[(i-1)*cols+j+1]) {
+                    if (i>0 && j<cols-1 && map.data[(i-1)*cols+j+1] == 0) {
                         add_edge(i*cols+j, (i-1)*cols+j+1, 1);
                     }
                 }
@@ -87,20 +90,14 @@ void spanning_tree::construct ()
 
         // edge connects different sets
         if (nodes[edge.from] != nodes[edge.to]) {
-            unordered_set<int> src;
-            int dst_idx;
-
-            // unify the two sets
-            if (nodes[edge.from].size() > nodes[edge.to].size()) {
-                for (auto e : nodes[edge.to]) {
-                    nodes[e] = nodes[edge.from];
-                }
-            }
-            else {
-                for (auto e : nodes[edge.from]) {
-                    nodes[e] = nodes[edge.to];
-                }
-            }
+            // combine the two sets
+            unordered_set<int> s(nodes[edge.from].begin(), nodes[edge.from].end());
+            for (auto v : nodes[edge.to])
+                s.insert(v);
+            for (auto v : nodes[edge.from])
+                nodes[v] = s;
+            for (auto v : nodes[edge.to])
+                nodes[v] = s;
 
             // add edge to mst
             new_edges.push_back(edge);

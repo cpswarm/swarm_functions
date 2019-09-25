@@ -5,7 +5,8 @@
 #include <unordered_set>
 #include <valarray>
 #include <ros/ros.h>
-#include <nav_msgs/Path.h>
+#include <tf2/utils.h>
+#include <geometry_msgs/PoseArray.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include "lib/edge.h"
 
@@ -13,7 +14,7 @@ using namespace std;
 using namespace ros;
 
 /**
- * @brief A class that generates a minimum-spanning-tree of a graph (MST).
+ * @brief A class that generates a minimum-spanning-tree (MST) graph for a given grid map.
  */
 class spanning_tree
 {
@@ -30,18 +31,17 @@ public:
     vector<edge> get_mst_edges ();
 
     /**
-     * @brief TODO
+     * @brief Get the generated MST for visualization.
+     * @return An array of poses that represent the vertices of the tree.
      */
-    nav_msgs::Path get_path (nav_msgs::OccupancyGrid gridmap);
+    geometry_msgs::PoseArray get_tree ();
 
     /**
-     * @brief Initialize the internal tree structure from a given graph.
-     * @param rows The number of rows in the array.
-     * @param cols The number of columns in the array.
-     * @param graph The graph array that defines vertices of the tree.
+     * @brief Initialize the internal tree structure from a given grid map.
+     * @param gridmap The grid map that needs to be covered by the tree.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (int rows, int cols, valarray<bool> graph, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4 = true);
 
     /**
      * @brief Generate the MST using Kruskal's algorithm.
@@ -79,6 +79,11 @@ private:
      * @brief Edges in Minimal-Spanning Tree.
      */
     vector<edge> new_edges;
+
+    /**
+     * @brief The grid map that needs to be covered by the MST.
+     */
+    nav_msgs::OccupancyGrid map;
 
     /**
      * @brief Maximum possible number of vertices in the tree.

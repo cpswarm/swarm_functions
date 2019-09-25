@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>coverage_path</name>
+    <name>area_division</name>
     <version>1.0.0</version>
-    <description>A package that TODO cyber physical systems (CPSs) in a swarm.</description>
+    <description>A package that divides the available environment area among multiple cyber physical systems (CPSs) in a swarm.</description>
 
     <!-- One maintainer tag required, multiple allowed, one person per tag -->
     <!-- Example:  -->
@@ -19,7 +19,7 @@
     <!-- Url tags are optional, but multiple are allowed, one per tag -->
     <!-- Optional attribute type can be: website, bugtracker, or repository -->
     <!-- Example: -->
-    <!-- <url type="website">http://wiki.ros.org/coverage_path</url> -->
+    <!-- <url type="website">http://wiki.ros.org/area_division</url> -->
 
 
     <!-- Author tags are optional, multiple are allowed, one per tag -->
@@ -50,10 +50,11 @@
     <buildtool_depend>catkin</buildtool_depend>
 
     <depend>roscpp</depend>
+    <depend>random_numbers</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
-    <depend>tf2</depend>
-    <depend>random_numbers</depend>
+    <depend>cpswarm_msgs</depend>
+    <depend>swarmros</depend>
 
     <test_depend>rostest</test_depend>
 

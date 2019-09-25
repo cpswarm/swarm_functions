@@ -5,7 +5,9 @@
 #include <valarray>
 #include <unordered_set>
 #include <ros/ros.h>
+#include <tf2/utils.h>
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/PoseArray.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/Path.h>
 #include "lib/edge.h"
@@ -37,6 +39,12 @@ public:
     void generate_path (geometry_msgs::Point);
 
     /**
+     * @brief Get the graph generated from the grid map.
+     * @return An array of poses representing the vertices of the grid.
+     */
+    geometry_msgs::PoseArray get_grid ();
+
+    /**
      * @brief Get the complete path.
      * @return The path as vector of poses.
      */
@@ -44,20 +52,14 @@ public:
 
     /**
      * @brief Initialize the internal graph structure that represents the area division.
-     * @param graph The graph array that defines the area division.
+     * @param graph  gridmap The grid map for which the paths are generated.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (valarray<bool> graph, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4 = true);
 
     /**
-     * @brief Initialize private variables according to grid map.
-     * @param gridmap The grid map for which the paths are generated
-     */
-    void initialize_map(nav_msgs::OccupancyGrid gridmap);
-
-    /**
-     * @brief Initialize the internal tree structure.
-     * @param mst The graph array that defines vertices of the tree.
+     * @brief Remove edges of the graph that overlap with the tree.
+     * @param mst The edges that define the tree.
      */
     void initialize_tree (vector<edge> mst);
 
@@ -72,12 +74,6 @@ public:
      * @return The previous way point.
      */
     geometry_msgs::Point previous_wp ();
-
-    /**
-     * @brief Remove redundant edges in the internal graph.
-     */
-    void remove_edges ();
-
     /**
      * @brief Make the next way point the current one.
      */
@@ -111,14 +107,9 @@ private:
     deque<geometry_msgs::Point> path;
 
     /**
-     * @brief The minimum spanning tree that defines the path.
-     */
-    vector<edge> mst;
-
-    /**
      * @brief Priority queue of edge objects sorted by cost.
      */
-    unordered_set<edge, hash_edge, compare_edge> edges;
+    unordered_set<edge, hash_edge> edges;
 
     /**
      * @brief The sets of connected vertices.
@@ -126,24 +117,9 @@ private:
     vector<unordered_set<int>> nodes;
 
     /**
-     * @brief Height of the grid map in cells.
+     * @brief The grid map that needs to be covered by the MST path.
      */
-    int rows;
-
-    /**
-     * @brief Width of the grid map in cells.
-     */
-    int cols;
-
-    /**
-     * @brief Resolution of the grid map in meter / cell.
-     */
-    double res;
-
-    /**
-     * @brief Origin of cell (0,0) of the grid map.
-     */
-    geometry_msgs::Point origin;
+    nav_msgs::OccupancyGrid map;
 
     /**
      * @brief The current way point.
