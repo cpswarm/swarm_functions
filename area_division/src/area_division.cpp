@@ -1,5 +1,8 @@
 #include "area_division.h"
 
+/**
+ * @brief Divide the area of the grid map equally among multiple CPSs.
+ */
 void divide_area ()
 {
     // convert swarm pose to grid
@@ -24,7 +27,28 @@ void divide_area ()
     division.initialize_cps(swarm_grid);
     division.divide();
 
+    // visualize area
+    if (visualize)
+        area_publisher.publish(division.get_grid(gridmap, uuid));
+
     reconfigure = false;
+}
+
+/**
+ * @brief Callback function to get the area assignment of this CPS.
+ * @param req Empty request.
+ * @param res The grid map assigned to this CPS.
+ * @return Whether the request succeeded.
+ */
+bool get_area (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
+{
+    // compute new area division if swarm configuration changed
+    if (reconfigure) {
+        divide_area();
+    }
+
+    // return assigned area
+    res.map = division.get_grid(gridmap, uuid);
 }
 
 /**
@@ -126,6 +150,7 @@ int main (int argc, char **argv)
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
+    nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // initialize flags
     uuid = "";
@@ -138,7 +163,8 @@ int main (int argc, char **argv)
     Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     Subscriber swarm_subscriber = nh.subscribe("swarm_position", queue_size, swarm_callback);
     Subscriber map_subscriber = nh.subscribe("map", queue_size, map_callback); // TODO: use explored/merged map
-    Publisher area_publisher = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
+    if (visualize)
+        area_publisher = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
 
     // init loop rate
     Rate rate(loop_rate);
@@ -165,19 +191,11 @@ int main (int argc, char **argv)
     }
 
     // configure area division optimizer
-    division.setup(1, 0.01, 1e-4, 30, false); // TODO: define parameters
+    division.setup(1, 0.01, 1e-4, 30); // TODO: define parameters
 
-    // publish grid map assigned to this cps
-    while (ok()) {
-        // compute new area division if swarm configuration changed
-        if (reconfigure) {
-            divide_area();
-            area_publisher.publish(division.get_grid(gridmap, uuid));
-        }
-
-        rate.sleep();
-        spinOnce();
-    }
+    // provide area service
+    ServiceServer area_service = nh.advertiseService("area/assigned", get_area);
+    spin();
 
     return 0;
 }

@@ -1,19 +1,80 @@
 #include "coverage_path.h"
 
-void generate_paths ()
+/**
+ * @brief Generate an optimal coverage path for a given area.
+ * @return Whether the path has been generated successfully.
+ */
+bool generate_path ()
 {
+    // get area to cover
+    nav_msgs::GetMap division;
+    if (map_getter.call(division) == false){
+        ROS_ERROR("Failed to get the assigned map, cannot compute coverage path!");
+        return false;
+    }
+
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
-    tree.initialize_graph(gridmap);
+    tree.initialize_graph(division.response.map);
     tree.construct();
 
     // generate path
     ROS_DEBUG("Generate coverage path...");
-    path.initialize_graph(gridmap);
+    path.initialize_graph(division.response.map);
     path.initialize_tree(tree.get_mst_edges());
     path.generate_path(pose.position);
 
+    // visualize path
+    if (visualize)
+        path_publisher.publish(path.get_path());
+
     reconfigure = false;
+
+    return true;
+}
+
+/**
+ * @brief Callback function to get the coverage path.
+ * @param req Path planning request that is ignored.
+ * @param res The coverage path.
+ * @return Whether the request succeeded.
+ */
+bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res)
+{
+    // compute new path if swarm configuration changed
+    if (reconfigure) {
+        if (generate_path() == false)
+            return false;
+    }
+
+    // return coverage path
+    res.plan = path.get_path();
+
+    return true;
+}
+
+/**
+ * @brief Callback function to get the coverage path.
+ * @param req Path planning request that is ignored.
+ * @param res The coverage path.
+ * @return Whether the request succeeded.
+ */
+bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWaypoint::Response &res)
+{
+    // compute new path if swarm configuration changed
+    if (reconfigure) {
+        if (generate_path() == false)
+            return false;
+    }
+
+    // return waypoint
+    res.point = path.get_waypoint(pose.position, req.tolerance);
+
+    // visualize waypoint
+    if (visualize)
+        wp_publisher.publish(res.point);
+
+    return true;
 }
 
 /**
@@ -28,16 +89,6 @@ void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
     // valid pose received
     if (msg->header.stamp.isValid())
         pose_valid = true;
-}
-
-/**
- * @brief Callback function to receive the grid map.
- * @param msg Merged grid map from all CPSs.
- */
-void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
-{
-    gridmap = *msg;
-    map_valid = true;
 }
 
 /**
@@ -60,15 +111,20 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // initialize flags
     pose_valid = false;
     map_valid = false;
 
-    // publishers and subscribers
+    // publishers, subscribers, and service clients
     Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    Subscriber map_subscriber = nh.subscribe("assigned_map", queue_size, map_callback);
-    Publisher path_publisher = nh.advertise<nav_msgs::Path>("path", queue_size, true);
+    if (visualize) {
+        path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
+        wp_publisher = nh.advertise<nav_msgs::Path>("coverage_path/waypoint", queue_size, true);
+    }
+    map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");
+    map_getter.waitForExistence();
 
     // init loop rate
     Rate rate(loop_rate);
@@ -87,17 +143,10 @@ int main (int argc, char **argv)
         spinOnce();
     }
 
-    // publish path
-    while (ok()) {
-        // compute new path if swarm configuration changed
-        if (reconfigure) {
-            generate_paths();
-            path_publisher.publish(path.get_path());
-        }
-
-        rate.sleep();
-        spinOnce();
-    }
+    // provide coverage path services
+    ServiceServer path_service = nh.advertiseService("coverage_path/path", get_path);
+    ServiceServer wp_service = nh.advertiseService("coverage_path/waypoint", get_waypoint);
+    spin();
 
     return 0;
 }

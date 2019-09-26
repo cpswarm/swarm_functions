@@ -6,11 +6,29 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/GetMap.h>
+#include <nav_msgs/GetPlan.h>
+#include <cpswarm_msgs/GetWaypoint.h>
 #include "lib/spanning_tree.h"
 #include "lib/mst_path.h"
 
 using namespace std;
 using namespace ros;
+
+/**
+ * @brief Publisher to visualize the coverage path.
+ */
+Publisher path_publisher;
+
+/**
+ * @brief Publisher to visualize the current waypoint.
+ */
+Publisher wp_publisher;
+
+/**
+ * @brief Service client to get the assigned area.
+ */
+ServiceClient map_getter;
 
 /**
  * @brief Current position of the CPS.
@@ -41,6 +59,11 @@ spanning_tree tree;
  * @brief The coverage path.
  */
 mst_path path;
+
+/**
+ * @brief Whether to publish the coverage path on a topic for visualization.
+ */
+bool visualize;
 
 /**
  * @brief Whether the swarm configuration has changed which requires a replanning of the path.

@@ -25,40 +25,9 @@ public:
     area_division();
 
     /**
-     * @brief Define the optimization parameters.
-     * @param iters Maximum number of iterations of the optimization algorithm.
-     * @param vWeight TODO
-     * @param rLevel TODO
-     * @param discr TODO
-     * @param imp TODO
-     */
-    void setup(int iters, double vWeight, double rLevel, int discr, bool imp);
-
-    /**
-     * @brief Define the grid map.
-     * @param r Number of rows in the grid map.
-     * @param c Number of columns in the grid map.
-     * @param src Grid map describing the environment in the ROS format.
-     */
-    void initialize_map(int r, int c, vector<signed char> src);
-
-    /**
-     * @brief Define the CPSs.
-     * @param cpss Mapping from UUIDs to positions of the CPSs.
-     */
-    void initialize_cps(map<string, vector<int>> cpss);
-
-    /**
      * @brief Perform the area division.
      */
-    void divide();
-
-    /**
-     * @brief Get the region assigned to a CPS.
-     * @param cps UUID of the CPS.
-     * @return Array which contains true in cells assigned to the CPS.
-     */
-    valarray<bool> get_region(string cps);
+    void divide ();
 
     /**
      * @brief Get the region assigned to a CPS.
@@ -66,48 +35,66 @@ public:
      * @param cps UUID of the CPS.
      * @return Grid map which contains obstacles in cells assigned to the CPS.
      */
-    nav_msgs::OccupancyGrid get_grid(nav_msgs::OccupancyGrid map, string cps);
+    nav_msgs::OccupancyGrid get_grid (nav_msgs::OccupancyGrid map, string cps);
 
+    /**
+     * @brief Define the CPSs.
+     * @param cpss Mapping from UUIDs to positions of the CPSs.
+     */
+    void initialize_cps (map<string, vector<int>> cpss);
 
-    bool getSuccess();
-    int getNr();
-    int getNumOB();
-    valarray<int> getAssignmentMatrix();
-    valarray<bool> getRobotBinary();
-    vector<valarray<bool>> getBinaryRobotRegions();
-    vector<vector<int>> getRobotsInit();
-    int getEffectiveSize();
-    int getMaxCellsAss();
-    int getMinCellsAss();
-    int getDiscr();
-    int getMaxIter();
-    int getAchievedDiscr();
+    /**
+     * @brief Define the grid map.
+     * @param r Number of rows in the grid map.
+     * @param c Number of columns in the grid map.
+     * @param src Grid map describing the environment in the ROS format.
+     */
+    void initialize_map (int r, int c, vector<signed char> src);
 
+    /**
+     * @brief Define the optimization parameters.
+     * @param iters Maximum number of iterations of the optimization algorithm.
+     * @param vWeight TODO
+     * @param rLevel TODO
+     * @param discr TODO
+     */
+    void setup (int iters, double vWeight, double rLevel, int discr);
 
 private:
-    void calculateRobotBinaryArrays();
-
-    valarray<double> FinalUpdateOnMetricMatrix(valarray<double> CM, valarray<double> RM, valarray<double> curentONe, valarray<float> CC);
-
-    valarray<double> generateRandomMatrix();
-
-    valarray<double> calculateCriterionMatrix(valarray<double> TilesImp, double minImp, double maxImp, double corMult, bool SmallerThan0);
-
-    bool isThisAGoalState(int thres);
-
-    valarray<float> CalcConnectedMultiplier(valarray<float> dist1, valarray<float> dist2);
-
-    void assign(vector<valarray<double>> Q);
+    /**
+     * @brief TODO
+     */
+    void assign (vector<valarray<double>> q);
 
     /**
      * @brief TODO
      */
-    double variateWeight;
+    valarray<float> CalcConnectedMultiplier (valarray<float> dist1, valarray<float> dist2);
 
     /**
      * @brief TODO
      */
-    double randomLevel;
+    void calculateRobotBinaryArrays ();
+
+    /**
+     * @brief TODO
+     */
+    valarray<double> FinalUpdateOnMetricMatrix (valarray<double> CM, valarray<double> curentONe, valarray<float> CC);
+
+    /**
+     * @brief TODO
+     */
+    bool isThisAGoalState (int thres);
+
+    /**
+     * @brief TODO
+     */
+    double variate_weight;
+
+    /**
+     * @brief TODO
+     */
+    double random_level;
 
     /**
      * @brief Number of rows in the grid map.
@@ -132,17 +119,17 @@ private:
     /**
      * @brief Maximum number of iterations of the optimization process.
      */
-    int maxIter;
+    int max_iter;
 
     /**
      * @brief The environment grid map. Robots are represented by 2, obstacles by 1/-2, empty cells by -1.
      */
-    vector<signed char> GridEnv;
+    vector<signed char> gridmap;
 
     /**
-     * @brief Robot positions.
+     * @brief Positions of the CPSs.
      */
-    vector<vector<int>> RobotsInit;
+    vector<vector<int>> cps;
 
     /**
      * @brief UUID mapping of CPSs.
@@ -160,11 +147,6 @@ private:
     valarray<int> A;
 
     /**
-     * @brief Location of robots as binary values in the grid map.
-     */
-    valarray<bool> robotBinary;
-
-    /**
      * @brief Grid cells not assigned to the robots.
      */
     vector<int> ArrayOfElements;
@@ -172,7 +154,7 @@ private:
     /**
      * @brief Whether the regions of the robots are connected.
      */
-    vector<bool> ConnectedRobotRegions;
+    vector<bool> regions;
 
     /**
      * @brief Whether the assignment succeeded.
@@ -180,29 +162,9 @@ private:
     bool success;
 
     /**
-     * @brief Whether grid cells are assigned to robots.
-     */
-    vector<valarray<bool>> BinaryRobotRegions;
-
-    /**
-     * @brief TODO
-     */
-    int maxCellsAss;
-
-    /**
-     * @brief TODO
-     */
-    int minCellsAss;
-
-    /**
      * @brief TODO
      */
     int discr;
-
-    /**
-     * @brief TODO
-     */
-    bool UseImportance;
 };
 
 #endif // AREA_DIVISION_LIB_H

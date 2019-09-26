@@ -27,12 +27,6 @@ public:
     mst_path ();
 
     /**
-     * @brief Get the current way point of the path.
-     * @return The current way point.
-     */
-    geometry_msgs::Point current_wp ();
-
-    /**
      * @brief Generate all way points for the path.
      * @param start The current position of the CPS.
      */
@@ -51,6 +45,14 @@ public:
     nav_msgs::Path get_path ();
 
     /**
+     * @brief Get the current waypoint and possibly select next waypoint, if close enough.
+     * @param position The current position of the CPS.
+     * @param tolerance The distance to the current waypoint below which the next waypoint is selected.
+     * @return A waypoint for the CPS to navigate to.
+     */
+    geometry_msgs::Point get_waypoint (geometry_msgs::Point position, double tolerance);
+
+    /**
      * @brief Initialize the internal graph structure that represents the area division.
      * @param graph  gridmap The grid map for which the paths are generated.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
@@ -63,22 +65,6 @@ public:
      */
     void initialize_tree (vector<edge> mst);
 
-    /**
-     * @brief Make the next way point the current one and return it.
-     * @returns The next way point.
-     */
-    geometry_msgs::Point next_wp ();
-
-    /**
-     * @brief Get the previous way point.
-     * @return The previous way point.
-     */
-    geometry_msgs::Point previous_wp ();
-    /**
-     * @brief Make the next way point the current one.
-     */
-    void step ();
-
 private:
     /**
      * @brief Add an edge to the tree graph.
@@ -87,6 +73,14 @@ private:
      * @param cost The cost of the edge.
      */
     void add_edge(int from, int to, int cost);
+
+    /**
+     * @brief Calculate the distance between two points.
+     * @param p1 The first point.
+     * @param p2 The second point.
+     * @return The straight line distance between both points.
+     */
+    double dist (geometry_msgs::Point p1, geometry_msgs::Point p2);
 
     /**
      * @brief Get the way point corresponding to a given index.

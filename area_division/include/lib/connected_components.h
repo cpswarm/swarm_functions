@@ -20,7 +20,7 @@ public:
      * @param cols Number of columns in the matrix.
      * @param zeroAsBg Whether 0 represents background and is ignored.
      */
-    connected_components(valarray<int> m, int rows, int cols, bool zeroAsBg);
+    connected_components (valarray<int> m, int rows, int cols, bool zeroAsBg);
 
     /**
      * @brief Rearrange the labels to make the label numbers consecutive.

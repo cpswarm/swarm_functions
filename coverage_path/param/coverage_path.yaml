@@ -1,2 +1,3 @@
 loop_rate:      1.5   # The frequency in Hz at which to run the control loops.
 queue_size:     1     # The size of the message queue used for publishing and subscribing to topics.
+visualization:  true  # Whether to publish the coverage path on a topic for visualization.

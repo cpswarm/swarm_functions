@@ -7,6 +7,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/GetMap.h>
 #include <cpswarm_msgs/ArrayOfPositions.h>
 #include <swarmros/String.h>
 #include "lib/area_division.h"
@@ -19,9 +20,9 @@ using namespace ros;
 string uuid;
 
 /**
- * @brief Subscriber for the positions of the other CPSs.
+ * @brief Publisher to visualize the assigned area grid map.
  */
-Subscriber swarm_pose_sub;
+Publisher area_publisher;
 
 /**
  * @brief The positions of the other swarm members.
@@ -62,6 +63,11 @@ area_division division;
  * @brief Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
  */
 double swarm_timeout;
+
+/**
+ * @brief Whether to publish the area division on a topic for visualization.
+ */
+bool visualize;
 
 /**
  * @brief Whether the swarm configuration has changed and the area needs to be divided again.

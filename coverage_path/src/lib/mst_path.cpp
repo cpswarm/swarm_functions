@@ -4,11 +4,6 @@ mst_path::mst_path ()
 {
 }
 
-geometry_msgs::Point mst_path::current_wp ()
-{
-    return get_wp(wp);
-}
-
 void mst_path::generate_path (geometry_msgs::Point start)
 {
     // starting vertex
@@ -138,6 +133,17 @@ nav_msgs::Path mst_path::get_path ()
     return nav_path;
 }
 
+geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, double tolerance)
+{
+    // close enough to or past current waypoint
+    if (dist(position, get_wp(wp)) < tolerance || dist(position, get_wp(wp+1)) < dist(position, get_wp(wp))) {
+        // select next waypoint
+        ++wp;
+    }
+
+    return get_wp(wp);
+}
+
 void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
 {
     map = gridmap;
@@ -221,21 +227,6 @@ void mst_path::initialize_tree (vector<edge> mst)
     }
 }
 
-geometry_msgs::Point mst_path::next_wp ()
-{
-    return get_wp(++wp);
-}
-
-geometry_msgs::Point mst_path::previous_wp ()
-{
-    return get_wp(wp-1);
-}
-
-void mst_path::step ()
-{
-    ++wp;
-}
-
 void mst_path::add_edge (int from, int to, int cost)
 {
     // add edge to priority queue
@@ -245,6 +236,11 @@ void mst_path::add_edge (int from, int to, int cost)
     // add vertices to sets
     nodes[from].insert(to);
     nodes[to].insert(from);
+}
+
+double mst_path::dist (geometry_msgs::Point p1, geometry_msgs::Point p2)
+{
+    return hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
 geometry_msgs::Point mst_path::get_wp (int idx)
