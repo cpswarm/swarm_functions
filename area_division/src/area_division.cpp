@@ -21,7 +21,7 @@ void divide_area ()
     swarm_grid.emplace(uuid, pos);
 
     // divide area
-    ROS_ERROR("Dividing area...");
+    ROS_DEBUG("Dividing area...");
     vector<signed char, allocator<signed char>> map = gridmap.data;
     division.initialize_map((int)gridmap.info.width, (int)gridmap.info.height, map);
     division.initialize_cps(swarm_grid);
@@ -49,6 +49,8 @@ bool get_area (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
 
     // return assigned area
     res.map = division.get_grid(gridmap, uuid);
+
+    return true;
 }
 
 /**
@@ -94,6 +96,7 @@ void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
 
             // divide again
             reconfigure = true;
+            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
         }
 
         // update existing cps
@@ -106,6 +109,7 @@ void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
     // remove old cps
     for (auto cps=swarm_pose.cbegin(); cps!=swarm_pose.cend();) {
         if (cps->second.header.stamp + Duration(swarm_timeout) < Time::now()) {
+            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
             swarm_pose.erase(cps++);
 
             // divide again
