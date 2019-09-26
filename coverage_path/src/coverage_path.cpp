@@ -69,10 +69,16 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
 
     // return waypoint
     res.point = path.get_waypoint(pose.position, req.tolerance);
+    res.valid = path.valid();
 
     // visualize waypoint
-    if (visualize)
-        wp_publisher.publish(res.point);
+    if (visualize) {
+        geometry_msgs::PointStamped wp;
+        wp.header.stamp = Time::now();
+        wp.header.frame_id = "local_origin_ned";
+        wp.point = res.point;
+        wp_publisher.publish(wp);
+    }
 
     return true;
 }
@@ -89,6 +95,49 @@ void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
     // valid pose received
     if (msg->header.stamp.isValid())
         pose_valid = true;
+}
+
+/**
+ * @brief Callback function to receive the positions of the other CPSs.
+ * @param msg UUIDs and positions of the other CPSs.
+ */
+void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
+{
+    // update cps uuids
+    for (auto cps : msg->positions) {
+        // index of cps in map
+        auto idx = swarm.find(cps.swarmio.node);
+
+        // add new cps
+        if (idx == swarm.end()) {
+            swarm.emplace(cps.swarmio.node, Time::now());
+
+            // recompute path
+            reconfigure = true;
+            ROS_ERROR("New CPS %s", cps.swarmio.node.c_str());
+        }
+
+        // update existing cps
+        else {
+            idx->second = Time::now();
+        }
+    }
+
+    // remove old cps
+    for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
+        if (cps->second + Duration(swarm_timeout) < Time::now()) {
+            ROS_ERROR("Remove CPS %s", cps->first.c_str());
+            swarm.erase(cps++);
+
+            // recompute path
+            reconfigure = true;
+        }
+        else {
+            ++cps;
+        }
+    }
+
+    swarm_valid = true;
 }
 
 /**
@@ -111,17 +160,19 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // initialize flags
     pose_valid = false;
-    map_valid = false;
+    swarm_valid = false;
 
     // publishers, subscribers, and service clients
     Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+    Subscriber swarm_subscriber = nh.subscribe("swarm_position", queue_size, swarm_callback);
     if (visualize) {
         path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
-        wp_publisher = nh.advertise<nav_msgs::Path>("coverage_path/waypoint", queue_size, true);
+        wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
     }
     map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");
     map_getter.waitForExistence();
@@ -136,9 +187,9 @@ int main (int argc, char **argv)
         spinOnce();
     }
 
-    // init map
-    while (ok() && map_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for grid map...");
+    // init swarm
+    while (ok() && swarm_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid swarm information...");
         rate.sleep();
         spinOnce();
     }

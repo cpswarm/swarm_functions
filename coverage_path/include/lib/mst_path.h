@@ -65,6 +65,12 @@ public:
      */
     void initialize_tree (vector<edge> mst);
 
+    /**
+     * @brief Check whether the current waypoint index is valid.
+     * @return True, if the waypoint index is within the limits of the path, false otherwise.
+     */
+    bool valid ();
+
 private:
     /**
      * @brief Add an edge to the tree graph.
@@ -83,11 +89,11 @@ private:
     double dist (geometry_msgs::Point p1, geometry_msgs::Point p2);
 
     /**
-     * @brief Get the way point corresponding to a given index.
-     * @param idx The index of the way point.
-     * @return The way point, if a valid index was given. An empty point otherwise.
+     * @brief Get the current way point.
+     * @param offset The index offset to the current waypoint.
+     * @return The way point, if a valid offset was given. An empty point otherwise.
      */
-    geometry_msgs::Point get_wp (int idx);
+    geometry_msgs::Point get_wp (int offset=0);
 
     /**
      * @brief Remove an edge from the tree graph.

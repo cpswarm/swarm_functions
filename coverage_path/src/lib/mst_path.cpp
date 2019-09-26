@@ -136,12 +136,12 @@ nav_msgs::Path mst_path::get_path ()
 geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, double tolerance)
 {
     // close enough to or past current waypoint
-    if (dist(position, get_wp(wp)) < tolerance || dist(position, get_wp(wp+1)) < dist(position, get_wp(wp))) {
+    if (dist(position, get_wp()) < tolerance || dist(position, get_wp(1)) < dist(position, get_wp())) {
         // select next waypoint
         ++wp;
     }
 
-    return get_wp(wp);
+    return get_wp();
 }
 
 void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
@@ -227,6 +227,11 @@ void mst_path::initialize_tree (vector<edge> mst)
     }
 }
 
+bool mst_path::valid ()
+{
+    return 0 <= wp && wp < path.size();
+}
+
 void mst_path::add_edge (int from, int to, int cost)
 {
     // add edge to priority queue
@@ -243,12 +248,12 @@ double mst_path::dist (geometry_msgs::Point p1, geometry_msgs::Point p2)
     return hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
-geometry_msgs::Point mst_path::get_wp (int idx)
+geometry_msgs::Point mst_path::get_wp (int offset)
 {
     geometry_msgs::Point waypoint;
 
-    if (0 <= idx && idx < path.size()) {
-        waypoint = path[idx];
+    if (0 <= wp+offset && wp+offset < path.size()) {
+        waypoint = path[wp+offset];
     }
 
     return waypoint;
