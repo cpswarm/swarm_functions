@@ -38,10 +38,15 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
 
 void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
 {
+    // initialize map
     map = gridmap;
     int rows = gridmap.info.height;
     int cols = gridmap.info.width;
+
+    // empty containers
+    nodes.clear();
     nodes.resize(rows*cols);
+    edges = priority_queue<edge, vector<edge>, compare_edge>();
 
     // iterate all rows and columns
     for (int i=0; i<rows; i++) {
@@ -84,6 +89,8 @@ void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool conn
 
 void spanning_tree::construct ()
 {
+    new_edges.clear();
+
     while (!edges.empty()) {
         // select shortest edge
         edge edge = edges.top();

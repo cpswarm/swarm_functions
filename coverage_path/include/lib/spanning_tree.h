@@ -84,11 +84,6 @@ private:
      * @brief The grid map that needs to be covered by the MST.
      */
     nav_msgs::OccupancyGrid map;
-
-    /**
-     * @brief Maximum possible number of vertices in the tree.
-     */
-    int max_nodes;
 };
 
 #endif // SPANNING_TREE_H
