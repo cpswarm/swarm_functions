@@ -1,6 +1,6 @@
 # kinematics_exchanger
 
-This ROS package that allows to exchange kinematic properties such as velocity or position between multiple cyber physical systems (CPSs) in a swarm.
+This ROS package allows to exchange kinematic properties such as velocity or position between multiple cyber physical systems (CPSs) in a swarm.
 
 ## Dependencies
 This package depends on the [CPSwarm ROS Messages](https://github.com/cpswarm/cpswarm_msgs). The communication between CPSs is based on the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
