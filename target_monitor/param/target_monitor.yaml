@@ -1,0 +1,6 @@
+loop_rate:   5.0  # The frequency in Hz at which to run the swarm behavior loops.
+queue_size:  1    # The size of the message queue used for publishing and subscribing to topics.
+tracking_timeout:     1.0            # The time in seconds after which a target transistions into the state TARGET_LOST when no target information is received.
+target_tolerance:     0.5            # Minimum distance between two consecutive target positions such that a target update event is published.
+fov:                  0.64           # The field of view of the target tracking camera in radian (measured). It is used to simulate target detection.
+simulation:           true           # Whether the targets are detected virtually by position or actually by the camera tracking topic.
