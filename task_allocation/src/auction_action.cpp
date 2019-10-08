@@ -94,14 +94,13 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
     if (winner.compare("") != 0) {
         cpswarm_msgs::TaskAllocatedEvent allocation;
         allocation.header.stamp = Time::now();
-        allocation.header.frame_id = "";
+        allocation.header.frame_id = "local_origin_ned";
         allocation.swarmio.name = "cps_selected";
         allocation.task_id = task_id;
         allocation.cps_id = winner;
         publisher.publish(allocation);
         ROS_INFO("TASK_AUCTION - Task %d allocated to %s", task_id, winner.c_str());
     }
-
 
     // action server has been preempted
     if (as->isPreemptRequested()) {
