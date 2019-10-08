@@ -12,7 +12,7 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose)
 {
 }
 
-target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp)
+target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp) : id(id), state(state), pose(pose)
 {
     // read parameters
     double loop_rate;
