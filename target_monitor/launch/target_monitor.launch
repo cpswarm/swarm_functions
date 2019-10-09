@@ -7,6 +7,7 @@
     <!-- Swarm kinematics exchanging node -->
     <node pkg="target_monitor" type="target_monitor" name="target_monitor_$(arg id)" output="$(arg output)" required="true">
         <rosparam file="$(find target_monitor)/param/target_monitor.yaml" command="load" />
+        <rosparam file="$(find target_monitor)/param/targets.yaml" command="load" />
     </node>
 
 </launch>

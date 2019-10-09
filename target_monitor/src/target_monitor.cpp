@@ -142,9 +142,7 @@ int main (int argc, char** argv)
 
     // publishers and subscribers
     Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    if (simulation == false) {
-        Subscriber tracking_sub = nh.subscribe("target_tracking", queue_size, tracking_callback);
-    }
+    Subscriber tracking_sub = nh.subscribe("target_tracking", queue_size, tracking_callback);
     Subscriber local_done_sub = nh.subscribe("target_done", queue_size, done_callback);
     Subscriber found_sub = nh.subscribe("bridge/events/target_found", queue_size, found_callback);
     Subscriber update_sub = nh.subscribe("bridge/events/target_update", queue_size, update_callback);

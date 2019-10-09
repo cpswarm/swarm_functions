@@ -4,6 +4,10 @@ target::target () : target(-1, TARGET_UNKNOWN)
 {
 }
 
+target::target (const target& t) : target(t.id, t.state, t.pose, t.stamp)
+{
+}
+
 target::target (unsigned int id, target_state_t state) : target(id, state, geometry_msgs::Pose())
 {
 }
@@ -12,7 +16,7 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose)
 {
 }
 
-target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp) : id(id), state(state), pose(pose)
+target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp) : id(id), state(state), pose(pose), stamp(stamp)
 {
     // read parameters
     double loop_rate;
@@ -87,6 +91,12 @@ void target::lost ()
             target_lost_pub.publish(target);
         }
     }
+}
+
+void target::operator= (const target& t)
+{
+    id = t.id;
+    update(t.state, t.pose, t.stamp);
 }
 
 void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)

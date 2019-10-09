@@ -17,8 +17,7 @@ targets::targets ()
     vector<int> done;
     nh.getParam(this_node::getNamespace() + "/targets_done", done);
     for (int t : done) {
-        target new_target = target(t, TARGET_DONE);
-        target_map.emplace(t, new_target);
+        target_map.emplace(piecewise_construct, forward_as_tuple(t), forward_as_tuple(t, TARGET_DONE));
     }
 
     // publishers and subscribers
@@ -46,15 +45,15 @@ void targets::simulate ()
     else if (targets_x.size() < 1)
         ROS_INFO("There are no targets!");
     for (int i = 0; i < targets_x.size(); ++i) {
+        ROS_DEBUG("Target %d at [%.2f, %.2f]", i, targets_x[i], targets_y[i]);
         geometry_msgs::Pose new_target_pose;
         new_target_pose.position.x = targets_x[i];
         new_target_pose.position.y = targets_y[i];
-        target new_target = target(i, TARGET_UNKNOWN, new_target_pose);
-        simulated_targets.emplace(i, new_target);
+        simulated_targets.emplace(piecewise_construct, forward_as_tuple(i), forward_as_tuple(i, TARGET_UNKNOWN, new_target_pose));
     }
 }
 
-void targets::update (geometry_msgs::Pose pose) const
+void targets::update (geometry_msgs::Pose pose)
 {
     // check if a target is lost
     for (auto t : target_map) {
@@ -65,20 +64,20 @@ void targets::update (geometry_msgs::Pose pose) const
     // check if a new target is found in simulation
     for (auto t : simulated_targets) {
         // target pose
-        geometry_msgs::Pose target = t.second.get_pose();
+        geometry_msgs::Pose t_pose = t.second.get_pose();
 
         // visible distance from drone with fov at current altitude
         double dist = pose.position.z * tan(fov / 2.0);
 
-        ROS_DEBUG("Target %d distance %.2f < %.2f", t.first, hypot(pose.position.x - target.position.x, pose.position.y - target.position.y), dist);
+        ROS_DEBUG("Target %d distance %.2f < %.2f", t.first, hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y), dist);
 
         // target is within camera fov
-        if (hypot(pose.position.x - target.position.x, pose.position.y - target.position.y) <= dist) {
+        if (hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y) <= dist) {
             // publish tracking information
             cpswarm_msgs::TargetTracking track;
             track.header.stamp = Time::now();
             track.id = t.first;
-            track.tf = transform(pose, target);
+            track.tf = transform(pose, t_pose);
             tracking_pub.publish(track);
         }
     }
@@ -99,8 +98,7 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
 
     // add new target
     else {
-        target new_target = target(msg.id, state, pose, msg.header.stamp);
-        target_map.emplace(msg.id, new_target);
+        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(msg.id, state, pose, msg.header.stamp));
     }
 }
 

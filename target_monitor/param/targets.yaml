@@ -4,7 +4,7 @@ targets_x: # The locations of the targets to rescue in simulation, given as two 
 - 2
 - 8
 targets_y:
-- -8
+- -2
 - 7
 - 7
 - -7

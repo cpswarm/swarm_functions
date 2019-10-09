@@ -31,6 +31,11 @@ public:
     target ();
 
     /**
+     * @brief Copy constructor.
+     */
+    target (const target& t);
+
+    /**
      * @brief Constructor that initializes some private member variables.
      * @param id The target ID.
      * @param state The target state.
@@ -71,15 +76,10 @@ public:
     void lost ();
 
     /**
-     * @brief Publish a target position event about the target.
+     * @brief Assignment operator.
+     * @param t The object from where to take the assignment values.
      */
-    void publish ();
-
-    /**
-     * @brief Check whether the target is being tracked.
-     * @return True, if the target is in the state TARGET_TRACKED, false otherwise.
-     */
-    bool tracked () const;
+    void operator= (const target& t);
 
     /**
      * @brief Update the information about a target.
@@ -121,7 +121,7 @@ private:
     Time stamp;
 
     /**
-     * @brief The time in seconds after which a target transistions into the state TARGET_LOST when no target update has been received.
+     * @brief The time in seconds after which a target transitions into the state TARGET_LOST when no target update has been received.
      */
     Duration timeout;
 

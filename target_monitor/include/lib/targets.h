@@ -34,7 +34,7 @@ public:
      * @brief Update the state of all targets. If no update has been received for a target within a fixed period, its state will change to TARGET_LOST. This needs to be called periodically.
      * @param pose The current position of the CPS.
      */
-    void update (geometry_msgs::Pose pose) const;
+    void update (geometry_msgs::Pose pose);
 
     /**
      * @brief Update the information of a target.
