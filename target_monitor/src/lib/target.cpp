@@ -43,6 +43,8 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
         while (ok() && target_found_pub.getNumSubscribers() <= 0)
             rate->sleep();
 
+        ROS_DEBUG("Found target %d at (%.2f,%.2f)", id, pose.position.x, pose.position.y);
+
         // publish event
         cpswarm_msgs::TargetPositionEvent target;
         geometry_msgs::PoseStamped ps;
@@ -125,6 +127,8 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             // wait until subscriber is connected
             while (ok() && target_update_pub.getNumSubscribers() <= 0)
                 rate->sleep();
+
+            ROS_DEBUG("Found target %d at (%.2f,%.2f)", id, pose.position.x, pose.position.y);
 
             // publish event
             cpswarm_msgs::TargetPositionEvent target;

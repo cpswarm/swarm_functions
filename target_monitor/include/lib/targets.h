@@ -1,6 +1,7 @@
 #ifndef TARGETS_H
 #define TARGETS_H
 
+#include <unordered_map>
 #include <tf2/utils.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Transform.h>
@@ -72,12 +73,12 @@ private:
     /**
      * @brief A map holding ID and target object of all known targets.
      */
-    map<unsigned int, target> target_map;
+    unordered_map<unsigned int, shared_ptr<target>> target_map;
 
     /**
      * @brief A map holding ID and target object of simulated targets, including the ones not yet found.
      */
-    map<unsigned int, target> simulated_targets;
+    unordered_map<unsigned int, shared_ptr<target>> simulated_targets;
 
     /**
      * @brief The UUID of the CPS that owns this class instance.

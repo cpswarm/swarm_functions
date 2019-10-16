@@ -17,7 +17,7 @@ targets::targets ()
     vector<int> done;
     nh.getParam(this_node::getNamespace() + "/targets_done", done);
     for (int t : done) {
-        target_map.emplace(piecewise_construct, forward_as_tuple(t), forward_as_tuple(t, TARGET_DONE));
+        target_map.emplace(piecewise_construct, forward_as_tuple(t), forward_as_tuple(make_shared<target>(t, TARGET_DONE)));
     }
 
     // publishers and subscribers
@@ -49,7 +49,7 @@ void targets::simulate ()
         geometry_msgs::Pose new_target_pose;
         new_target_pose.position.x = targets_x[i];
         new_target_pose.position.y = targets_y[i];
-        simulated_targets.emplace(piecewise_construct, forward_as_tuple(i), forward_as_tuple(i, TARGET_UNKNOWN, new_target_pose));
+        simulated_targets.emplace(piecewise_construct, forward_as_tuple(i), forward_as_tuple(make_shared<target>(i, TARGET_UNKNOWN, new_target_pose)));
     }
 }
 
@@ -58,13 +58,13 @@ void targets::update (geometry_msgs::Pose pose)
     // check if a target is lost
     for (auto t : target_map) {
         // update target and inform others in case target is lost
-        t.second.lost();
+        t.second->lost();
     }
 
     // check if a new target is found in simulation
     for (auto t : simulated_targets) {
         // target pose
-        geometry_msgs::Pose t_pose = t.second.get_pose();
+        geometry_msgs::Pose t_pose = t.second->get_pose();
 
         // visible distance from drone with fov at current altitude
         double dist = pose.position.z * tan(fov / 2.0);
@@ -93,12 +93,12 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
 
     // update existing target
     if (target_map.count(msg.id) > 0) {
-        target_map[msg.id].update(state, pose, msg.header.stamp);
+        target_map[msg.id]->update(state, pose, msg.header.stamp);
     }
 
     // add new target
     else {
-        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(msg.id, state, pose, msg.header.stamp));
+        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, pose, msg.header.stamp)));
     }
 }
 
