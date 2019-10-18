@@ -35,6 +35,21 @@ double yaw ()
 }
 
 /**
+ * @brief Compute the orientation resulting from the rotated CPS orientation.
+ * @return The rotation to apply to the CPS orientation.
+ */
+geometry_msgs::Quaternion rotate (geometry_msgs::Quaternion rotation)
+{
+    tf2::Quaternion cps_orientation;
+    tf2::fromMsg(pose.orientation, cps_orientation);
+    tf2::Quaternion target_rotation;
+    tf2::fromMsg(rotation, target_rotation);
+    tf2::Quaternion target_orientation = target_rotation * cps_orientation;
+    target_orientation.normalize();
+    return tf2::toMsg(target_orientation);
+}
+
+/**
  * @brief Callback function for target position.
  * @param msg ID of target and translation between CPS and target as received from the OpenMV camera.
  */
@@ -49,6 +64,7 @@ void tracking_callback (const cpswarm_msgs::TargetTracking::ConstPtr& msg)
     event.id = msg->id;
     event.pose.pose.position.x = pose.position.x + distance * cos(direction);
     event.pose.pose.position.y = pose.position.y + distance * sin(direction);
+    event.pose.pose.orientation = rotate(msg->tf.rotation);
     event.header.stamp = msg->header.stamp;
     monitor->update(event, TARGET_TRACKED);
 }

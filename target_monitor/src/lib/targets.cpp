@@ -49,6 +49,7 @@ void targets::simulate ()
         geometry_msgs::Pose new_target_pose;
         new_target_pose.position.x = targets_x[i];
         new_target_pose.position.y = targets_y[i];
+        new_target_pose.orientation.w = 1;
         simulated_targets.emplace(piecewise_construct, forward_as_tuple(i), forward_as_tuple(make_shared<target>(i, TARGET_UNKNOWN, new_target_pose)));
     }
 }
@@ -102,19 +103,29 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
 geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_msgs::Pose p2) const
 {
     // orientation of first point
-    tf2::Quaternion orientation;
-    tf2::fromMsg(p1.orientation, orientation);
+    tf2::Quaternion orientation1;
+    tf2::fromMsg(p1.orientation, orientation1);
 
     // relative coordinates of second point
     double dx = p2.position.x - p1.position.x;
     double dy = p2.position.y - p1.position.y;
     double distance = hypot(dx, dy);
-    double direction = (M_PI / 2.0) - tf2::getYaw(orientation) + atan2(dy, dx);
+    double direction = (M_PI / 2.0) - tf2::getYaw(orientation1) + atan2(dy, dx);
 
     // compute transform
     geometry_msgs::Transform tf;
+
+    // translation
     tf.translation.x = -distance * cos(direction); // x is inverted in tracking camera tf
     tf.translation.y = distance * sin(direction);
+
+    // rotation
+    p1.orientation.w *= -1; // invert p1
+    tf2::fromMsg(p1.orientation, orientation1);
+    tf2::Quaternion orientation2;
+    tf2::fromMsg(p2.orientation, orientation2);
+    tf2::Quaternion rotation = orientation2 * orientation1;
+    tf.rotation = tf2::toMsg(rotation);
 
     return tf;
 }
