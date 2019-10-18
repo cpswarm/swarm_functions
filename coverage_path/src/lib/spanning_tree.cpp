@@ -6,7 +6,7 @@ spanning_tree::spanning_tree()
 
 vector<edge> spanning_tree::get_mst_edges ()
 {
-    return new_edges;
+    return mst_edges;
 }
 
 geometry_msgs::PoseArray spanning_tree::get_tree ()
@@ -15,7 +15,7 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
     vector<geometry_msgs::Pose> poses;
     geometry_msgs::Pose pose;
 
-    for (auto e : new_edges) {
+    for (auto e : mst_edges) {
         // from
         pose.position.x = e.from % map.info.width * map.info.resolution + map.info.origin.position.x;
         pose.position.y = e.from / map.info.width * map.info.resolution + map.info.origin.position.y;
@@ -89,7 +89,7 @@ void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool conn
 
 void spanning_tree::construct ()
 {
-    new_edges.clear();
+    mst_edges.clear();
 
     while (!edges.empty()) {
         // select shortest edge
@@ -101,13 +101,11 @@ void spanning_tree::construct ()
             unordered_set<int> s(nodes[edge.from].begin(), nodes[edge.from].end());
             for (auto v : nodes[edge.to])
                 s.insert(v);
-            for (auto v : nodes[edge.from])
-                nodes[v] = s;
-            for (auto v : nodes[edge.to])
+            for (auto v : s)
                 nodes[v] = s;
 
             // add edge to mst
-            new_edges.push_back(edge);
+            mst_edges.push_back(edge);
         }
 
         // remove edge from source tree

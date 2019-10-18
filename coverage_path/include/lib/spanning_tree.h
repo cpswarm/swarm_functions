@@ -78,7 +78,7 @@ private:
     /**
      * @brief Edges in Minimal-Spanning Tree.
      */
-    vector<edge> new_edges;
+    vector<edge> mst_edges;
 
     /**
      * @brief The grid map that needs to be covered by the MST.
