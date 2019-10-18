@@ -83,10 +83,10 @@ void uuid_callback(const swarmros::String::ConstPtr& msg)
 void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server* as)
 {
     // compute bid
-    double distance = hypot(goal->task_pose.position.x - pose.position.x, goal->task_pose.position.y - pose.position.y);
+    double distance = hypot(goal->task_pose.pose.position.x - pose.position.x, goal->task_pose.pose.position.y - pose.position.y);
     task_id = goal->task_id;
 
-    ROS_INFO("TASK_BID - Compute bid for target %d, value: %.2f", task_id, 1.0/distance);
+    ROS_INFO("TASK_BID - Compute bid for task %d, value: %.2f", task_id, 1.0/distance);
 
     // create bid message
     cpswarm_msgs::TaskAllocationEvent task_allocation;
@@ -100,7 +100,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     // publish bid until auction ends
     Rate rate(1.0);
     while (ok() && !as->isPreemptRequested() && allocation.task_id < 0) {
-        ROS_INFO("TASK_BID - Waiting for auction to end");
+        ROS_DEBUG_ONCE("TASK_BID - Waiting for auction to end");
         publisher.publish(task_allocation);
         spinOnce();
         rate.sleep();

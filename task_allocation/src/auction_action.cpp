@@ -55,12 +55,12 @@ string winner;
 void bid_callback(const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 {
     if (auction_open && (task_id == msg->id)) {
-        ROS_INFO("TASK_AUCTION - New bid received from %s", msg->swarmio.node.c_str());
+        ROS_DEBUG("TASK_AUCTION - New bid received from %s", msg->swarmio.node.c_str());
         // new highest bid received
         if (msg->bid > highest_bid) {
             winner = msg->swarmio.node;
             highest_bid = msg->bid;
-            ROS_INFO("TASK_AUCTION - Highest bid: %.4f", msg->bid);
+            ROS_INFO("TASK_AUCTION - Highest bid %.4f received from %s", msg->bid, msg->swarmio.node.c_str());
         }
     }
 }
@@ -74,12 +74,11 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
 {
     // start a new auction
     task_id = goal->task_id;
-    task_pose = goal->task_pose;
+    task_pose = goal->task_pose.pose;
     highest_bid = 0;
     winner = "";
     auction_open = true;
     ROS_INFO("TASK_AUCTION - Starting task allocation auction for task %d at position (%.6f, %.6f)", task_id, task_pose.position.x, task_pose.position.y);
-
 
     // wait for bids
     Rate rate(20.0);
@@ -112,7 +111,7 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
         cpswarm_msgs::TaskAllocationResult result;
         result.winner = winner;
         result.task_id = task_id;
-        result.task_pose = task_pose;
+        result.task_pose.pose = task_pose;
 
         // task allocation failed, return negative result
         if (winner.compare("") == 0) {
