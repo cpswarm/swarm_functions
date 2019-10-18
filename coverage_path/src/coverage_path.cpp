@@ -13,6 +13,8 @@ bool generate_path ()
         return false;
     }
 
+    ROS_INFO("Generate new coverage path...");
+
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
     tree.initialize_graph(division.response.map);
@@ -114,7 +116,7 @@ void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
 
             // recompute path
             reconfigure = true;
-            ROS_ERROR("New CPS %s", cps.swarmio.node.c_str());
+            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
         }
 
         // update existing cps
@@ -126,7 +128,7 @@ void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
     // remove old cps
     for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
         if (cps->second + Duration(swarm_timeout) < Time::now()) {
-            ROS_ERROR("Remove CPS %s", cps->first.c_str());
+            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
             swarm.erase(cps++);
 
             // recompute path
