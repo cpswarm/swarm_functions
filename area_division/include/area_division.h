@@ -20,9 +20,19 @@ using namespace ros;
 string uuid;
 
 /**
+ * @brief Publisher to stop the CPS.
+ */
+Publisher pos_publisher;
+
+/**
  * @brief Publisher to visualize the assigned area grid map.
  */
 Publisher area_publisher;
+
+/**
+ * @brief ROS rate object for controlling loop rates.
+ */
+Rate* rate;
 
 /**
  * @brief The positions of the other swarm members.
@@ -65,6 +75,11 @@ area_division division;
 double swarm_timeout;
 
 /**
+ * @brief The number of position updates from other swarm members to wait for before starting the area division.
+ */
+int swarm_updates;
+
+/**
  * @brief Whether to publish the area division on a topic for visualization.
  */
 bool visualize;
@@ -73,5 +88,10 @@ bool visualize;
  * @brief Whether the swarm configuration has changed and the area needs to be divided again.
  */
 bool reconfigure;
+
+/**
+ * @brief Number of position updates received from the swarm.
+ */
+int updates;
 
 #endif // AREA_DIVISION_H

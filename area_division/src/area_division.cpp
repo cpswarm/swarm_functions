@@ -12,6 +12,7 @@ void divide_area ()
         pos[0] = int(round((cps.second.pose.position.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
         pos[1] = int(round((cps.second.pose.position.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
         swarm_grid.emplace(cps.first, pos);
+        ROS_DEBUG("Other CPS %d at (%d,%d)", cps.first, pos[0], pos[1]);
     }
 
     // add this robot to swarm grid
@@ -19,6 +20,7 @@ void divide_area ()
     pos[0] = int(round((pose.position.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
     pos[1] = int(round((pose.position.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
     swarm_grid.emplace(uuid, pos);
+    ROS_DEBUG("Me %d at (%d,%d)", uuid, pos[0], pos[1]);
 
     // divide area
     ROS_DEBUG("Dividing area...");
@@ -44,6 +46,25 @@ bool get_area (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
 {
     // compute new area division if swarm configuration changed
     if (reconfigure) {
+        ROS_INFO("Dividing area among CPSs...");
+
+        // there are other cpss in the swarm
+        if (updates > 0) {
+            // stop cps
+            geometry_msgs::PoseStamped goal_pose;
+            goal_pose.header.stamp = Time::now();
+            goal_pose.pose = pose;
+            pos_publisher.publish(goal_pose);
+
+            // wait for swarm update
+            updates = 0;
+            while (updates < swarm_updates) {
+                spinOnce();
+                rate->sleep();
+            }
+        }
+
+        // divide area
         divide_area();
     }
 
@@ -82,6 +103,10 @@ void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
  */
 void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
 {
+    // got update
+    if (msg->positions.size() > 0)
+        ++updates;
+
     // update cps positions
     for (auto cps : msg->positions) {
         // index of cps in map
@@ -147,6 +172,7 @@ int main (int argc, char **argv)
 
     // init global variables
     reconfigure = true;
+    updates = 0;
 
     // read parameters
     double loop_rate;
@@ -154,6 +180,7 @@ int main (int argc, char **argv)
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
+    nh.param(this_node::getName() + "/swarm_updates", swarm_updates, 10);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // initialize flags
@@ -167,39 +194,42 @@ int main (int argc, char **argv)
     Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     Subscriber swarm_subscriber = nh.subscribe("swarm_position", queue_size, swarm_callback);
     Subscriber map_subscriber = nh.subscribe("map", queue_size, map_callback); // TODO: use explored/merged map
+    pos_publisher = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
     if (visualize)
         area_publisher = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
 
     // init loop rate
-    Rate rate(loop_rate);
+    rate = new Rate(loop_rate);
 
     // init uuid
     while (ok() && uuid == "") {
         ROS_DEBUG_ONCE("Waiting for UUID...");
-        rate.sleep();
+        rate->sleep();
         spinOnce();
     }
 
     // init position
     while (ok() && (pose_valid == false || swarm_valid == false)) {
         ROS_DEBUG_ONCE("Waiting for valid position information...");
-        rate.sleep();
+        rate->sleep();
         spinOnce();
     }
 
     // init map
     while (ok() && map_valid == false) {
         ROS_DEBUG_ONCE("Waiting for grid map...");
-        rate.sleep();
+        rate->sleep();
         spinOnce();
     }
 
     // configure area division optimizer
-    division.setup(1, 0.01, 1e-4, 30); // TODO: define parameters
+    division.setup(1, 0.01, 1e-4, 30); // TODO: refine parameters
 
     // provide area service
     ServiceServer area_service = nh.advertiseService("area/assigned", get_area);
     spin();
+
+    delete rate;
 
     return 0;
 }
