@@ -115,6 +115,17 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
         nh.getParam(this_node::getNamespace() + "/targets_done", done);
         done.push_back(id);
         nh.setParam(this_node::getNamespace() + "/targets_done", done);
+
+        // publish event
+        cpswarm_msgs::TargetPositionEvent target;
+        geometry_msgs::PoseStamped ps;
+        ps.pose = pose;
+        ps.header.frame_id = "local_origin_ned";
+        target.pose = ps;
+        target.header.stamp = Time::now();
+        target.swarmio.name = "target_done";
+        target.id = id;
+        target_done_pub.publish(target);
     }
 
     // target is being tracked, update for already known target

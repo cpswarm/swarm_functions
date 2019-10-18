@@ -1,12 +1,19 @@
 #include <ros/ros.h>
 #include <tf2/utils.h>
+#include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/Pose.h>
 #include <cpswarm_msgs/TargetPositionEvent.h>
 #include <cpswarm_msgs/TargetTracking.h>
+#include <cpswarm_msgs/TargetAction.h>
 #include "lib/targets.h"
 
 using namespace std;
 using namespace ros;
+
+/**
+ * @brief An action server type that allows to set the state of a target.
+ */
+typedef actionlib::SimpleActionServer<cpswarm_msgs::TargetAction> action_server_t;
 
 /**
  * @brief The targets being monitored.
@@ -123,6 +130,26 @@ void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 /**
+ * @brief Callback of the action server which sets the target state to done.
+ * @param goal The goal message received from the action client.
+ * @param as The action server offered by this node.
+ */
+void set_done(const cpswarm_msgs::TargetGoalConstPtr& goal, action_server_t* as)
+{
+    // create position event message
+    cpswarm_msgs::TargetPositionEvent event;
+    event.id = goal->id;
+    event.pose = goal->pose;
+    event.header = goal->pose.header;
+
+    // update target internally
+    monitor->update(event, TARGET_DONE);
+
+    // action server finished successfully
+    as->setSucceeded();
+}
+
+/**
  * @brief Main function to be executed by ROS.
  * @param argc Number of command line arguments.
  * @param argv Array of command line arguments.
@@ -164,6 +191,10 @@ int main (int argc, char** argv)
     Subscriber update_sub = nh.subscribe("bridge/events/target_update", queue_size, update_callback);
     Subscriber lost_sub = nh.subscribe("bridge/events/target_lost", queue_size, lost_callback);
     Subscriber done_sub = nh.subscribe("bridge/events/target_done", queue_size, done_callback);
+
+    // action servers
+    action_server_t set_done_as(nh, "cmd/target_done", boost::bind(&set_done, _1, &set_done_as), false);
+    set_done_as.start();
 
     // init position and yaw
     while (ok() && pose_valid == false) {
