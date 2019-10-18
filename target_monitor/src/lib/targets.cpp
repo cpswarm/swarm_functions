@@ -8,7 +8,7 @@ targets::targets ()
     Rate rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    nh.param(this_node::getName() + "/fov", fov, 0.64);
+    nh.param(this_node::getName() + "/fov", fov, 1.0);
 
     // uuid of this cps
     cps = "";
@@ -66,13 +66,10 @@ void targets::update (geometry_msgs::Pose pose)
         // target pose
         geometry_msgs::Pose t_pose = t.second->get_pose();
 
-        // visible distance from drone with fov at current altitude
-        double dist = pose.position.z * tan(fov / 2.0);
-
-        ROS_DEBUG("Target %d distance %.2f < %.2f", t.first, hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y), dist);
+        ROS_DEBUG("Target %d distance %.2f < %.2f", t.first, hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y), fov);
 
         // target is within camera fov
-        if (hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y) <= dist) {
+        if (hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y) <= fov) {
             // publish tracking information
             cpswarm_msgs::TargetTracking track;
             track.header.stamp = Time::now();

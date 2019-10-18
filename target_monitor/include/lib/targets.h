@@ -86,7 +86,7 @@ private:
     string cps;
 
     /**
-     * @brief The field of view of the target tracking camera in radian (measured). It is used to simulate target detection.
+     * @brief Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.
      */
     double fov;
 };
