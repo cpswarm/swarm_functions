@@ -77,10 +77,15 @@ void mst_path::generate_path (geometry_msgs::Point start)
         nodes[current].erase(previous);
         nodes[previous].erase(current);
 
-        // add vertex to path
+        // convert index to waypoint position on map
         wp.x = (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x;
         wp.y = (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y;
 
+        // shift waypoint to center path on cell
+        wp.x += 0.25 * map.info.resolution;
+        wp.y += 0.25 * map.info.resolution;
+
+        // add vertex to path
         path.push_back(wp);
     } while (found);
 
