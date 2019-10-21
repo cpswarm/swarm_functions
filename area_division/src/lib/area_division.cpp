@@ -2,6 +2,12 @@
 
 area_division::area_division ()
 {
+    // read parameters
+    NodeHandle nh;
+    nh.param(this_node::getName() + "/optimizer/iterations", max_iter, 1);
+    nh.param(this_node::getName() + "/optimizer/variate_weight", variate_weight, 0.01);
+    nh.param(this_node::getName() + "/optimizer/random_level", random_level, 1e-4);
+    nh.param(this_node::getName() + "/optimizer/discrepancy", discr, 30);
 }
 
 void area_division::divide ()
@@ -176,14 +182,6 @@ void area_division::initialize_map (int r, int c, vector<signed char> src)
     cols = c;
     ob = 0;
     gridmap = src;
-}
-
-void area_division::setup (int iters, double vWeight, double rLevel, int discr)
-{
-    max_iter = iters;
-    variate_weight = vWeight;
-    random_level = rLevel;
-    discr = discr;
 }
 
 void area_division::assign (vector<valarray<double>> matrix)

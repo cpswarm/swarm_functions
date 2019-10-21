@@ -51,15 +51,6 @@ public:
      */
     void initialize_map (int r, int c, vector<signed char> src);
 
-    /**
-     * @brief Define the optimization parameters.
-     * @param iters Maximum number of iterations of the optimization algorithm.
-     * @param vWeight TODO
-     * @param rLevel TODO
-     * @param discr TODO
-     */
-    void setup (int iters, double vWeight, double rLevel, int discr);
-
 private:
     /**
      * @brief TODO
@@ -87,12 +78,12 @@ private:
     bool isThisAGoalState (int thres);
 
     /**
-     * @brief TODO
+     * @brief Maximum variate weight of connected components.
      */
     double variate_weight;
 
     /**
-     * @brief TODO
+     * @brief Percent of random influence.
      */
     double random_level;
 
@@ -162,7 +153,7 @@ private:
     bool success;
 
     /**
-     * @brief TODO
+     * @brief Maximum discrepancy among areas.
      */
     int discr;
 };

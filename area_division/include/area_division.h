@@ -8,7 +8,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
-#include <cpswarm_msgs/ArrayOfPositions.h>
+#include <cpswarm_msgs/AreaDivisionEvent.h>
 #include <swarmros/String.h>
 #include "lib/area_division.h"
 
@@ -22,12 +22,17 @@ string uuid;
 /**
  * @brief Publisher to stop the CPS.
  */
-Publisher pos_publisher;
+Publisher pos_pub;
+
+/**
+ * @brief Publisher to syncronize with other CPSs.
+ */
+Publisher swarm_pub;
 
 /**
  * @brief Publisher to visualize the assigned area grid map.
  */
-Publisher area_publisher;
+Publisher area_pub;
 
 /**
  * @brief ROS rate object for controlling loop rates.
@@ -67,17 +72,12 @@ bool map_valid;
 /**
  * @brief The object encapsulating the area division optimization algorithm.
  */
-area_division division;
+area_division* division;
 
 /**
- * @brief Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
+ * @brief The time in seconds to wait after an area division event before starting the area division.
  */
 double swarm_timeout;
-
-/**
- * @brief The number of position updates from other swarm members to wait for before starting the area division.
- */
-int swarm_updates;
 
 /**
  * @brief Whether to publish the area division on a topic for visualization.
@@ -90,8 +90,8 @@ bool visualize;
 bool reconfigure;
 
 /**
- * @brief Number of position updates received from the swarm.
+ * @brief The time at which the synchronization for the area division started.
  */
-int updates;
+Time sync_start;
 
 #endif // AREA_DIVISION_H

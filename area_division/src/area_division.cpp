@@ -12,7 +12,7 @@ void divide_area ()
         pos[0] = int(round((cps.second.pose.position.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
         pos[1] = int(round((cps.second.pose.position.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
         swarm_grid.emplace(cps.first, pos);
-        ROS_DEBUG("Other CPS %d at (%d,%d)", cps.first, pos[0], pos[1]);
+        ROS_ERROR("Other CPS %s at (%d,%d)", cps.first.c_str(), pos[0], pos[1]);
     }
 
     // add this robot to swarm grid
@@ -20,20 +20,72 @@ void divide_area ()
     pos[0] = int(round((pose.position.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
     pos[1] = int(round((pose.position.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
     swarm_grid.emplace(uuid, pos);
-    ROS_DEBUG("Me %d at (%d,%d)", uuid, pos[0], pos[1]);
+    ROS_ERROR("Me %s at (%d,%d)", uuid.c_str(), pos[0], pos[1]);
 
     // divide area
-    ROS_DEBUG("Dividing area...");
+    ROS_INFO("Dividing area...");
     vector<signed char, allocator<signed char>> map = gridmap.data;
-    division.initialize_map((int)gridmap.info.width, (int)gridmap.info.height, map);
-    division.initialize_cps(swarm_grid);
-    division.divide();
+    division->initialize_map((int)gridmap.info.width, (int)gridmap.info.height, map);
+    division->initialize_cps(swarm_grid);
+    division->divide();
 
     // visualize area
     if (visualize)
-        area_publisher.publish(division.get_grid(gridmap, uuid));
+        area_pub.publish(division->get_grid(gridmap, uuid));
 
     reconfigure = false;
+}
+
+/**
+ * @brief Synchronize The CPSs by exchanging an event.
+ */
+void sync ()
+{
+    // start synchronization sequence
+    if (sync_start + Duration(swarm_timeout) < Time::now()) {
+        // stop moving
+        geometry_msgs::PoseStamped goal_pose;
+        goal_pose.header.stamp = Time::now();
+        goal_pose.pose = pose;
+        pos_pub.publish(goal_pose);
+
+        // reset information about swarm
+        swarm_pose.clear();
+
+        // start of synchronization time window
+        sync_start = Time::now();
+
+        // send event to swarm
+        cpswarm_msgs::AreaDivisionEvent event;
+        event.header.stamp = Time::now();
+        event.swarmio.name = "area_division";
+        geometry_msgs::PoseStamped ps;
+        ps.header.frame_id = "local_origin_ned";
+        ps.pose = pose;
+        event.pose = ps;
+        swarm_pub.publish(event);
+    }
+}
+
+/**
+ * @brief Remove CPSs from which no update has been received.
+ */
+void update_swarm ()
+{
+    // check all known cpss
+    for (auto cps=swarm_pose.cbegin(); cps!=swarm_pose.cend();) {
+        // remove old cps
+        if (cps->second.header.stamp + Duration(swarm_timeout) < Time::now()) {
+            ROS_ERROR("Remove CPS %s", cps->first.c_str());
+            swarm_pose.erase(cps++);
+
+            // recalculate area division
+            reconfigure = true;
+        }
+        else {
+            ++cps;
+        }
+    }
 }
 
 /**
@@ -44,32 +96,23 @@ void divide_area ()
  */
 bool get_area (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
 {
-    // compute new area division if swarm configuration changed
+    // synchronize with swarm
+    sync();
+
+    // wait for swarm updates
+    while (Time::now() <= sync_start + Duration(swarm_timeout)) {
+        rate->sleep();
+        spinOnce();
+    }
+
+    // swarm configuration changed
     if (reconfigure) {
-        ROS_INFO("Dividing area among CPSs...");
-
-        // there are other cpss in the swarm
-        if (updates > 0) {
-            // stop cps
-            geometry_msgs::PoseStamped goal_pose;
-            goal_pose.header.stamp = Time::now();
-            goal_pose.pose = pose;
-            pos_publisher.publish(goal_pose);
-
-            // wait for swarm update
-            updates = 0;
-            while (updates < swarm_updates) {
-                spinOnce();
-                rate->sleep();
-            }
-        }
-
         // divide area
         divide_area();
     }
 
     // return assigned area
-    res.map = division.get_grid(gridmap, uuid);
+    res.map = division->get_grid(gridmap, uuid);
 
     return true;
 }
@@ -98,54 +141,36 @@ void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 /**
- * @brief Callback function to receive the positions of the other CPSs.
- * @param msg UUIDs and positions of the other CPSs.
+ * @brief Callback function to receive area division requests from other CPSs.
+ * @param msg UUIDs and position of the other CPS.
  */
-void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
+void swarm_callback (const cpswarm_msgs::AreaDivisionEvent::ConstPtr& msg)
 {
-    // got update
-    if (msg->positions.size() > 0)
-        ++updates;
+    // synchronize with swarm
+    sync();
 
-    // update cps positions
-    for (auto cps : msg->positions) {
-        // index of cps in map
-        auto idx = swarm_pose.find(cps.swarmio.node);
+    // recalculate area division
+    reconfigure = true;
 
-        // add new cps
-        if (idx == swarm_pose.end()) {
-            geometry_msgs::PoseStamped pose;
-            pose.header.stamp = Time::now();
-            pose.pose = cps.pose;
-            swarm_pose.emplace(cps.swarmio.node, pose);
+    // check if cps is already known
+    auto idx = swarm_pose.find(msg->swarmio.node);
 
-            // divide again
-            reconfigure = true;
-            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
-        }
+    // add new cps
+    if (idx == swarm_pose.end()) {
+        ROS_ERROR("Add CPS %s", msg->swarmio.node.c_str());
 
-        // update existing cps
-        else {
-            idx->second.header.stamp = Time::now();
-            idx->second.pose = cps.pose;
-        }
+        // add cps
+        swarm_pose.emplace(msg->swarmio.node, msg->pose);
     }
 
-    // remove old cps
-    for (auto cps=swarm_pose.cbegin(); cps!=swarm_pose.cend();) {
-        if (cps->second.header.stamp + Duration(swarm_timeout) < Time::now()) {
-            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
-            swarm_pose.erase(cps++);
+    // update existing cps
+    else {
+        ROS_ERROR("Update CPS %s", msg->swarmio.node.c_str());
 
-            // divide again
-            reconfigure = true;
-        }
-        else {
-            ++cps;
-        }
+        // update cps
+        idx->second.header.stamp = Time::now();
+        idx->second = msg->pose;
     }
-
-    swarm_valid = true;
 }
 
 /**
@@ -172,7 +197,7 @@ int main (int argc, char **argv)
 
     // init global variables
     reconfigure = true;
-    updates = 0;
+    sync_start = Time::now();
 
     // read parameters
     double loop_rate;
@@ -180,7 +205,6 @@ int main (int argc, char **argv)
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
-    nh.param(this_node::getName() + "/swarm_updates", swarm_updates, 10);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 
     // initialize flags
@@ -191,12 +215,13 @@ int main (int argc, char **argv)
 
     // publishers and subscribers
     Subscriber uuid_sub = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
-    Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    Subscriber swarm_subscriber = nh.subscribe("swarm_position", queue_size, swarm_callback);
-    Subscriber map_subscriber = nh.subscribe("map", queue_size, map_callback); // TODO: use explored/merged map
-    pos_publisher = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
+    Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+    Subscriber swarm_sub = nh.subscribe("bridge/events/area_division", queue_size, swarm_callback);
+    Subscriber map_sub = nh.subscribe("map", queue_size, map_callback); // TODO: use explored/merged map
+    pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
+    swarm_pub = nh.advertise<cpswarm_msgs::AreaDivisionEvent>("area_division", queue_size, true);
     if (visualize)
-        area_publisher = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
+        area_pub = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
 
     // init loop rate
     rate = new Rate(loop_rate);
@@ -209,7 +234,7 @@ int main (int argc, char **argv)
     }
 
     // init position
-    while (ok() && (pose_valid == false || swarm_valid == false)) {
+    while (ok() && pose_valid == false) {
         ROS_DEBUG_ONCE("Waiting for valid position information...");
         rate->sleep();
         spinOnce();
@@ -222,14 +247,16 @@ int main (int argc, char **argv)
         spinOnce();
     }
 
-    // configure area division optimizer
-    division.setup(1, 0.01, 1e-4, 30); // TODO: refine parameters
+    // create area division object
+    division = new area_division();
 
     // provide area service
     ServiceServer area_service = nh.advertiseService("area/assigned", get_area);
     spin();
 
+    // clean up
     delete rate;
+    delete division;
 
     return 0;
 }
