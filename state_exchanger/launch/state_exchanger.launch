@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- Swarm state exchanging node -->
+    <node pkg="state_exchanger" type="state_exchanger" name="state_exchanger_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find state_exchanger)/param/state_exchanger.yaml" command="load" />
+    </node>
+
+</launch>
