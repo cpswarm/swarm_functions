@@ -10,7 +10,8 @@
 #include <nav_msgs/GetMap.h>
 #include <nav_msgs/GetPlan.h>
 #include <cpswarm_msgs/GetWaypoint.h>
-#include <cpswarm_msgs/ArrayOfPositions.h>
+#include <cpswarm_msgs/ArrayOfStates.h>
+#include <cpswarm_msgs/StateEvent.h>
 #include "lib/spanning_tree.h"
 #include "lib/mst_path.h"
 
@@ -41,6 +42,16 @@ geometry_msgs::Pose pose;
  * @brief Whether a valid position has been received.
  */
 bool pose_valid;
+
+/**
+ * @brief Current state of the CPS.
+ */
+string state;
+
+/**
+ * @brief Whether a valid state has been received.
+ */
+bool state_valid;
 
 /**
  * @brief The UUIDs of the other swarm members.

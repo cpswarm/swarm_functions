@@ -100,13 +100,31 @@ void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 /**
- * @brief Callback function to receive the positions of the other CPSs.
- * @param msg UUIDs and positions of the other CPSs.
+ * @brief Callback function for state updates.
+ * @param msg State received from the CPS.
  */
-void swarm_callback (const cpswarm_msgs::ArrayOfPositions::ConstPtr& msg)
+void state_callback (const cpswarm_msgs::StateEvent::ConstPtr& msg)
+{
+    // store new position and orientation in class variables
+    state = msg->state;
+
+    // valid state received
+    if (msg->header.stamp.isValid())
+        state_valid = true;
+}
+
+/**
+ * @brief Callback function to receive the states of the other CPSs.
+ * @param msg UUIDs and states of the other CPSs.
+ */
+void swarm_callback (const cpswarm_msgs::ArrayOfStates::ConstPtr& msg)
 {
     // update cps uuids
-    for (auto cps : msg->positions) {
+    for (auto cps : msg->states) {
+        // only consider cpss in the same state, i.e., coverage
+        if (cps.state != state)
+            continue;
+
         // index of cps in map
         auto idx = swarm.find(cps.swarmio.node);
 
@@ -167,11 +185,13 @@ int main (int argc, char **argv)
 
     // initialize flags
     pose_valid = false;
+    state_valid = false;
     swarm_valid = false;
 
     // publishers, subscribers, and service clients
     Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    Subscriber swarm_subscriber = nh.subscribe("swarm_position", queue_size, swarm_callback);
+    Subscriber state_subscriber = nh.subscribe("state", queue_size, state_callback);
+    Subscriber swarm_subscriber = nh.subscribe("swarm_state", queue_size, swarm_callback);
     if (visualize) {
         path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
@@ -185,6 +205,13 @@ int main (int argc, char **argv)
     // init position
     while (ok() && pose_valid == false) {
         ROS_DEBUG_ONCE("Waiting for valid position information...");
+        rate.sleep();
+        spinOnce();
+    }
+
+    // init state
+    while (ok() && state_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid state information...");
         rate.sleep();
         spinOnce();
     }
