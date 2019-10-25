@@ -70,10 +70,12 @@ private:
     /**
      * @brief TODO
      */
-    valarray<double> FinalUpdateOnMetricMatrix (valarray<double> CM, valarray<double> curentONe, valarray<float> CC);
+    valarray<double> FinalUpdateOnMetricMatrix (double CM, valarray<double> curentONe, valarray<float> CC);
 
     /**
-     * @brief TODO
+     * @brief Check if the areas assigned to each robot are of similar size.
+     * @param thres The maximum number of grid cells that the areas assigned to different robots is allowed to differ.
+     * @return True, if the maximum assigned area to any robot is at most thresh larger than the minimum assigned area to any robot, false otherwise.
      */
     bool isThisAGoalState (int thres);
 
@@ -153,7 +155,7 @@ private:
     bool success;
 
     /**
-     * @brief Maximum discrepancy among areas.
+     * @brief Maximum difference between number of assigned grid cells to each CPS.
      */
     int discr;
 };

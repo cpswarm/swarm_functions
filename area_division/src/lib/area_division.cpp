@@ -39,7 +39,6 @@ void area_division::divide ()
 
     // perform area division
     success = false;
-    valarray<double> criterionMatrix;
     while (termThr<=discr && !success) {
         // initializations
         double downThres = ((double)NoTiles-(double)termThr*(nr-1)) / (double)(NoTiles*nr);
@@ -71,7 +70,7 @@ void area_division::divide ()
                     // construct the final connected component multiplier
                     ConnectedMultiplier = CalcConnectedMultiplier(cc.NormalizedEuclideanDistanceBinary(true), cc.NormalizedEuclideanDistanceBinary(false));
                 }
-                ConnectedMultiplierList.push_back(ConnectedMultiplier);
+                ConnectedMultiplierList[r] = ConnectedMultiplier;
 
                 // calculate the deviation from the the optimal assignment
                 plainErrors[r] = ArrayOfElements[r] / (double) effectiveSize;
@@ -108,21 +107,25 @@ void area_division::divide ()
                     else {
                         correctionMult[r] = 1.0 - (plainErrors[r] / totalNegPlainErrors) * (TotalNegPerc / 2.0);
                     }
-
-                    valarray<double> criterionMatrix(correctionMult[r], rows*cols);
                 }
-                MetricMatrix[r] = FinalUpdateOnMetricMatrix(criterionMatrix, MetricMatrix[r], ConnectedMultiplierList[r]);
+                MetricMatrix[r] = FinalUpdateOnMetricMatrix(correctionMult[r], MetricMatrix[r], ConnectedMultiplierList[r]);
             }
 
             iter++;
         }
 
+        // could not find area division
         if (iter >= max_iter) {
             max_iter = max_iter/2;
             success = false;
+
+            // increase allowed area discrepancy
             termThr++;
         }
     }
+
+    if (success == false)
+        ROS_ERROR("Area division failed!");
 }
 
 nav_msgs::OccupancyGrid area_division::get_grid (nav_msgs::OccupancyGrid map, string cps)
@@ -130,14 +133,17 @@ nav_msgs::OccupancyGrid area_division::get_grid (nav_msgs::OccupancyGrid map, st
     nav_msgs::OccupancyGrid assigned;
     assigned = map;
 
-    for (int i=0; i<A.size(); ++i) {
-        // mark assigned cells as free
-        if (A[i] == uuid_map[cps]) {
-            assigned.data[i] = 0;
-        }
-        // mark cells assigned to other cpss as obstacles
-        else {
-            assigned.data[i] = 100;
+    for (int i=0; i<rows; i++) {
+        for (int j=0; j<cols;j++) {
+            // mark assigned cells as free
+            if (A[(rows-1-i)*cols+j] == uuid_map[cps]) { // origin of division algorithm is top left
+                assigned.data[i*cols+j] = 0;
+            }
+
+            // mark cells assigned to other cpss as obstacles
+            else {
+                assigned.data[i*cols+j] = 100;
+            }
         }
     }
 
@@ -159,15 +165,19 @@ void area_division::initialize_cps (map<string, vector<int>> cpss)
 
     // place cpss in the map
     for (auto c : cpss) {
+        // divison algorithm assumes origin at top left
+        int x = c.second[0];
+        int y = rows - 1 - c.second[1];
+
         // index of position in grid map
-        int idx = c.second[1] * cols + c.second[0];
+        int idx = y * cols + x;
 
         // place cps in data structures
         gridmap[idx] = numeric_limits<signed char>::max();
         A[idx] = nr;
 
         // store cps position and mapping of uuid
-        cps.push_back(initializer_list<int>{c.second[0],c.second[1]});
+        cps.push_back(initializer_list<int>{x,y});
         uuid_map[c.first] = nr;
 
         // count number of cpss
@@ -219,7 +229,7 @@ void area_division::assign (vector<valarray<double>> matrix)
     }
 }
 
-valarray<double> area_division::FinalUpdateOnMetricMatrix(valarray<double> CM, valarray<double> curentONe, valarray<float> CC)
+valarray<double> area_division::FinalUpdateOnMetricMatrix(double CM, valarray<double> curentONe, valarray<float> CC)
 {
     random_numbers::RandomNumberGenerator* rng = new random_numbers::RandomNumberGenerator();
 
@@ -227,7 +237,7 @@ valarray<double> area_division::FinalUpdateOnMetricMatrix(valarray<double> CM, v
 
     for (int i=0; i<MMnew.size(); ++i) {
         double random = 2.0*random_level * rng->uniform01() + 1.0 - random_level;
-        MMnew[i] = curentONe[i] * CM[i] * random * CC[i];
+        MMnew[i] = curentONe[i] * CM * random * CC[i];
     }
 
     delete rng;
@@ -265,7 +275,7 @@ valarray<float> area_division::CalcConnectedMultiplier(valarray<float> dist1, va
     float MinV = numeric_limits<float>::max();
     for (int i=0;i<rows;i++){
         for (int j=0;j<cols;j++){
-            returnM[i*cols+j] =dist1[i*cols+j] - dist2[i*cols+j];
+            returnM[i*cols+j] = dist1[i*cols+j] - dist2[i*cols+j];
             if (MaxV < returnM[i*cols+j]) {MaxV = returnM[i*cols+j];}
             if (MinV > returnM[i*cols+j]) {MinV = returnM[i*cols+j];}
         }

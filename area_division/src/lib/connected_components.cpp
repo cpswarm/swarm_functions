@@ -23,7 +23,7 @@ valarray<int> connected_components::compactLabeling ()
     // whether 0 is background or not
     int j = 1;
     for (int i=1; i<stat.size(); i++) {
-        if (stat[i]!=0)
+        if (stat[i] != 0)
             stat[i] = j++;
     }
 
@@ -54,51 +54,63 @@ vector<int> connected_components::labeling ()
     int next_region = 1;
     for (int y = 0; y < rows; ++y ) {
         for (int x = 0; x < cols; ++x ) {
-            if (image[y*cols+x] == 0 && zeroAsBg) continue;
+            if (image[y*cols+x] == 0 && zeroAsBg)
+                continue;
+
             int k = 0;
             bool connected = false;
+
             // if connected to the left
             if (x > 0 && image[y*cols+x-1] == image[y*cols+x]) {
                 k = rst[y*cols+x-1];
                 connected = true;
             }
-            // if connected to the up
-            if (y > 0 && image[(y-1)*cols+x]== image[y*cols+x] && (!connected || image[(y-1)*cols+x] < k )) {
+
+            // if connected upwards
+            if (y > 0 && image[(y-1)*cols+x] == image[y*cols+x] && (!connected || image[(y-1)*cols+x] < k)) {
                 k = rst[(y-1)*cols+x];
                 connected = true;
             }
-            if ( !connected ) {
+
+            // not connected
+            if (!connected) {
                 k = next_region;
                 next_region++;
             }
 
-            rst[y*cols+x]= k;
+            // set label
+            rst[y*cols+x] = k;
+
             // if connected, but with different label, then do union
-            if (x > 0 && image[y*cols+x-1] == image[y*cols+x] && rst[y*cols+x-1]!= k )
-                uf_union( k, rst[y*cols+x-1], parent );
-            if (y > 0 && image[(y-1)*cols+x] == image[y*cols+x] && rst[(y-1)*cols+x]!= k )
-                uf_union( k, rst[(y-1)*cols+x], parent );
+            if (x > 0 && image[y*cols+x-1] == image[y*cols+x] && rst[y*cols+x-1] != k)
+                uf_union(k, rst[y*cols+x-1], parent);
+            if (y > 0 && image[(y-1)*cols+x] == image[y*cols+x] && rst[(y-1)*cols+x] != k)
+                uf_union(k, rst[(y-1)*cols+x], parent);
         }
     }
 
     // begin the second pass, assign the new labels
     // if 0 is reserved for background, then the first available label is 1
     next_label = 1;
-    for (int i = 0; i < cols*rows; i++ ) {
-        if (image[i]!=0 || !zeroAsBg) {
+    for (int i=0; i<cols*rows; i++) {
+        if (image[i] != 0 || !zeroAsBg) {
             rst[i] = uf_find(rst[i], parent, labels);
             // The labels are from 1, if label 0 should be considered, then
             // all the label should minus 1
-            if (!zeroAsBg) rst[i]--;
+            if (!zeroAsBg)
+                rst[i]--;
         }
     }
-    next_label--;   // next_label records the max label
-    if (!zeroAsBg) next_label--;
+
+    // record the max label
+    next_label--;
+    if (!zeroAsBg)
+        next_label--;
 
     return rst;
 }
 
-void connected_components::uf_union (int x, int y, vector<int> parent)
+void connected_components::uf_union (int x, int y, vector<int>& parent)
 {
     while ( parent[x]>0 )
         x = parent[x];
@@ -111,12 +123,15 @@ void connected_components::uf_union (int x, int y, vector<int> parent)
     }
 }
 
-int connected_components::uf_find (int x, vector<int> parent, vector<int> label)
+int connected_components::uf_find (int x, vector<int> parent, vector<int>& label)
 {
-    while ( parent[x]>0 )
+    while (parent[x] > 0) {
         x = parent[x];
-    if ( label[x] == 0 )
-        label[x] = next_label++;
+    }
+    if (label[x] == 0) {
+        label[x] = next_label;
+        ++next_label;
+    }
     return label[x];
 }
 
@@ -185,7 +200,7 @@ valarray<float> connected_components::NormalizedEuclideanDistanceBinary (bool Ro
     return Region;
 }
 
-void connected_components::DT1D(vector<float> f, vector<float> d, vector<int> v , vector<float> z)
+void connected_components::DT1D(vector<float> f, vector<float>& d, vector<int>& v , vector<float>& z)
 {
     int k = 0;
     v[0] = 0;

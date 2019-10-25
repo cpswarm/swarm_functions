@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <valarray>
+#include <ros/ros.h>
 
 using namespace std;
 
@@ -45,14 +46,14 @@ public:
     /**
      * @brief TODO
      */
-    void uf_union (int x, int y, vector<int> parent);
+    void uf_union (int x, int y, vector<int>& parent);
 
     /**
      * @brief Return the root label (starts from 1 because label array is initialized to 0 at first). The label array records the new label for every root.
      * @param TODO
      * @return TODO
      */
-    int uf_find (int x, vector<int> parent, vector<int> label);
+    int uf_find (int x, vector<int> parent, vector<int>& label);
 
     /**
      * @brief TODO
@@ -67,7 +68,7 @@ public:
     valarray<float> NormalizedEuclideanDistanceBinary (bool RobotR);
 
 private:
-    void DT1D (vector<float> f, vector<float> d, vector<int> v , vector<float> z);
+    void DT1D (vector<float> f, vector<float>& d, vector<int>& v , vector<float>& z);
 
     vector<float> getVector(valarray<float> A, int row);
 
