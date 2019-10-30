@@ -15,8 +15,9 @@ typedef enum {
     TARGET_UNKNOWN = 0, // unknown target
     TARGET_KNOWN,       // target found by another CPS
     TARGET_TRACKED,     // target found by this CPS
-    TARGET_LOST,        // target lost
-    TARGET_DONE         // target completed
+    TARGET_ASSIGNED,    // target assigned to any CPS
+    TARGET_LOST,        // target lost by any CPS
+    TARGET_DONE         // target completed by any CPS
 } target_state_t;
 
 /**

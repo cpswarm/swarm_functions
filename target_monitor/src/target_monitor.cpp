@@ -2,6 +2,7 @@
 #include <tf2/utils.h>
 #include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/Pose.h>
+#include <cpswarm_msgs/TaskAllocatedEvent.h>
 #include <cpswarm_msgs/TargetPositionEvent.h>
 #include <cpswarm_msgs/TargetTracking.h>
 #include <cpswarm_msgs/TargetAction.h>
@@ -92,6 +93,19 @@ void found_callback (const cpswarm_msgs::TargetPositionEvent::ConstPtr& msg)
 void update_callback (const cpswarm_msgs::TargetPositionEvent::ConstPtr& msg)
 {
     monitor->update(*msg, TARGET_KNOWN);
+}
+
+/**
+ * @brief Callback function to receive information about targets assigned to a CPSs.
+ * @param msg ID and position of target.
+ */
+void assigned_callback (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg)
+{
+    // create position event message to update target internally
+    cpswarm_msgs::TargetPositionEvent event;
+    event.id = msg->task_id;
+    event.header.stamp = msg->header.stamp;
+    monitor->update(event, TARGET_ASSIGNED);
 }
 
 /**
@@ -186,9 +200,11 @@ int main (int argc, char** argv)
     // publishers and subscribers
     Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     Subscriber tracking_sub = nh.subscribe("target_tracking", queue_size, tracking_callback);
+    Subscriber local_assigned_sub = nh.subscribe("cps_selected", queue_size, assigned_callback);
     Subscriber local_done_sub = nh.subscribe("target_done", queue_size, done_callback);
     Subscriber found_sub = nh.subscribe("bridge/events/target_found", queue_size, found_callback);
     Subscriber update_sub = nh.subscribe("bridge/events/target_update", queue_size, update_callback);
+    Subscriber assigned_sub = nh.subscribe("bridge/events/cps_selected", queue_size, assigned_callback);
     Subscriber lost_sub = nh.subscribe("bridge/events/target_lost", queue_size, lost_callback);
     Subscriber done_sub = nh.subscribe("bridge/events/target_done", queue_size, done_callback);
 

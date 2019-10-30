@@ -103,8 +103,9 @@ void target::operator= (const target& t)
 
 void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
 {
-    // this target has been completed already
+    // this target has been completed already, nothing to do
     if (this->state == TARGET_DONE) {
+        ROS_DEBUG("Target %d already done", id);
         return;
     }
 
@@ -126,10 +127,38 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
         target.swarmio.name = "target_done";
         target.id = id;
         target_done_pub.publish(target);
+
+        // update target information
+        this->state = state;
+        this->pose = pose;
+        this->stamp = stamp;
+
+        ROS_DEBUG("Target %d done", id);
+
+        return;
+    }
+
+    // this target has been assigned already, nothing to do except setting it to done
+    if (this->state == TARGET_ASSIGNED) {
+        ROS_DEBUG("Target %d already assigned", id);
+        return;
+    }
+
+    // target has been assigned to a cps, stop tracking it
+    if (state == TARGET_ASSIGNED) {
+        // update target information
+        this->state = state;
+        this->stamp = stamp;
+
+        // not necessary to publish event, since assignment is a swarm scope event already
+
+        ROS_DEBUG("Target %d assigned", id);
+
+        return;
     }
 
     // target is being tracked, update for already known target
-    else if (state == TARGET_TRACKED) {
+    if (state == TARGET_TRACKED) {
         // compute distance that target moved
         double moved = hypot(last_pose.position.x - pose.position.x, last_pose.position.y - pose.position.y);
 
@@ -169,14 +198,18 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             target.swarmio.name = "target_update";
             target.id = id;
             target_update_pub.publish(target);
+
+            ROS_DEBUG("Target %d update", id);
         }
 
         // store current pose
         last_pose = pose;
-    }
 
-    // update target information
-    this->state = state;
-    this->pose = pose;
-    this->stamp = stamp;
+        // update target information
+        this->state = state;
+        this->pose = pose;
+        this->stamp = stamp;
+
+        return;
+    }
 }
