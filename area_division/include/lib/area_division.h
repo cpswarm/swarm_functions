@@ -7,7 +7,6 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include <random_numbers/random_numbers.h>
 #include "lib/connected_components.h"
 
 using namespace std;
@@ -83,11 +82,6 @@ private:
      * @brief Maximum variate weight of connected components.
      */
     double variate_weight;
-
-    /**
-     * @brief Percent of random influence.
-     */
-    double random_level;
 
     /**
      * @brief Number of rows in the grid map.

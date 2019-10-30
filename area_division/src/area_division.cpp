@@ -183,7 +183,7 @@ int main (int argc, char **argv)
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
     nh.param(this_node::getName() + "/visualize", visualize, false);
 

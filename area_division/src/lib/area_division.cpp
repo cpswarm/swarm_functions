@@ -4,9 +4,8 @@ area_division::area_division ()
 {
     // read parameters
     NodeHandle nh;
-    nh.param(this_node::getName() + "/optimizer/iterations", max_iter, 1);
+    nh.param(this_node::getName() + "/optimizer/iterations", max_iter, 10);
     nh.param(this_node::getName() + "/optimizer/variate_weight", variate_weight, 0.01);
-    nh.param(this_node::getName() + "/optimizer/random_level", random_level, 1e-4);
     nh.param(this_node::getName() + "/optimizer/discrepancy", discr, 30);
 }
 
@@ -231,16 +230,11 @@ void area_division::assign (vector<valarray<double>> matrix)
 
 valarray<double> area_division::FinalUpdateOnMetricMatrix(double CM, valarray<double> curentONe, valarray<float> CC)
 {
-    random_numbers::RandomNumberGenerator* rng = new random_numbers::RandomNumberGenerator();
-
     valarray<double> MMnew(rows*cols);
 
     for (int i=0; i<MMnew.size(); ++i) {
-        double random = 2.0*random_level * rng->uniform01() + 1.0 - random_level;
-        MMnew[i] = curentONe[i] * CM * random * CC[i];
+        MMnew[i] = curentONe[i] * CM * CC[i];
     }
-
-    delete rng;
 
     return MMnew;
 }
