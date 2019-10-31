@@ -8,7 +8,7 @@ The swarm functions library provides simple functionalities that enable swarm al
 The behavior library is based on the latest ROS long-term support release [ROS Kinetic Kame](https://wiki.ros.org/kinetic/). Newer versions may also work.
 
 To run swarm functions of this library, the abstraction library is required. The abstraction library consists of three sub-libraries:
-* [hardware functions](https://github.com/cpswarm/hardware functions)
+* [hardware functions](https://github.com/cpswarm/hardware_functions)
 * [sensing and actuation](https://github.com/cpswarm/sensing_actuation)
 * hardware drivers
 
