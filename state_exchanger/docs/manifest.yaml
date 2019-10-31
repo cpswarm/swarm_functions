@@ -1,0 +1,18 @@
+actions: []
+authors: Micha Sende <sende@lakeside-labs.com>
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- cpswarm_msgs
+- roscpp
+- smach_msgs
+description: A package that exchanges behavioral states between multiple cyber physical
+  systems (CPSs) in a swarm.
+license: Apache License 2.0
+maintainers: Micha Sende <sende@lakeside-labs.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: http://wiki.ros.org/state_exchanger

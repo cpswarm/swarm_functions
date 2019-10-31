@@ -1,8 +1,8 @@
 #include "state_exchanger.h"
 
 /**
- * @brief Callback function for position updates.
- * @param msg Position received from the CPS.
+ * @brief Callback function for state updates.
+ * @param msg State received from the CPS state machine.
  */
 void state_callback (const smach_msgs::SmachContainerStatus::ConstPtr& msg)
 {
@@ -54,7 +54,7 @@ int main (int argc, char **argv)
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
     double timeout;
     nh.param(this_node::getName() + "/timeout", timeout, 20.0);
     sm_path = "/SM_TOP";
