@@ -1,0 +1,20 @@
+actions: []
+authors: Micha Sende <sende@lakeside-labs.com>
+brief: ''
+bugtracker: ''
+depends:
+- nav_msgs
+- catkin
+- roscpp
+- cpswarm_msgs
+- geometry_msgs
+- tf2
+description: A package that generates an optimal path to cover a given area with a
+  cyber physical system (CPS).
+license: Apache License 2.0
+maintainers: Micha Sende <sende@lakeside-labs.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: http://wiki.ros.org/coverage_path

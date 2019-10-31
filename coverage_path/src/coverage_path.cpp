@@ -56,9 +56,9 @@ bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res
 }
 
 /**
- * @brief Callback function to get the coverage path.
- * @param req Path planning request that is ignored.
- * @param res The coverage path.
+ * @brief Callback function to get the current waypoint of the path.
+ * @param req Empty get waypoint request.
+ * @param res The current waypoint.
  * @return Whether the request succeeded.
  */
 bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWaypoint::Response &res)
