@@ -37,7 +37,7 @@ public:
     nav_msgs::OccupancyGrid get_grid (nav_msgs::OccupancyGrid map, string cps);
 
     /**
-     * @brief Define the CPSs.
+     * @brief Define the CPS positions.
      * @param cpss Mapping from UUIDs to positions of the CPSs.
      */
     void initialize_cps (map<string, vector<int>> cpss);
@@ -52,22 +52,25 @@ public:
 
 private:
     /**
-     * @brief TODO
+     * @brief Define the assignment matrix based on a given distance metric matrix.
+     * @param matrix A matrix of distance metrics.
      */
-    void assign (vector<valarray<double>> q);
+    void assign (vector<valarray<double>> matrix);
 
     /**
-     * @brief TODO
+     * @brief Calculate the connected multiplier.
+     * @param dist1
+     * @param dist2
+     * @return The connected multiplier array.
      */
     valarray<float> CalcConnectedMultiplier (valarray<float> dist1, valarray<float> dist2);
 
     /**
-     * @brief TODO
-     */
-    void calculateRobotBinaryArrays ();
-
-    /**
-     * @brief TODO
+     * @brief Update the metric matrix.
+     * @param CM Correction multiplier.
+     * @param curentONe Current metric matrix.
+     * @param CC Connected multiplier array.
+     * @return The updated metric matrix.
      */
     valarray<double> FinalUpdateOnMetricMatrix (double CM, valarray<double> curentONe, valarray<float> CC);
 
@@ -124,7 +127,7 @@ private:
     map<string, int> uuid_map;
 
     /**
-     * @brief TODO
+     * @brief A binary array for each CPS which indicates free space.
      */
     vector<valarray<int>> BWlist;
 
