@@ -1,6 +1,6 @@
 # target_monitor
 
-This ROS package manages information about targets in a swarm of cyber physical systems (CPSs).
+This package manages information about targets in a swarm of cyber physical systems (CPSs).
 
 ## Dependencies
 This package depends on the following message definitions:
