@@ -32,15 +32,15 @@ The launch file can be configured with following parameters:
 
 ### Parameter Files
 In the `param` subdirectory there is the parameter file `kinematics_exchanger.yaml` that allows to configure the behavior of the `kinematics_exchanger` node. It contains the following parameters:
-* `loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: 1.5)
   The frequency in Hz at which to run the control loops.
-* `queue_size` (integer, default: 10)
+* `~queue_size` (integer, default: 10)
   The size of the message queue used for publishing and subscribing to topics.
-* `timeout` (real, default: 20.0)
+* `~timeout` (real, default: 20.0)
   The time in seconds after which another CPS is considered to have left the swarm.
-* `sample_size` (integer, default: 5)
+* `~sample_size` (integer, default: 5)
   The number of data samples to average over for reliable results.
-* `init` (integer, default: 30)
+* `~init` (integer, default: 30)
   The number of messages to ignore during initialization. This is because the first messages are inaccurate.
 
 ## Nodes
