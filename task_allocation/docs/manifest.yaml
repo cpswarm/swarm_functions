@@ -8,12 +8,13 @@ depends:
 - cpswarm_msgs
 - roscpp
 - actionlib_msgs
-description: A package that offers an action server to assign a task to a cyber physical
-  system (CPS).
+description: A package that offers action servers for assigning tasks between cyber
+  physical system (CPS).
 license: Apache License 2.0
-maintainers: Gianluca Prato <prato@ismb.it>, Micha Sende <sende@lakeside-labs.com>
+maintainers: Micha Sende <sende@lakeside-labs.com>, Gianluca Prato <prato@ismb.it>,
+  Micha Sende <sende@lakeside-labs.com>
 msgs: []
 package_type: package
 repo_url: ''
 srvs: []
-url: ''
+url: http://wiki.ros.org/task_allocation

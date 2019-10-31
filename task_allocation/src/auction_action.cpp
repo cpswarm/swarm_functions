@@ -81,7 +81,10 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
     ROS_INFO("TASK_AUCTION - Starting task allocation auction for task %d at position (%.6f, %.6f)", task_id, task_pose.position.x, task_pose.position.y);
 
     // wait for bids
-    Rate rate(20.0);
+    NodeHandle nh;
+    double loop_rate;
+    nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
+    Rate rate(loop_rate);
     Time start_time = Time::now();
     while (ok() && !as->isPreemptRequested() && Time::now() - start_time < Duration(timeout)) {
         spinOnce();
@@ -144,10 +147,12 @@ int main(int argc, char **argv)
 
     // read parameters
     nh.param(this_node::getName() + "/timeout", timeout, 10.0);
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
 
     // publishers and subscribers
-    Subscriber cost_subscriber = nh.subscribe<cpswarm_msgs::TaskAllocationEvent>("bridge/events/cps_selection", 10, bid_callback);
-    publisher = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("cps_selected", 1, true);
+    Subscriber cost_subscriber = nh.subscribe<cpswarm_msgs::TaskAllocationEvent>("bridge/events/cps_selection", queue_size, bid_callback);
+    publisher = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("cps_selected", queue_size, true);
 
     // start the action server and wait
     Server server(nh, "cmd/task_allocation_auction", boost::bind(&auction_callback, _1, &server), false);

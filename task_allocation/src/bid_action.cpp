@@ -98,7 +98,10 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     task_allocation.bid = 1.0 / distance;
 
     // publish bid until auction ends
-    Rate rate(1.0);
+    NodeHandle nh;
+    double loop_rate;
+    nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
+    Rate rate(loop_rate);
     while (ok() && !as->isPreemptRequested() && allocation.task_id < 0) {
         ROS_DEBUG_ONCE("TASK_BID - Waiting for auction to end");
         publisher.publish(task_allocation);
@@ -149,14 +152,20 @@ int main(int argc, char **argv)
     task_id = -1;
     allocation.task_id = -1;
 
+    // read parameters
+    double loop_rate;
+    nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
+    Rate rate(loop_rate);
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
+
     // publishers and subscribers
-    Subscriber pose_subscriber = nh.subscribe<geometry_msgs::PoseStamped>("pos_provider/pose", 10, pose_callback);
-    Subscriber allocation_subscriber = nh.subscribe<cpswarm_msgs::TaskAllocatedEvent>("bridge/events/cps_selected", 10, allocation_callback);
+    Subscriber pose_subscriber = nh.subscribe<geometry_msgs::PoseStamped>("pos_provider/pose", queue_size, pose_callback);
+    Subscriber allocation_subscriber = nh.subscribe<cpswarm_msgs::TaskAllocatedEvent>("bridge/events/cps_selected", queue_size, allocation_callback);
     Subscriber uuid_subscriber = nh.subscribe<swarmros::String>("bridge/uuid", 1, uuid_callback);
-    publisher = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("cps_selection", 10);
+    publisher = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("cps_selection", queue_size);
 
     // wait for pose and uuid
-    Rate rate(10.0);
     while (ok() && (!pose_received || uuid.compare("") == 0)) {
         ROS_DEBUG_ONCE("TASK_BID - Waiting for position or UUID...");
         spinOnce();
