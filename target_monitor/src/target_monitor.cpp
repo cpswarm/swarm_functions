@@ -179,7 +179,7 @@ int main (int argc, char** argv)
     bool simulation;
     nh.param(this_node::getName() + "/simulation", simulation, false);
     int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
 
     // rate of update loop
     double loop_rate;

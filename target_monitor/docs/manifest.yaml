@@ -1,0 +1,20 @@
+actions: []
+authors: Micha Sende <sende@lakeside-labs.com>
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- roscpp
+- cpswarm_msgs
+- swarmros
+- geometry_msgs
+- tf2
+description: A package that manages information about targets in a swarm of cyber
+  physical systems (CPSs).
+license: Apache License 2.0
+maintainers: Micha Sende <sende@lakeside-labs.com>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: http://wiki.ros.org/target_monitor

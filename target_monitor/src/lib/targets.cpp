@@ -7,8 +7,8 @@ targets::targets ()
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
     Rate rate(loop_rate);
     int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    nh.param(this_node::getName() + "/fov", fov, 1.0);
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
+    nh.param(this_node::getName() + "/fov", fov, 0.5);
 
     // uuid of this cps
     cps = "";

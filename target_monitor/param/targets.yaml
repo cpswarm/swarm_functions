@@ -1,4 +1,4 @@
-targets_x: # The locations of the targets to rescue in simulation, given as two separate lists of local x-coordinates and y-coordinates. Make sure they are given in order. The target IDs are the list indexes.
+targets_x: # The locations of the targets in simulation, given as two separate lists of local x-coordinates and y-coordinates. Make sure they are given in order. The target IDs are the list indexes.
 - 0
 - 1
 - 2

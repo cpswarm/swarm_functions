@@ -22,9 +22,9 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
     int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
     double timeout;
-    nh.param(this_node::getName() + "/timeout", timeout, 1.0);
+    nh.param(this_node::getName() + "/tracking_timeout", timeout, 5.0);
     this->timeout = Duration(timeout);
     nh.param(this_node::getName() + "/target_tolerance", target_tolerance, 0.1);
 
