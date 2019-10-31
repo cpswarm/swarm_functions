@@ -36,11 +36,11 @@ The launch file can be configured with following parameters:
 
 ### Parameter Files
 In the `param` subdirectory there is the parameter file `coverage_path.yaml` that allows to configure the behavior of the `coverage_path` node. It contains the following parameters:
-* `loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: 1.5)
   The frequency in Hz at which to run the control loops.
-* `queue_size` (integer, default: 1)
+* `~queue_size` (integer, default: 1)
   The size of the message queue used for publishing and subscribing to topics.
-* `swarm_timeout` (real, default: 5.0)
+* `~swarm_timeout` (real, default: 5.0)
   Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
 * `~visualize` (boolean, default: false)
   Whether to publish the coverage path on a topic for visualization.
