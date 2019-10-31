@@ -26,7 +26,7 @@ to launch the `kinematics_exchanger` node.
 ### Launch File Parameters
 The launch file can be configured with following parameters:
 * `id` (integer, default: 1)
-  The identifier (ID) of the CPS.
+  The identifier (ID) of the CPS used for name spacing in simulation.
 * `output` (string, default: screen)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
