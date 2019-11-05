@@ -9,7 +9,7 @@ This package depends on the following message definitions:
 
 The communication between CPSs is based on the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
-The following packages of the [sensing and actuation](https://github.com/cpswarm/sensing_actuation) library are required:
+The following packages of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation) are required:
 * *_pos_provider
 * *_vel_provider
 
@@ -23,25 +23,13 @@ roslaunch kinematics_exchanger kinematics_exchanger.launch
 ```
 to launch the `kinematics_exchanger` node.
 
-### Launch File Parameters
 The launch file can be configured with following parameters:
 * `id` (integer, default: 1)
   The identifier (ID) of the CPS used for name spacing in simulation.
 * `output` (string, default: screen)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
-### Parameter Files
-In the `param` subdirectory there is the parameter file `kinematics_exchanger.yaml` that allows to configure the behavior of the `kinematics_exchanger` node. It contains the following parameters:
-* `~loop_rate` (real, default: 1.5)
-  The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 10)
-  The size of the message queue used for publishing and subscribing to topics.
-* `~timeout` (real, default: 20.0)
-  The time in seconds after which another CPS is considered to have left the swarm.
-* `~sample_size` (integer, default: 5)
-  The number of data samples to average over for reliable results.
-* `~init` (integer, default: 30)
-  The number of messages to ignore during initialization. This is because the first messages are inaccurate.
+In the `param` subdirectory there is the parameter file `kinematics_exchanger.yaml` that allows to configure the behavior of the `kinematics_exchanger` node.
 
 ## Nodes
 
@@ -69,6 +57,18 @@ The `kinematics_exchanger` node publishes position and velocity of this CPS to t
   The positions of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the position of this CPS.
 * `swarm_velocity_rel` ([cpswarm_msgs/ArrayOfVectors](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfVectors.html))
   The velocities of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the velocity of this CPS.
+
+#### Parameters
+* `~loop_rate` (real, default: 1.5)
+  The frequency in Hz at which to run the control loops.
+* `~queue_size` (integer, default: 10)
+  The size of the message queue used for publishing and subscribing to topics.
+* `~timeout` (real, default: 20.0)
+  The time in seconds after which another CPS is considered to have left the swarm.
+* `~sample_size` (integer, default: 5)
+  The number of data samples to average over for reliable results.
+* `~init` (integer, default: 30)
+  The number of messages to ignore during initialization. This is because the first messages are inaccurate.
 
 ## Code API
 [kinematics_exchanger package code API documentation](https://cpswarm.github.io/swarm_functions/kinematics_exchanger/docs/html/files.html)

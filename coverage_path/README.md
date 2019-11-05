@@ -10,11 +10,11 @@ This package depends on the following message definitions:
 
 The communication between CPSs is based on the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
-The following packages of the [swarm functions](https://github.com/cpswarm/swarm_functions) library are required:
+The following packages of the [swarm functions library](https://github.com/cpswarm/swarm_functions) are required:
 * area_division
 * state_exchanger
 
-The following packages of the [sensing and actuation](https://github.com/cpswarm/sensing_actuation) library are required:
+The following packages of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation) are required:
 * *_pos_provider
 
 Further required packages are:
@@ -27,23 +27,13 @@ roslaunch coverage_path coverage_path.launch
 ```
 to launch the `coverage_path` node.
 
-### Launch File Parameters
 The launch file can be configured with following parameters:
 * `id` (integer, default: 1)
   The identifier (ID) of the CPS used for name spacing in simulation.
 * `output` (string, default: screen)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
-### Parameter Files
-In the `param` subdirectory there is the parameter file `coverage_path.yaml` that allows to configure the behavior of the `coverage_path` node. It contains the following parameters:
-* `~loop_rate` (real, default: 1.5)
-  The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 1)
-  The size of the message queue used for publishing and subscribing to topics.
-* `~swarm_timeout` (real, default: 5.0)
-  Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
-* `~visualize` (boolean, default: false)
-  Whether to publish the coverage path on a topic for visualization.
+In the `param` subdirectory there is the parameter file `coverage_path.yaml` that allows to configure the behavior of the `coverage_path` node.
 
 ## Nodes
 
@@ -73,6 +63,16 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
 #### Services Called
 * `area/assigned` ([nav_msgs/GetMap](http://docs.ros.org/api/nav_msgs/html/srv/GetMap.html))
   Get the map of the area assigned to this CPS.
+
+#### Parameters
+* `~loop_rate` (real, default: 1.5)
+  The frequency in Hz at which to run the control loops.
+* `~queue_size` (integer, default: 1)
+  The size of the message queue used for publishing and subscribing to topics.
+* `~swarm_timeout` (real, default: 5.0)
+  Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
+* `~visualize` (boolean, default: false)
+  Whether to publish the coverage path on a topic for visualization.
 
 ## Code API
 [coverage_path package code API documentation](https://cpswarm.github.io/swarm_functions/coverage_path/docs/html/files.html)

@@ -9,10 +9,10 @@ This package depends on the following message definitions:
 
 The communication between CPSs is based on the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
-The following packages of the [swarm functions](https://github.com/cpswarm/swarm_functions) library are required:
+The following packages of the [swarm functions library](https://github.com/cpswarm/swarm_functions) are required:
 * task_allocation
 
-The following packages of the [sensing and actuation](https://github.com/cpswarm/sensing_actuation) library are required:
+The following packages of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation) are required:
 * *_pos_provider
 
 Further required packages are:
@@ -25,33 +25,13 @@ roslaunch target_monitor target_monitor.launch
 ```
 to launch the `target_monitor` node.
 
-### Launch File Parameters
 The launch file can be configured with following parameters:
 * `id` (integer, default: 1)
   The identifier (ID) of the CPS used for name spacing in simulation.
 * `output` (string, default: screen)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
-### Parameter Files
-In the `param` subdirectory there are two parameter files `target_monitor.yaml` and `targets.yaml` that allows to configure the behavior of the `target_monitor` node. The `target_monitor.yaml` contains the following parameters:
-* `~loop_rate` (real, default: 1.5)
-  The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 10)
-  The size of the message queue used for publishing and subscribing to topics.
-* `~tracking_timeout` (real, default: 5.0)
-  The time in seconds after which a target transitions into the state lost when no target information is received.
-* `~target_tolerance` (real, default: 0.1)
-  The path of the smach state machine whose state shall be exchanged.
-* `~fov` (real, default: 0.5)
-  Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.
-* `~simulation` (boolean, default: false)
-  Whether the targets are detected virtually by position or actually by the camera tracking topic.
-
-The `targets.yaml` contains the coordinates of the simulated targets. It is only used when the parameter `simulation` is set to `true`. They are given as two list parameters where the list index is the ID of the target:
-* `~targets_x` (real list, default: [])
-   The x-coordinates of the simulated targets.
-* `~targets_y` (real list, default: [])
-   The y-coordinates of the simulated targets.
+In the `param` subdirectory there are two parameter files `target_monitor.yaml` and `targets.yaml` that allows to configure the behavior of the `target_monitor` node. The `targets.yaml` contains the coordinates of the simulated targets. It is only used when the parameter `simulation` is set to `true`. They are given as two list parameters where the list index is the ID of the target.
 
 ## Nodes
 
@@ -61,7 +41,6 @@ The `target_monitor` node keeps track of targets and their positions that are be
 ![Target FSM](target_fsm.png)
 
 The state of the target changes depending on local and remote events that are exchanged between CPSs through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
-
 
 #### Subscribed Topics
 * `pos_provider/pose` ([geometry_msgs/PoseStamped](https://docs.ros.org/api/geometry_msgs/html/msg/PoseStamped.html))
@@ -98,8 +77,27 @@ The state of the target changes depending on local and remote events that are ex
   The event of a target being completed by this CPS. The event is forwarded by the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) to the other swarm members.
 
 #### Action Servers
-* `cmd/target_done` ([cpswarm_msgs/TargetAction](https://cpswarm.github.io/cpswarm_msgs/html/action/Target.html))
+* `cmd/target_done/goal` ([cpswarm_msgs/TargetGoal](https://cpswarm.github.io/cpswarm_msgs/html/action/Target.html))
   Sets the state of a target to done. This invokes the target_done event to be published.
+
+#### Parameters
+* `~loop_rate` (real, default: 1.5)
+  The frequency in Hz at which to run the control loops.
+* `~queue_size` (integer, default: 10)
+  The size of the message queue used for publishing and subscribing to topics.
+* `~tracking_timeout` (real, default: 5.0)
+  The time in seconds after which a target transitions into the state lost when no target information is received.
+* `~target_tolerance` (real, default: 0.1)
+  The path of the smach state machine whose state shall be exchanged.
+* `~fov` (real, default: 0.5)
+  Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.
+* `~simulation` (boolean, default: false)
+  Whether the targets are detected virtually by position or actually by the camera tracking topic.
+
+* `~targets_x` (real list, default: [])
+   The x-coordinates of the simulated targets.
+* `~targets_y` (real list, default: [])
+   The y-coordinates of the simulated targets.
 
 ## Code API
 [target_monitor package code API documentation](https://cpswarm.github.io/swarm_functions/target_monitor/docs/html/files.html)
