@@ -35,20 +35,11 @@ In the `param` subdirectory there is the parameter file `task_allocation.yaml` t
 ### auction_action
 The `auction_action` node offers the `task_allocation_auction` action server that acts as auctioneer in the task allocation auction. When the action is called, it opens an auction and announces the task with ID and location. It then waits a specific time for the bids of other CPS. Once the auction timeout expires, it broadcasts the ID of the winning CPS, i.e., the one with the highest bid, to which the task is assigned. If no CPS participated in the auction, the action server aborts the auction goal.
 
-#### Action API
-The `auction_action` node provides an implementation of the SimpleActionServer to provide the task allocation auction process. It takes in goals containing cpswarm_msgs/TaskAllocation messages.
-
-##### Action Subscribed Topics
+#### Action Goal
 * `cmd/task_allocation_auction/goal` ([cpswarm_msgs/TaskAllocationGoal](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   A goal to start an auction containing the universally unique ID (UUID) of the auctioneer together with the ID and the position of the task that is auctioned.
-* `cmd/task_allocation_auction/cancel` ([actionlib_msgs/GoalID](https://docs.ros.org/api/actionlib_msgs/html/msg/GoalID.html))
-  A request to cancel a specific auction goal.
 
-##### Action Published Topics
-* `cmd/task_allocation_auction/feedback` ([cpswarm_msgs/TaskAllocationFeedback](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
-  The feedback is empty for the `task_allocation_auction` action.
-* `cmd/task_allocation_auction/status` ([actionlib_msgs/GoalStatusArray](https://docs.ros.org/api/actionlib_msgs/html/msg/GoalStatusArray.html))
-  Provides status information on the goals that are sent to the `task_allocation_auction` action.
+#### Action Result
 * `cmd/task_allocation_auction/result` ([cpswarm_msgs/TaskAllocationResult](https://cpswarm.github.io/cpswarm_msgs/html/action/TaskAllocation.html))
   The result of the auction contains the UUID of the winning CPS, together with ID and position of the task that has been auctioned.
 
