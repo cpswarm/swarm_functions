@@ -12,7 +12,7 @@
 
     <!-- Url tags are optional, but multiple are allowed, one per tag -->
     <!-- Optional attribute type can be: website, bugtracker, or repository -->
-    <url type="website">http://wiki.ros.org/state_exchanger</url>
+    <url type="website">https://wiki.ros.org/state_exchanger</url>
 
     <!-- Author tags are optional, multiple are allowed, one per tag -->
     <!-- Authors do not have to be maintainers, but could be -->
