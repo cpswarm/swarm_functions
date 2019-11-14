@@ -205,8 +205,8 @@ void area_division::assign (vector<valarray<double>> matrix)
     ArrayOfElements.resize(nr);
     for (int i=0; i<rows; i++) {
         for (int j=0; j<cols; j++) {
-            // unknown grid cell (treat as free)
-            if (gridmap[i*cols+j] == -1) {
+            // free grid cell
+            if (gridmap[i*cols+j] < 50) {
                 double minV = matrix[0][i*cols+j];
                 int indMin = 0;
                 for (int r=1; r<nr; r++) {
