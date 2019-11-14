@@ -16,7 +16,7 @@ $(function() {
 <div id="main-nav"></div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_3ebdb57ff8bba63229910f993a9c488b.html">coverage_path</a></li><li class="navelem"><a class="el" href="dir_3bdef5ab35625bd084133b1c731fa4b8.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -43,9 +43,9 @@ Include dependency graph for coverage_path.cpp:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aafdf5b46b00928b44ab86f0a56df3e92"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8cpp.html#aafdf5b46b00928b44ab86f0a56df3e92">generate_path</a> ()</td></tr>
-<tr class="memdesc:aafdf5b46b00928b44ab86f0a56df3e92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate an optimal coverage path for a given area.  <a href="#aafdf5b46b00928b44ab86f0a56df3e92">More...</a><br /></td></tr>
-<tr class="separator:aafdf5b46b00928b44ab86f0a56df3e92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a530da2039aff24329ca61c428193547a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8cpp.html#a530da2039aff24329ca61c428193547a">generate_path</a> (geometry_msgs::Point start)</td></tr>
+<tr class="memdesc:a530da2039aff24329ca61c428193547a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate an optimal coverage path for a given area.  <a href="#a530da2039aff24329ca61c428193547a">More...</a><br /></td></tr>
+<tr class="separator:a530da2039aff24329ca61c428193547a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88088c3ff1e9bf0a527ee19eff53a445"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8cpp.html#a88088c3ff1e9bf0a527ee19eff53a445">get_path</a> (nav_msgs::GetPlan::Request &amp;req, nav_msgs::GetPlan::Response &amp;res)</td></tr>
 <tr class="memdesc:a88088c3ff1e9bf0a527ee19eff53a445"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to get the coverage path.  <a href="#a88088c3ff1e9bf0a527ee19eff53a445">More...</a><br /></td></tr>
 <tr class="separator:a88088c3ff1e9bf0a527ee19eff53a445"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -55,9 +55,6 @@ Functions</h2></td></tr>
 <tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 <tr class="memdesc:a3c04138a5bfe5d72780bb7e82a18e627"><td class="mdescLeft">&#160;</td><td class="mdescRight">A ROS node that computes the optimal paths for area coverage with a swarm of CPSs.  <a href="#a3c04138a5bfe5d72780bb7e82a18e627">More...</a><br /></td></tr>
 <tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a535f048a2557c01d671d0f9a3da40009"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8cpp.html#a535f048a2557c01d671d0f9a3da40009">pose_callback</a> (const geometry_msgs::PoseStamped::ConstPtr &amp;msg)</td></tr>
-<tr class="memdesc:a535f048a2557c01d671d0f9a3da40009"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for position updates.  <a href="#a535f048a2557c01d671d0f9a3da40009">More...</a><br /></td></tr>
-<tr class="separator:a535f048a2557c01d671d0f9a3da40009"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f4f549c0aeed2153ebf4e19e4ed3880"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8cpp.html#a8f4f549c0aeed2153ebf4e19e4ed3880">state_callback</a> (const cpswarm_msgs::StateEvent::ConstPtr &amp;msg)</td></tr>
 <tr class="memdesc:a8f4f549c0aeed2153ebf4e19e4ed3880"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for state updates.  <a href="#a8f4f549c0aeed2153ebf4e19e4ed3880">More...</a><br /></td></tr>
 <tr class="separator:a8f4f549c0aeed2153ebf4e19e4ed3880"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -66,8 +63,8 @@ Functions</h2></td></tr>
 <tr class="separator:ace1e723102b1370977cd8702c65f2dfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aafdf5b46b00928b44ab86f0a56df3e92"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafdf5b46b00928b44ab86f0a56df3e92">&#9670;&nbsp;</a></span>generate_path()</h2>
+<a id="a530da2039aff24329ca61c428193547a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a530da2039aff24329ca61c428193547a">&#9670;&nbsp;</a></span>generate_path()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -75,16 +72,23 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">bool generate_path </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">geometry_msgs::Point&#160;</td>
+          <td class="paramname"><em>start</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Generate an optimal coverage path for a given area. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">start</td><td>The starting position of the path. </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the path has been generated successfully. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00007">7</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00008">8</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -124,7 +128,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00044">44</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00045">45</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -164,7 +168,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00064">64</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00065">65</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -204,35 +208,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Success. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00169">169</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a535f048a2557c01d671d0f9a3da40009"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a535f048a2557c01d671d0f9a3da40009">&#9670;&nbsp;</a></span>pose_callback()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void pose_callback </td>
-          <td>(</td>
-          <td class="paramtype">const geometry_msgs::PoseStamped::ConstPtr &amp;&#160;</td>
-          <td class="paramname"><em>msg</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Callback function for position updates. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">msg</td><td>Position received from the CPS. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00092">92</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00156">156</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -260,7 +236,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00106">106</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00093">93</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -288,7 +264,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00120">120</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8cpp_source.html#l00107">107</a> of file <a class="el" href="coverage__path_8cpp_source.html">coverage_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -298,7 +274,7 @@ Functions</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/coverage_path">coverage_path</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Oct 31 2019 10:37:31</small>
+<small>autogenerated on Thu Nov 14 2019 09:31:43</small>
 </div>
 </body>
 </html>

@@ -34,16 +34,6 @@ Publisher wp_publisher;
 ServiceClient map_getter;
 
 /**
- * @brief Current position of the CPS.
- */
-geometry_msgs::Pose pose;
-
-/**
- * @brief Whether a valid position has been received.
- */
-bool pose_valid;
-
-/**
  * @brief Current state of the CPS.
  */
 string state;

@@ -11,11 +11,11 @@ This package depends on the following message definitions:
 The communication between CPSs is based on the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
 The following packages of the [swarm functions library](https://github.com/cpswarm/swarm_functions) are required:
-* area_division
+* area_division (only if `divide_area=true`)
 * state_exchanger
 
 The following packages of the [sensing and actuation library](https://github.com/cpswarm/sensing_actuation) are required:
-* *_pos_provider
+* area_provider (only if `divide_area=false`)
 
 Further required packages are:
 * [tf2](https://wiki.ros.org/tf2/)
@@ -41,8 +41,6 @@ In the `param` subdirectory there is the parameter file `coverage_path.yaml` tha
 The `coverage_path` node generates a path that allows a CPS to cover a given area. It uses the area assigned by the area_division package. The generated coverage path is based on a [minimum spanning tree](https://en.wikipedia.org/wiki/Minimum_spanning_tree) to optimally sweep the area. The path is regenerated when CPSs with the same behavior state join or leave the swarm. A regeneration of the path also triggers a new area division among the CPSs. The path can be retrieved either as a whole or waypoint after waypoint. In the latter case, the current waypoint is returned, based on the current position of the CPS.
 
 #### Subscribed Topics
-* `pos_provider/pose` ([geometry_msgs/PoseStamped](https://docs.ros.org/api/geometry_msgs/html/msg/PoseStamped.html))
-  The current position of this CPS.
 * `state` ([cpswarm_msgs/StateEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/StateEvent.html))
   The current behavior state of this CPS.
 * `swarm_state` ([cpswarm_msgs/ArrayOfStates](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfStates.html))
@@ -57,12 +55,14 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
 #### Services
 * `coverage_path/path` ([nav_msgs/GetPlan](http://docs.ros.org/api/nav_msgs/html/srv/GetPlan.html))
   Provides the complete generated path.
-* `coverage_path/waypoint` ([cpswarm_msgs/GetWaypoint](https://cpswarm.github.io/cpswarm_msgs/html/srv/path/GetWaypoint.html))
+* `coverage_path/waypoint` ([cpswarm_msgs/GetWaypoint](https://cpswarm.github.io/cpswarm_msgs/html/srv/GetWaypoint.html))
   Provides the current waypoint of the generated path.
 
 #### Services Called
+* `area/get_map` ([nav_msgs/GetMap](http://docs.ros.org/api/nav_msgs/html/srv/GetMap.html))
+  Get the map of the environment. Only called if `divide_area=false`.
 * `area/assigned` ([nav_msgs/GetMap](http://docs.ros.org/api/nav_msgs/html/srv/GetMap.html))
-  Get the map of the area assigned to this CPS.
+  Get the map of the area assigned to this CPS. Only called if `divide_area=true`.
 
 #### Parameters
 * `~loop_rate` (real, default: 1.5)
@@ -73,6 +73,8 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
   Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
 * `~visualize` (boolean, default: false)
   Whether to publish the coverage path on a topic for visualization.
+* `~divide_area` (boolean, default: false)
+  Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map.
 
 ## Code API
 [coverage_path package code API documentation](https://cpswarm.github.io/swarm_functions/coverage_path/docs/html/files.html)

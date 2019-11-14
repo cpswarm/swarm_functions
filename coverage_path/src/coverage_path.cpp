@@ -2,13 +2,14 @@
 
 /**
  * @brief Generate an optimal coverage path for a given area.
+ * @param start The starting position of the path.
  * @return Whether the path has been generated successfully.
  */
-bool generate_path ()
+bool generate_path (geometry_msgs::Point start)
 {
     // get area to cover
-    nav_msgs::GetMap division;
-    if (map_getter.call(division) == false){
+    nav_msgs::GetMap map;
+    if (map_getter.call(map) == false){
         ROS_ERROR("Failed to get the assigned map, cannot compute coverage path!");
         return false;
     }
@@ -17,14 +18,14 @@ bool generate_path ()
 
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
-    tree.initialize_graph(division.response.map);
+    tree.initialize_graph(map.response.map);
     tree.construct();
 
     // generate path
     ROS_DEBUG("Generate coverage path...");
-    path.initialize_graph(division.response.map);
+    path.initialize_graph(map.response.map);
     path.initialize_tree(tree.get_mst_edges());
-    path.generate_path(pose.position);
+    path.generate_path(start);
 
     // visualize path
     if (visualize)
@@ -45,7 +46,7 @@ bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res
 {
     // compute new path if swarm configuration changed
     if (reconfigure) {
-        if (generate_path() == false)
+        if (generate_path(req.start.pose.position) == false)
             return false;
     }
 
@@ -65,12 +66,12 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
 {
     // compute new path if swarm configuration changed
     if (reconfigure) {
-        if (generate_path() == false)
+        if (generate_path(req.position) == false)
             return false;
     }
 
     // return waypoint
-    res.point = path.get_waypoint(pose.position, req.tolerance);
+    res.point = path.get_waypoint(req.position, req.tolerance);
     res.valid = path.valid();
 
     // visualize waypoint
@@ -83,20 +84,6 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
     }
 
     return true;
-}
-
-/**
- * @brief Callback function for position updates.
- * @param msg Position received from the CPS.
- */
-void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
-{
-    // store new position and orientation in class variables
-    pose = msg->pose;
-
-    // valid pose received
-    if (msg->header.stamp.isValid())
-        pose_valid = true;
 }
 
 /**
@@ -182,32 +169,28 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
     nh.param(this_node::getName() + "/visualize", visualize, false);
+    bool divide_area;
+    nh.param(this_node::getName() + "/divide_area", divide_area, false);
 
     // initialize flags
-    pose_valid = false;
     state_valid = false;
     swarm_valid = false;
 
     // publishers, subscribers, and service clients
-    Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     Subscriber state_subscriber = nh.subscribe("state", queue_size, state_callback);
     Subscriber swarm_subscriber = nh.subscribe("swarm_state", queue_size, swarm_callback);
     if (visualize) {
         path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
     }
-    map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");
+    if (divide_area)
+        map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");
+    else
+        map_getter = nh.serviceClient<nav_msgs::GetMap>("area/get_map");
     map_getter.waitForExistence();
 
     // init loop rate
     Rate rate(loop_rate);
-
-    // init position
-    while (ok() && pose_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for valid position information...");
-        rate.sleep();
-        spinOnce();
-    }
 
     // init state
     while (ok() && state_valid == false) {
