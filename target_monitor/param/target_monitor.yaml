@@ -3,4 +3,4 @@ queue_size:  10   # The size of the message queue used for publishing and subscr
 tracking_timeout:     5.0            # The time in seconds after which a target transitions into the state lost when no target information is received.
 target_tolerance:     0.1            # Minimum distance between two consecutive target positions such that a target update event is published.
 fov:                  0.5            # Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.
-simulation:           false          # Whether the targets are detected virtually by position or actually by the camera tracking topic.
+simulation:           true          # Whether the targets are detected virtually by position or actually by the camera tracking topic.
