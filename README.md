@@ -1,6 +1,6 @@
 # Swarm Functions Library
 
-The swarm functions library provides simple functionalities that enable swarm algorithms to work. It is part of the swarm library.
+The swarm functions library provides simple functionalities that enable swarm algorithms to work. It is part of the [swarm library](https://github.com/topics/swarm-library).
 
 ![Behavior Library Structure](library_structure.png)
 
