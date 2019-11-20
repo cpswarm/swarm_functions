@@ -18,6 +18,7 @@ The following packages of the [sensing and actuation library](https://github.com
 * area_provider (only if `divide_area=false`)
 
 Further required packages are:
+* [roscpp](https://wiki.ros.org/roscpp/)
 * [tf2](https://wiki.ros.org/tf2/)
 
 ## Execution
@@ -28,9 +29,9 @@ roslaunch coverage_path coverage_path.launch
 to launch the `coverage_path` node.
 
 The launch file can be configured with following parameters:
-* `id` (integer, default: 1)
+* `id` (integer, default: `1`)
   The identifier (ID) of the CPS used for name spacing in simulation.
-* `output` (string, default: screen)
+* `output` (string, default: `screen`)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
 In the `param` subdirectory there is the parameter file `coverage_path.yaml` that allows to configure the behavior of the `coverage_path` node.
@@ -65,15 +66,15 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
   Get the map of the area assigned to this CPS. Only called if `divide_area=true`.
 
 #### Parameters
-* `~loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: `1.5`)
   The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 1)
+* `~queue_size` (integer, default: `1`)
   The size of the message queue used for publishing and subscribing to topics.
-* `~swarm_timeout` (real, default: 5.0)
+* `~swarm_timeout` (real, default: `5.0`)
   Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
-* `~visualize` (boolean, default: false)
+* `~visualize` (boolean, default: `false`)
   Whether to publish the coverage path on a topic for visualization.
-* `~divide_area` (boolean, default: false)
+* `~divide_area` (boolean, default: `false`)
   Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map.
 
 ## Code API

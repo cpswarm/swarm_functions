@@ -11,6 +11,9 @@ The communication between CPSs is based on the [CPSwarm Communication Library](h
 
 The state that is exchanged is read from a [SMACH](https://wiki.ros.org/smach) state machine.
 
+Further required packages are:
+* [roscpp](https://wiki.ros.org/roscpp/)
+
 ## Execution
 Run the launch file
 ```
@@ -19,9 +22,9 @@ roslaunch state_exchanger state_exchanger.launch
 to launch the `state_exchanger` node.
 
 The launch file can be configured with following parameters:
-* `id` (integer, default: 1)
+* `id` (integer, default: `1`)
   The identifier (ID) of the CPS used for name spacing in simulation.
-* `output` (string, default: screen)
+* `output` (string, default: `screen`)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
 In the `param` subdirectory there is the parameter file `state_exchanger.yaml` that allows to configure the behavior of the `state_exchanger` node.
@@ -44,13 +47,13 @@ The `state_exchanger` node publishes behavioral states of this CPS to the rest o
   The states of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
 #### Parameters
-  * `~loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: `1.5`)
   The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 10)
+* `~queue_size` (integer, default: `10`)
   The size of the message queue used for publishing and subscribing to topics.
-* `~timeout` (real, default: 20.0)
+* `~timeout` (real, default: `20.0`)
   The time in seconds after which another CPS is considered to have left the swarm.
-* `~sm_path` (string, default: /SM_TOP)
+* `~sm_path` (string, default: `/SM_TOP`)
   The path of the smach state machine whose state shall be exchanged.
 
 ## Code API

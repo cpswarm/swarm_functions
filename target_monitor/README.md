@@ -16,6 +16,7 @@ The following packages of the [sensing and actuation library](https://github.com
 * *_pos_provider
 
 Further required packages are:
+* [roscpp](https://wiki.ros.org/roscpp/)
 * [tf2](https://wiki.ros.org/tf2/)
 
 ## Execution
@@ -26,9 +27,9 @@ roslaunch target_monitor target_monitor.launch
 to launch the `target_monitor` node.
 
 The launch file can be configured with following parameters:
-* `id` (integer, default: 1)
+* `id` (integer, default: `1`)
   The identifier (ID) of the CPS used for name spacing in simulation.
-* `output` (string, default: screen)
+* `output` (string, default: `screen`)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
 In the `param` subdirectory there are two parameter files `target_monitor.yaml` and `targets.yaml` that allows to configure the behavior of the `target_monitor` node. The `targets.yaml` contains the coordinates of the simulated targets. It is only used when the parameter `simulation` is set to `true`. They are given as two list parameters where the list index is the ID of the target.
@@ -81,22 +82,22 @@ The state of the target changes depending on local and remote events that are ex
   Sets the state of a target to done. This invokes the target_done event to be published.
 
 #### Parameters
-* `~loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: `1.5`)
   The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 10)
+* `~queue_size` (integer, default: `10`)
   The size of the message queue used for publishing and subscribing to topics.
-* `~tracking_timeout` (real, default: 5.0)
+* `~tracking_timeout` (real, default: `5.0`)
   The time in seconds after which a target transitions into the state lost when no target information is received.
-* `~target_tolerance` (real, default: 0.1)
+* `~target_tolerance` (real, default: `0.1`)
   The path of the smach state machine whose state shall be exchanged.
-* `~fov` (real, default: 0.5)
+* `~fov` (real, default: `0.5`)
   Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.
-* `~simulation` (boolean, default: false)
+* `~simulation` (boolean, default: `false`)
   Whether the targets are detected virtually by position or actually by the camera tracking topic.
 
-* `~targets_x` (real list, default: [])
+* `~targets_x` (real list, default: `[]`)
    The x-coordinates of the simulated targets.
-* `~targets_y` (real list, default: [])
+* `~targets_y` (real list, default: `[]`)
    The y-coordinates of the simulated targets.
 
 ## Code API

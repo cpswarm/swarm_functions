@@ -14,6 +14,7 @@ The following packages of the [sensing and actuation library](https://github.com
 * *_vel_provider
 
 Further required packages are:
+* [roscpp](https://wiki.ros.org/roscpp/)
 * [tf2](https://wiki.ros.org/tf2/)
 
 ## Execution
@@ -24,9 +25,9 @@ roslaunch kinematics_exchanger kinematics_exchanger.launch
 to launch the `kinematics_exchanger` node.
 
 The launch file can be configured with following parameters:
-* `id` (integer, default: 1)
+* `id` (integer, default: `1`)
   The identifier (ID) of the CPS used for name spacing in simulation.
-* `output` (string, default: screen)
+* `output` (string, default: `screen`)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
 In the `param` subdirectory there is the parameter file `kinematics_exchanger.yaml` that allows to configure the behavior of the `kinematics_exchanger` node.
@@ -59,15 +60,15 @@ The `kinematics_exchanger` node publishes position and velocity of this CPS to t
   The velocities of the other swarm members received through the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio) relative to the velocity of this CPS.
 
 #### Parameters
-* `~loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: `1.5`)
   The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 10)
+* `~queue_size` (integer, default: `10`)
   The size of the message queue used for publishing and subscribing to topics.
-* `~timeout` (real, default: 20.0)
+* `~timeout` (real, default: `20.0`)
   The time in seconds after which another CPS is considered to have left the swarm.
-* `~sample_size` (integer, default: 5)
+* `~sample_size` (integer, default: `5`)
   The number of data samples to average over for reliable results.
-* `~init` (integer, default: 30)
+* `~init` (integer, default: `30`)
   The number of messages to ignore during initialization. This is because the first messages are inaccurate.
 
 ## Code API

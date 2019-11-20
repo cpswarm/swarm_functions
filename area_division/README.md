@@ -15,6 +15,9 @@ The following packages of the [sensing and actuation library](https://github.com
 * *_pos_provider
 * *_pos_controller
 
+Further required packages are:
+* [roscpp](https://wiki.ros.org/roscpp/)
+
 ## Execution
 Run the launch file
 ```
@@ -23,9 +26,9 @@ roslaunch area_division area_division.launch
 to launch the `area_division` node.
 
 The launch file can be configured with following parameters:
-* `id` (integer, default: 1)
+* `id` (integer, default: `1`)
   The identifier (ID) of the CPS used for name spacing in simulation.
-* `output` (string, default: screen)
+* `output` (string, default: `screen`)
   Whether to show the program output (`screen`) or to write it to a log file (`log`).
 
 In the `param` subdirectory there is the parameter file `area_division.yaml` that allows to configure the behavior of the `area_division` node.
@@ -58,19 +61,19 @@ The `area_division` divides the environment area among multiple CPSs. When this 
   Provides the map of the area assigned to this CPS.
 
 #### Parameters
-* `~loop_rate` (real, default: 1.5)
+* `~loop_rate` (real, default: `1.5`)
   The frequency in Hz at which to run the control loops.
-* `~queue_size` (integer, default: 10)
+* `~queue_size` (integer, default: `10`)
   The size of the message queue used for publishing and subscribing to topics.
-* `~swarm_timeout` (real, default: 5.0)
+* `~swarm_timeout` (real, default: `5.0`)
   The time in seconds to wait after an area division event before starting the area division.
-* `~visualize` (boolean, default: false)
+* `~visualize` (boolean, default: `false`)
   Whether to publish the area division on a topic for visualization.
-* `~/optimizer/iterations` (integer, default: 10)
+* `~/optimizer/iterations` (integer, default: `10`)
   Maximum number of iterations of the optimization algorithm.
-* `~/optimizer/variate_weight` (real, default: 0.01)
+* `~/optimizer/variate_weight` (real, default: `0.01`)
   Maximum variate weight of connected components.
-* `~/optimizer/discrepancy` (integer, default: 30)
+* `~/optimizer/discrepancy` (integer, default: `30`)
   Maximum difference between number of assigned grid cells to each CPS.
 
 ## Code API
