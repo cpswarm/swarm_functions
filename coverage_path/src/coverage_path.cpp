@@ -21,6 +21,10 @@ bool generate_path (geometry_msgs::Point start)
     tree.initialize_graph(map.response.map);
     tree.construct();
 
+    // visualize path
+    if (visualize)
+        mst_publisher.publish(tree.get_tree());
+
     // generate path
     ROS_DEBUG("Generate coverage path...");
     path.initialize_graph(map.response.map);
@@ -182,6 +186,7 @@ int main (int argc, char **argv)
     if (visualize) {
         path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
+        mst_publisher = nh.advertise<geometry_msgs::PoseArray>("coverage_path/mst", queue_size, true);
     }
     if (divide_area)
         map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");

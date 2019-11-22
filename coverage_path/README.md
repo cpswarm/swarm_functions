@@ -52,6 +52,8 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
   The generated path for visualization purposes. Only published if the parameter `visualize` is set to true.
 * `coverage_path/waypoint` ([geometry_msgs/PointStamped](http://docs.ros.org/api/geometry_msgs/html/msg/PointStamped.html))
   The current waypoint of the generated path for visualization purposes. Only published if the parameter `visualize` is set to true.
+* `coverage_path/mst` ([geometry_msgs/PoseArray](http://docs.ros.org/api/geometry_msgs/html/msg/PoseArray.html))
+  The minimum spanning tree of the area for visualization purposes. Only published if the parameter `visualize` is set to true.
 
 #### Services
 * `coverage_path/path` ([nav_msgs/GetPlan](http://docs.ros.org/api/nav_msgs/html/srv/GetPlan.html))

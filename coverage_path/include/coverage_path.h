@@ -5,6 +5,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/PoseArray.h>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
@@ -27,6 +28,11 @@ Publisher path_publisher;
  * @brief Publisher to visualize the current waypoint.
  */
 Publisher wp_publisher;
+
+/**
+ * @brief Publisher to visualize the minimum spanning tree.
+ */
+Publisher mst_publisher;
 
 /**
  * @brief Service client to get the assigned area.
