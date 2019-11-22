@@ -11,7 +11,19 @@ bool edge::operator== (const edge &e) const
 
 bool compare_edge::operator() (const edge& a, const edge& b) const
 {
-    return a.cost < b.cost;
+    if (a.cost == b.cost) {
+        if (abs(a.to - a.from) == abs(b.to - b.from))
+            // third, edges on the right
+            return a.from < b.from;
+
+        // second, horizontal edges
+        else
+            return abs(a.to - a.from) > abs(b.to - b.from);
+    }
+
+    // first, edges with lowest cost
+    else
+        return a.cost < b.cost;
 }
 
 size_t hash_edge::operator() (const edge& e) const
