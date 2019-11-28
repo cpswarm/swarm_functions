@@ -65,14 +65,14 @@ void tracking_callback (const cpswarm_msgs::TargetTracking::ConstPtr& msg)
 {
     // compute distance and direction of target
     double distance = hypot(msg->tf.translation.x, msg->tf.translation.y);
-    double direction = yaw() + atan2(msg->tf.translation.y, -msg->tf.translation.x) - M_PI / 2; // x is inverted in tracking camera tf
+    double direction = yaw() + atan2(msg->tf.translation.y, msg->tf.translation.x) - M_PI / 2; // x is inverted in tracking camera tf
 
     // create position event message to update target internally
     cpswarm_msgs::TargetPositionEvent event;
     event.id = msg->id;
-    event.pose.pose.position.x = pose.position.x + distance * cos(direction);
-    event.pose.pose.position.y = pose.position.y + distance * sin(direction);
-    event.pose.pose.orientation = rotate(msg->tf.rotation);
+    event.pose.pose.position.x = msg->tf.translation.x; //+ distance * cos(direction);
+    event.pose.pose.position.y = msg->tf.translation.y; // + distance * sin(direction);
+    event.pose.pose.orientation = msg->tf.rotation;
     event.header.stamp = msg->header.stamp;
     monitor->update(event, TARGET_TRACKED);
 }
@@ -190,10 +190,11 @@ int main (int argc, char** argv)
     monitor = new targets();
 
     // read target positions from parameter file
+    /*
     if (simulation) {
         monitor->simulate();
     }
-
+*/
     // no pose received yet
     pose_valid = false;
 
