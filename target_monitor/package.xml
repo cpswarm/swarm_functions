@@ -25,6 +25,7 @@
     <depend>geometry_msgs</depend>
     <depend>swarmros</depend>
     <depend>cpswarm_msgs</depend>
+    <depend>tf</depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>
