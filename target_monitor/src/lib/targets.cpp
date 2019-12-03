@@ -129,6 +129,7 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
 
 geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_msgs::Pose p2) const
 {
+  
     // orientation of first point
     tf2::Quaternion orientation1;/*
     tf2::fromMsg(p1.orientation, orientation1);
