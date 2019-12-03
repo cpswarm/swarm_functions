@@ -3,10 +3,13 @@
 
 #include <unordered_map>
 #include <tf2/utils.h>
+#include <tf/transform_listener.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Transform.h>
+#include <ar_track_alvar_msgs/AlvarMarkers.h>
 #include <swarmros/String.h>
 #include <cpswarm_msgs/TargetTracking.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include "target.h"
 
 /**
@@ -61,6 +64,12 @@ private:
     void uuid_callback (const swarmros::String::ConstPtr& msg);
 
     /**
+     * @brief Callback function to receive the ar markers seen by the robot.
+     * @param msg ar markers seen.
+     */
+    void ar_marker_callback (const ar_track_alvar_msgs::AlvarMarkers::ConstPtr msg);
+
+    /**
      * @brief A node handle for the main ROS node.
      */
     NodeHandle nh;
@@ -69,6 +78,20 @@ private:
      * @brief Publisher for transmitting target tracking information.
      */
     Publisher tracking_pub;
+
+    /**
+     * @brief Subscriber.
+     */
+    Subscriber uuid_sub;
+
+    /**
+     * @brief Subscriber.
+     */
+    Subscriber ar_marker_sub;
+
+
+
+
 
     /**
      * @brief A map holding ID and target object of all known targets.
@@ -84,6 +107,16 @@ private:
      * @brief The UUID of the CPS that owns this class instance.
      */
     string cps;
+
+    /**
+     * @brief The markers and their positions seen from the robot
+     */
+    vector<ar_track_alvar_msgs::AlvarMarker> markers;
+
+    /**
+     * @brief The markers and their positions seen from the robot
+     */
+    vector<int> id_saved_markers;
 
     /**
      * @brief Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.

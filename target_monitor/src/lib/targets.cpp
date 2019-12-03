@@ -22,7 +22,9 @@ targets::targets ()
 
     // publishers and subscribers
     tracking_pub = nh.advertise<cpswarm_msgs::TargetTracking>("target_tracking", queue_size, true);
-    Subscriber uuid_sub = nh.subscribe("bridge/uuid", queue_size, &targets::uuid_callback, this);
+    uuid_sub = nh.subscribe("bridge/uuid", queue_size, &targets::uuid_callback, this);
+    // subscriber of the ar marker topic
+    ar_marker_sub = nh.subscribe("ar_pose_marker", queue_size, &targets::ar_marker_callback, this);
 
     // init uuid
     while (ok() && cps == "") {
@@ -32,7 +34,7 @@ targets::targets ()
 }
 
 void targets::simulate ()
-{
+{/*
     // read all potential targets from parameter file
     vector<double> targets_x;
     vector<double> targets_y;
@@ -52,33 +54,58 @@ void targets::simulate ()
         new_target_pose.orientation.w = 1;
         simulated_targets.emplace(piecewise_construct, forward_as_tuple(i), forward_as_tuple(make_shared<target>(i, TARGET_UNKNOWN, new_target_pose)));
     }
+    * */
 }
 
 void targets::update (geometry_msgs::Pose pose)
 {
+	/*
     // check if a target is lost
     for (auto t : target_map) {
         // update target and inform others in case target is lost
         t.second->lost();
     }
-
+    */
+	bool checked_before = false;
     // check if a new target is found in simulation
-    for (auto t : simulated_targets) {
-        // target pose
-        geometry_msgs::Pose t_pose = t.second->get_pose();
-
-        ROS_DEBUG("Target %d distance %.2f < %.2f", t.first, hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y), fov);
-
-        // target is within camera fov
-        if (hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y) <= fov) {
-            // publish tracking information
-            cpswarm_msgs::TargetTracking track;
-            track.header.stamp = Time::now();
-            track.id = t.first;
-            track.tf = transform(pose, t_pose);
-            tracking_pub.publish(track);
-        }
-    }
+    for (int i=0; i<markers.size(); i++) {
+        
+        
+        /*
+		if (id_saved_markers.size() != 0){
+			for (int j=0; j<id_saved_markers.size(); j++){
+					if (id_saved_markers[j] == markers[i].id){
+						checked_before = true;
+						break;
+						
+					}
+				
+			}
+			if (!checked_before){
+				id_saved_markers.push_back(markers[i].id);*/
+				cpswarm_msgs::TargetTracking track;
+				track.header.stamp = Time::now();
+				track.id = markers[i].id;
+				track.tf = transform(markers[i].pose.pose, pose);
+				tracking_pub.publish(track);
+				
+			} 
+        
+      /*} else{
+		  
+		  
+				id_saved_markers.push_back(markers[i].id);
+				cpswarm_msgs::TargetTracking track;
+				track.header.stamp = Time::now();
+				track.id = markers[i].id;
+				track.tf = transform(markers[i].pose.pose, pose);
+				tracking_pub.publish(track);
+			
+			
+			
+		
+	  }
+    }*/
 }
 
 void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
@@ -103,7 +130,7 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
 geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_msgs::Pose p2) const
 {
     // orientation of first point
-    tf2::Quaternion orientation1;
+    tf2::Quaternion orientation1;/*
     tf2::fromMsg(p1.orientation, orientation1);
 
     // relative coordinates of second point
@@ -116,15 +143,35 @@ geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_ms
     geometry_msgs::Transform tf;
 
     // translation
-    tf.translation.x = -distance * cos(direction); // x is inverted in tracking camera tf
+    tf.translation.x = distance * cos(direction); // x is inverted in tracking camera tf
     tf.translation.y = distance * sin(direction);
 
     // rotation
-    p1.orientation.w *= -1; // invert p1
+    //p1.orientation.w = 1; 
     tf2::fromMsg(p1.orientation, orientation1);
     tf2::Quaternion orientation2;
     tf2::fromMsg(p2.orientation, orientation2);
     tf2::Quaternion rotation = orientation2 * orientation1;
+    tf.rotation = tf2::toMsg(rotation);
+  */
+
+     // translation 1 meter before the frame
+    geometry_msgs::Transform tf;
+    tf2::fromMsg(p1.orientation, orientation1);
+    tf2::Quaternion rotation = orientation1;
+    tf.translation.x = p1.position.x + 1*cos(tf2::getYaw(orientation1)); // x is inverted in tracking camera tf
+    tf.translation.y = p1.position.y + 1*sin(tf2::getYaw(orientation1));
+    
+    //rotation of 180 degrees to get the desired pre pick robot orientation
+    tf2::Quaternion q_orig, q_rot, q_new;
+    tf2::convert(rotation , q_orig);
+    double r=0, p=0, y=3.14159;
+    q_rot.setRPY(r, p, y);
+    q_new = q_rot*q_orig;  // Calculate the new orientation
+    q_new.normalize();
+    // Stuff the new rotation back into the pose. This requires conversion into a msg type
+    tf2::convert(q_new, rotation);   
+   
     tf.rotation = tf2::toMsg(rotation);
 
     return tf;
@@ -133,4 +180,10 @@ geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_ms
 void targets::uuid_callback (const swarmros::String::ConstPtr& msg)
 {
     cps = msg->value;
+}
+
+void targets::ar_marker_callback (const ar_track_alvar_msgs::AlvarMarkers::ConstPtr msg)
+{
+    markers = msg->markers;
+    //
 }
