@@ -46,6 +46,7 @@ void sync ()
         // stop moving
         geometry_msgs::PoseStamped goal_pose;
         goal_pose.header.stamp = Time::now();
+        goal_pose.header.frame_id = "map"; // TODO: to be read from a parameter
         goal_pose.pose = pose;
         pos_pub.publish(goal_pose);
 
