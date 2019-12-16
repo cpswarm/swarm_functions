@@ -1,0 +1,13 @@
+publish_frequency: 1.0
+always_send_full_costmap: true
+# TODO: read this parameter from map_topic
+resolution: 1.0
+width: 20
+height: 20
+origin_x: -10
+origin_y: -10
+plugins:
+- {name: visited_map, type: "visited_layer::VisitedLayer"}
+
+visited_map:
+  map_topic: area_provider/map

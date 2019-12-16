@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- cost map of visited area -->
+    <node pkg="costmap_2d" type="costmap_2d_node" name="visited_map_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find visited_map)/param/costmap_2d.yaml" command="load" ns="costmap" />
+    </node>
+
+</launch>

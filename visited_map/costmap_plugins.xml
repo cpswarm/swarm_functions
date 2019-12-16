@@ -1,0 +1,5 @@
+<library path="lib/libvisited_layer">
+    <class type="visited_layer::VisitedLayer" base_class_type="costmap_2d::Layer">
+        <description>TODO</description>
+    </class>
+</library>
