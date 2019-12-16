@@ -55,9 +55,10 @@ public:
     /**
      * @brief Initialize the internal graph structure that represents the area division.
      * @param graph  gridmap The grid map for which the paths are generated.
+     * @param angle The angle by which the map has been rotated. Default 0.0.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, double angle = 0.0, bool connect4 = true);
 
     /**
      * @brief Remove edges of the graph that overlap with the tree.
@@ -125,6 +126,11 @@ private:
      * @brief The current way point.
      */
     int wp;
+
+    /**
+     * @brief The required rotation of the output path.
+     */
+    double rotation;
 };
 
 #endif // MST_PATH_H

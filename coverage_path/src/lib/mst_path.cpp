@@ -129,7 +129,10 @@ nav_msgs::Path mst_path::get_path ()
     vector<geometry_msgs::PoseStamped> poses;
     geometry_msgs::PoseStamped pose;
     for (auto p : path) {
-        pose.pose.position = p;
+        // rotate
+        pose.pose.position.x = p.x*cos(rotation) - p.y*sin(rotation);
+        pose.pose.position.y = p.x*sin(rotation) + p.y*cos(rotation);
+
         poses.push_back(pose);
     }
     nav_path.poses = poses;
@@ -149,8 +152,12 @@ geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, doub
     return get_wp();
 }
 
-void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
+void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, double angle, bool connect4)
 {
+    // rotation of output tree
+    rotation = -angle;
+
+    // initialize path
     map = gridmap;
     int rows = gridmap.info.height;
     int cols = gridmap.info.width;
@@ -258,7 +265,9 @@ geometry_msgs::Point mst_path::get_wp (int offset)
     geometry_msgs::Point waypoint;
 
     if (0 <= wp+offset && wp+offset < path.size()) {
-        waypoint = path[wp+offset];
+        // rotate
+        waypoint.x = path[wp+offset].x*cos(rotation) - path[wp+offset].y*sin(rotation);
+        waypoint.y = path[wp+offset].x*sin(rotation) + path[wp+offset].y*cos(rotation);
     }
 
     return waypoint;

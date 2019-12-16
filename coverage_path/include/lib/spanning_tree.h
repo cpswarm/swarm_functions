@@ -39,9 +39,10 @@ public:
     /**
      * @brief Initialize the internal tree structure from a given grid map.
      * @param gridmap The grid map that needs to be covered by the tree.
+     * @param angle The angle by which the map has been rotated. Default 0.0.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, double angle = 0.0, bool connect4 = true);
 
     /**
      * @brief Generate the MST using Kruskal's algorithm.
@@ -84,6 +85,11 @@ private:
      * @brief The grid map that needs to be covered by the MST.
      */
     nav_msgs::OccupancyGrid map;
+
+    /**
+     * @brief The rotation of the output tree.
+     */
+    double rotation;
 };
 
 #endif // SPANNING_TREE_H
