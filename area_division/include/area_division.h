@@ -9,6 +9,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
 #include <cpswarm_msgs/AreaDivisionEvent.h>
+#include <cpswarm_msgs/GetDouble.h>
 #include <swarmros/String.h>
 #include "lib/area_division.h"
 
@@ -33,6 +34,21 @@ Publisher swarm_pub;
  * @brief Publisher to visualize the assigned area grid map.
  */
 Publisher area_pub;
+
+/**
+ * @brief Publisher to visualize the rotated map.
+ */
+Publisher map_rot_publisher;
+
+/**
+ * @brief Publisher to visualize the downsampled map.
+ */
+Publisher map_ds_publisher;
+
+/**
+ * @brief Service client to get the angle which the area has to be rotated by.
+ */
+ServiceClient rotater;
 
 /**
  * @brief ROS rate object for controlling loop rates.
@@ -73,6 +89,11 @@ bool map_valid;
  * @brief The object encapsulating the area division optimization algorithm.
  */
 area_division* division;
+
+/**
+ * @brief The grid map underlying the area division will be downsampled to this resolution in meter / cell.
+ */
+double resolution;
 
 /**
  * @brief The time in seconds to wait after an area division event before starting the area division.
