@@ -153,19 +153,25 @@ bool generate_path (geometry_msgs::Point start)
     }
     nav_msgs::OccupancyGrid map = gm.response.map;
 
-    // divided area is already rotated and downsampled
-    double angle = 0.0;
+    // divided area is already rotated, translated, and downsampled
+    double rotation = 0.0;
+    geometry_msgs::Vector3 translation;
     if (divide_area) {
         // get angle of rotation
         cpswarm_msgs::GetDouble get_angle;
         if (rotater.call(get_angle))
-            angle = get_angle.response.value;
+            rotation = get_angle.response.value;
+
+        // get translation vector
+        cpswarm_msgs::GetVector get_translation;
+        if (translater.call(get_translation))
+            translation = get_translation.response.vector;
     }
 
     // original map still needs rotation and downsampling
     else {
         // rotate map
-        angle = rotate(map);
+        rotation = rotate(map);
 
         // downsample resolution
         if (map.info.resolution < resolution) {
@@ -177,18 +183,23 @@ bool generate_path (geometry_msgs::Point start)
 
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
-    tree.initialize_graph(map, angle);
+    tree.initialize_graph(map, translation, rotation);
     tree.construct();
 
     // visualize path
     if (visualize)
         mst_publisher.publish(tree.get_tree());
 
+    // transform starting point
+    geometry_msgs::Point cps;
+    cps.x = (start.x + translation.x) * cos(rotation) - (start.y + translation.y) * sin(rotation);
+    cps.y = (start.x + translation.x) * sin(rotation) + (start.y + translation.y) * cos(rotation);
+
     // generate path
     ROS_DEBUG("Generate coverage path...");
-    path.initialize_graph(map, angle);
+    path.initialize_graph(map, translation, rotation);
     path.initialize_tree(tree.get_mst_edges());
-    path.generate_path(start);
+    path.generate_path(cps);
 
     // visualize path
     if (visualize)
@@ -347,8 +358,11 @@ int main (int argc, char **argv)
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
         mst_publisher = nh.advertise<geometry_msgs::PoseArray>("coverage_path/mst", queue_size, true);
     }
-    if (divide_area)
+    if (divide_area) {
         map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");
+        translater = nh.serviceClient<cpswarm_msgs::GetVector>("area/get_translation");
+        translater.waitForExistence();
+    }
     else
         map_getter = nh.serviceClient<nav_msgs::GetMap>("area/get_map");
     map_getter.waitForExistence();

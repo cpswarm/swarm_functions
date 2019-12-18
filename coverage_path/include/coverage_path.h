@@ -6,12 +6,14 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Vector3.h>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
 #include <nav_msgs/GetPlan.h>
 #include <cpswarm_msgs/GetWaypoint.h>
 #include <cpswarm_msgs/GetDouble.h>
+#include <cpswarm_msgs/GetVector.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
 #include <cpswarm_msgs/StateEvent.h>
 #include "lib/spanning_tree.h"
@@ -44,6 +46,11 @@ ServiceClient map_getter;
  * @brief Service client to get the angle which the area has to be rotated by.
  */
 ServiceClient rotater;
+
+/**
+ * @brief Service client to get the offset which the area has to be translated by.
+ */
+ServiceClient translater;
 
 /**
  * @brief Current state of the CPS.

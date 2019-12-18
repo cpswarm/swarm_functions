@@ -7,6 +7,7 @@
 #include <ros/ros.h>
 #include <tf2/utils.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Vector3.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include "lib/edge.h"
 
@@ -39,10 +40,11 @@ public:
     /**
      * @brief Initialize the internal tree structure from a given grid map.
      * @param gridmap The grid map that needs to be covered by the tree.
+     * @param vec The vector by which the map has been translated.
      * @param angle The angle by which the map has been rotated. Default 0.0.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, double angle = 0.0, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vec, double angle = 0.0, bool connect4 = true);
 
     /**
      * @brief Generate the MST using Kruskal's algorithm.
@@ -90,6 +92,11 @@ private:
      * @brief The rotation of the output tree.
      */
     double rotation;
+
+    /**
+     * @brief The translation of the output tree.
+     */
+    geometry_msgs::Vector3 translation;
 };
 
 #endif // SPANNING_TREE_H

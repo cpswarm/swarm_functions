@@ -27,6 +27,10 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
         direction.setRPY(0, 0, atan2(dy, dx) + rotation);
         pose.orientation = tf2::toMsg(direction);
 
+        // translate
+        x += translation.x;
+        y += translation.y;
+
         // rotate
         pose.position.x = x*cos(rotation) - y*sin(rotation);
         pose.position.y = x*sin(rotation) + y*cos(rotation);
@@ -40,10 +44,12 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
     return path;
 }
 
-void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, double angle, bool connect4)
+void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vec, double angle, bool connect4)
 {
-    // rotation of output tree
+    // transformation of output tree
     rotation = -angle;
+    translation.x = -vec.x;
+    translation.y = -vec.y;
 
     // initialize map
     map = gridmap;
