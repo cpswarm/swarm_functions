@@ -34,7 +34,7 @@ double rotate (nav_msgs::OccupancyGrid& map)
     }
     double a = angle.response.value;
 
-    ROS_ERROR("Rotate map by %.2f...", a);
+    ROS_INFO("Rotate map by %.2f...", a);
 
     // rotate origin
     geometry_msgs::Pose origin_new;
@@ -108,6 +108,25 @@ double rotate (nav_msgs::OccupancyGrid& map)
 }
 
 /**
+ * @brief Shift a map to be aligned with the grid, i.e., the origin should be an even number.
+ * @param map The map to shift.
+ */
+void translate (nav_msgs::OccupancyGrid& map)
+{
+    // compute required translation
+    translation.x = round(map.info.origin.position.x) - map.info.origin.position.x;
+    translation.y = round(map.info.origin.position.y) - map.info.origin.position.y;
+    ROS_INFO("Translate map by (%.2f,%.2f)...", translation.x, translation.y);
+
+    // translate origin
+    map.info.origin.position.x += translation.x;
+    map.info.origin.position.y += translation.y;
+
+    // update meta data
+    map.info.map_load_time = Time::now();
+}
+
+/**
  * @brief Decrease the resolution of a occupancy grid map.
  * @param map A reference to the occupancy grid map to downsample.
  */
@@ -120,7 +139,7 @@ void downsample (nav_msgs::OccupancyGrid& map)
     // reduction factor
     int f = int(round(resolution / map.info.resolution));
 
-    ROS_ERROR("Downsample map by %d...", f);
+    ROS_INFO("Downsample map by %d...", f);
 
     // downsample map data
     vector<signed char> lr;
@@ -165,6 +184,9 @@ void divide_area ()
     // rotate map
     double angle = rotate(gridmap);
 
+    // shift map
+    translate(gridmap);
+
     map_rot_publisher.publish(gridmap);
 
     // downsample resolution
@@ -178,6 +200,8 @@ void divide_area ()
     map<string, vector<int>> swarm_grid;
     for (auto cps : swarm_pose) {
         geometry_msgs::Point rotated = rotate(cps.second.pose.position, angle);
+        rotated.x += translation.x;
+        rotated.y += translation.y;
         vector<int> pos(2);
         pos[0] = int(round((rotated.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
         pos[1] = int(round((rotated.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
@@ -187,6 +211,8 @@ void divide_area ()
 
     // add this robot to swarm grid
     geometry_msgs::Point rotated = rotate(pose.position, angle);
+    rotated.x += translation.x;
+    rotated.y += translation.y;
     vector<int> pos(2);
     pos[0] = int(round((rotated.x - gridmap.info.origin.position.x) / gridmap.info.resolution));
     pos[1] = int(round((rotated.y - gridmap.info.origin.position.y) / gridmap.info.resolution));
@@ -196,7 +222,7 @@ void divide_area ()
     // divide area
     ROS_INFO("Dividing area...");
     vector<signed char, allocator<signed char>> map = gridmap.data;
-    division->initialize_map((int)gridmap.info.width, (int)gridmap.info.height, map);
+    division->initialize_map((int)gridmap.info.height, (int)gridmap.info.width, map);
     division->initialize_cps(swarm_grid);
     division->divide();
 
@@ -264,6 +290,18 @@ bool get_area (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
     // return assigned area
     res.map = division->get_grid(gridmap, uuid);
 
+    return true;
+}
+
+/**
+ * @brief Callback function to get the translation by which the area has been shifted.
+ * @param req Empty request.
+ * @param res The translation of the area.
+ * @return Whether the request succeeded.
+ */
+bool get_translation (cpswarm_msgs::GetVector::Request &req, cpswarm_msgs::GetVector::Response &res)
+{
+    res.vector = translation;
     return true;
 }
 
@@ -407,8 +445,9 @@ int main (int argc, char **argv)
     // create area division object
     division = new area_division();
 
-    // provide area service
+    // provide area services
     ServiceServer area_service = nh.advertiseService("area/assigned", get_area);
+    ServiceServer translate_service = nh.advertiseService("area/get_translation", get_translation);
     spin();
 
     // clean up

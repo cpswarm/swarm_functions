@@ -6,10 +6,12 @@
 #include <vector>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Vector3.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
 #include <cpswarm_msgs/AreaDivisionEvent.h>
 #include <cpswarm_msgs/GetDouble.h>
+#include <cpswarm_msgs/GetVector.h>
 #include <swarmros/String.h>
 #include "lib/area_division.h"
 
@@ -89,6 +91,11 @@ bool map_valid;
  * @brief The object encapsulating the area division optimization algorithm.
  */
 area_division* division;
+
+/**
+ * @brief The translation by which the area has been shifted.
+ */
+geometry_msgs::Vector3 translation;
 
 /**
  * @brief The grid map underlying the area division will be downsampled to this resolution in meter / cell.
