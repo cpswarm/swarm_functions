@@ -118,6 +118,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
 
     // this cps has won the auction, return result
     else if (allocation.cps_id.compare(uuid) == 0) {
+        ROS_INFO("TASK_BID - I am the selected one (%s) for cart %d!", allocation.cps_id.c_str(), task_allocation.id);
         cpswarm_msgs::TaskAllocationResult result;
         result.task_id = allocation.task_id;
         result.task_pose = goal->task_pose;
