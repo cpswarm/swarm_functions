@@ -1,5 +1,5 @@
 # task_allocation
-[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__task_allocation__ubuntu_xenial__source&build=43)](http://build.ros.org/job/Ksrc_uX__task_allocation__ubuntu_xenial__source/43/)
+[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__task_allocation__ubuntu_xenial__source)](http://build.ros.org/job/Ksrc_uX__task_allocation__ubuntu_xenial__source/)
 
 
 This package offers action servers for assigning tasks between cyber physical system (CPS). It uses a market-inspired approach by running a single-round, single-item auction. The package offers two action servers that perform the auction, one that acts as auctioneer and one that acts as bidder. The auctioneer opens the auction for a specific duration in which interested bidders can place a single bid. After the timeout the winner, i.e., the bidder with the highest bid is announced.

@@ -1,5 +1,5 @@
 # Swarm Functions Library
-[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__swarm_functions__ubuntu_xenial__source&build=43)](http://build.ros.org/job/Ksrc_uX__swarm_functions__ubuntu_xenial__source/43/)
+[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__swarm_functions__ubuntu_xenial__source)](http://build.ros.org/job/Ksrc_uX__swarm_functions__ubuntu_xenial__source/)
 
 The swarm functions library provides simple functionalities that enable swarm algorithms to work. It is part of the [swarm library](https://github.com/topics/swarm-library).
 

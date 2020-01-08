@@ -1,5 +1,5 @@
 # state_exchanger
-[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__state_exchanger__ubuntu_xenial__source&build=43)](http://build.ros.org/job/Ksrc_uX__state_exchanger__ubuntu_xenial__source/43/)
+[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__state_exchanger__ubuntu_xenial__source)](http://build.ros.org/job/Ksrc_uX__state_exchanger__ubuntu_xenial__source/)
 
 This package exchanges behavioral states between multiple cyber physical systems (CPSs) in a swarm.
 

@@ -1,5 +1,5 @@
 # target_monitor
-[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__target_monitor__ubuntu_xenial__source&build=43)](http://build.ros.org/job/Ksrc_uX__target_monitor__ubuntu_xenial__source/43/)
+[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__target_monitor__ubuntu_xenial__source)](http://build.ros.org/job/Ksrc_uX__target_monitor__ubuntu_xenial__source/)
 
 This package manages information about targets in a swarm of cyber physical systems (CPSs).
 
