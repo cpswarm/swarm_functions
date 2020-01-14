@@ -129,13 +129,14 @@ void area_division::divide ()
 
 nav_msgs::OccupancyGrid area_division::get_grid (nav_msgs::OccupancyGrid map, string cps)
 {
+    // create new grid map
     nav_msgs::OccupancyGrid assigned;
     assigned = map;
 
     for (int i=0; i<rows; i++) {
         for (int j=0; j<cols;j++) {
             // mark assigned cells as free
-            if (A[(rows-1-i)*cols+j] == uuid_map[cps]) { // origin of division algorithm is top left
+            if (A[i*cols+j] == uuid_map[cps]) {
                 assigned.data[i*cols+j] = 0;
             }
 
@@ -166,7 +167,7 @@ void area_division::initialize_cps (map<string, vector<int>> cpss)
     for (auto c : cpss) {
         // divison algorithm assumes origin at top left
         int x = c.second[0];
-        int y = rows - 1 - c.second[1];
+        int y = c.second[1];
 
         // index of position in grid map
         int idx = y * cols + x;
@@ -189,8 +190,13 @@ void area_division::initialize_map (int r, int c, vector<signed char> src)
     // initialization
     rows = r;
     cols = c;
-    ob = 0;
     gridmap = src;
+    ob = 0;
+
+    // count number of occupied cells
+    for (int i=0; i<gridmap.size(); ++i)
+        if (gridmap[i] >= 50)
+            ++ob;
 }
 
 void area_division::assign (vector<valarray<double>> matrix)
@@ -205,16 +211,19 @@ void area_division::assign (vector<valarray<double>> matrix)
     ArrayOfElements.resize(nr);
     for (int i=0; i<rows; i++) {
         for (int j=0; j<cols; j++) {
-            // free grid cell
+            // free grid cell, assign to a robot
             if (gridmap[i*cols+j] < 50) {
+                // find index of robot that has lowest metric value
                 double minV = matrix[0][i*cols+j];
                 int indMin = 0;
                 for (int r=1; r<nr; r++) {
-                    if (matrix[r][i*cols+j] < minV) {
+                    if (matrix[r][i*cols+j] <= minV) {
                         minV = matrix[r][i*cols+j];
                         indMin = r;
                     }
                 }
+
+                // store assignment
                 A[i*cols+j] = indMin;
                 BWlist[indMin][i*cols+j] = 1;
                 ArrayOfElements[indMin]++;
@@ -226,6 +235,28 @@ void area_division::assign (vector<valarray<double>> matrix)
             }
         }
     }
+}
+
+valarray<float> area_division::CalcConnectedMultiplier(valarray<float> dist1, valarray<float> dist2)
+{
+    valarray<float> returnM(rows*cols);
+    float MaxV = 0;
+    float MinV = numeric_limits<float>::max();
+    for (int i=0;i<rows;i++){
+        for (int j=0;j<cols;j++){
+            returnM[i*cols+j] = dist1[i*cols+j] - dist2[i*cols+j];
+            if (MaxV < returnM[i*cols+j]) {MaxV = returnM[i*cols+j];}
+            if (MinV > returnM[i*cols+j]) {MinV = returnM[i*cols+j];}
+        }
+    }
+
+    for (int i=0;i<rows;i++){
+        for (int j=0;j<cols;j++){
+            returnM[i*cols+j] =(returnM[i*cols+j] - MinV)*((2*(float)variate_weight)/(MaxV-MinV))+(1-(float)variate_weight);
+        }
+    }
+
+    return  returnM;
 }
 
 valarray<double> area_division::FinalUpdateOnMetricMatrix(double CM, valarray<double> curentONe, valarray<float> CC)
@@ -260,26 +291,4 @@ bool area_division::isThisAGoalState(int thres)
     }
 
     return (maxCellsAss - minCellsAss) <= thres;
-}
-
-valarray<float> area_division::CalcConnectedMultiplier(valarray<float> dist1, valarray<float> dist2)
-{
-    valarray<float> returnM(rows*cols);
-    float MaxV = 0;
-    float MinV = numeric_limits<float>::max();
-    for (int i=0;i<rows;i++){
-        for (int j=0;j<cols;j++){
-            returnM[i*cols+j] = dist1[i*cols+j] - dist2[i*cols+j];
-            if (MaxV < returnM[i*cols+j]) {MaxV = returnM[i*cols+j];}
-            if (MinV > returnM[i*cols+j]) {MinV = returnM[i*cols+j];}
-        }
-    }
-
-    for (int i=0;i<rows;i++){
-        for (int j=0;j<cols;j++){
-            returnM[i*cols+j] =(returnM[i*cols+j] - MinV)*((2*(float)variate_weight)/(MaxV-MinV))+(1-(float)variate_weight);
-        }
-    }
-
-    return  returnM;
 }

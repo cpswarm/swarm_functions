@@ -8,6 +8,7 @@
 #include <tf2/utils.h>
 #include <geometry_msgs/Point.h>
 #include <geometry_msgs/PoseArray.h>
+#include <geometry_msgs/Vector3.h>
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/Path.h>
 #include "lib/edge.h"
@@ -55,9 +56,11 @@ public:
     /**
      * @brief Initialize the internal graph structure that represents the area division.
      * @param graph  gridmap The grid map for which the paths are generated.
+     * @param vector The vector by which the map has been translated.
+     * @param angle The angle by which the map has been rotated. Default 0.0.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle = 0.0, bool connect4 = true);
 
     /**
      * @brief Remove edges of the graph that overlap with the tree.
@@ -125,6 +128,16 @@ private:
      * @brief The current way point.
      */
     int wp;
+
+    /**
+     * @brief The rotation of the output path.
+     */
+    double rotation;
+
+    /**
+     * @brief The translation of the output path.
+     */
+    geometry_msgs::Vector3 translation;
 };
 
 #endif // MST_PATH_H

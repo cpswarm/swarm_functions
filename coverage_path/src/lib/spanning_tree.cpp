@@ -17,15 +17,23 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
 
     for (auto e : mst_edges) {
         // from
-        pose.position.x = e.from % map.info.width * map.info.resolution + map.info.origin.position.x;
-        pose.position.y = e.from / map.info.width * map.info.resolution + map.info.origin.position.y;
+        double x = e.from % map.info.width * map.info.resolution + map.info.origin.position.x;
+        double y = e.from / map.info.width * map.info.resolution + map.info.origin.position.y;
 
         // orientation
-        double dx = e.to % map.info.width * map.info.resolution + map.info.origin.position.x - pose.position.x;
-        double dy = e.to / map.info.width * map.info.resolution + map.info.origin.position.y - pose.position.y;
+        double dx = e.to % map.info.width * map.info.resolution + map.info.origin.position.x - x;
+        double dy = e.to / map.info.width * map.info.resolution + map.info.origin.position.y - y;
         tf2::Quaternion direction;
-        direction.setRPY(0, 0, atan2(dy, dx));
+        direction.setRPY(0, 0, atan2(dy, dx) + rotation);
         pose.orientation = tf2::toMsg(direction);
+
+        // translate
+        x += translation.x;
+        y += translation.y;
+
+        // rotate
+        pose.position.x = x*cos(rotation) - y*sin(rotation);
+        pose.position.y = x*sin(rotation) + y*cos(rotation);
 
         poses.push_back(pose);
     }
@@ -36,8 +44,13 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
     return path;
 }
 
-void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool connect4)
+void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vec, double angle, bool connect4)
 {
+    // transformation of output tree
+    rotation = -angle;
+    translation.x = -vec.x;
+    translation.y = -vec.y;
+
     // initialize map
     map = gridmap;
     int rows = gridmap.info.height;

@@ -1,4 +1,5 @@
 # area_division
+[![Build Status](http://build.ros.org/buildStatus/icon?job=Ksrc_uX__area_division__ubuntu_xenial__source)](http://build.ros.org/job/Ksrc_uX__area_division__ubuntu_xenial__source/)
 
 This package divides the available environment area among multiple cyber physical systems (CPSs) in a swarm. It is part of the swarm functions library.
 

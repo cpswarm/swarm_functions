@@ -75,9 +75,9 @@ private:
     valarray<double> FinalUpdateOnMetricMatrix (double CM, valarray<double> curentONe, valarray<float> CC);
 
     /**
-     * @brief Check if the areas assigned to each robot are of similar size.
-     * @param thres The maximum number of grid cells that the areas assigned to different robots is allowed to differ.
-     * @return True, if the maximum assigned area to any robot is at most thresh larger than the minimum assigned area to any robot, false otherwise.
+     * @brief Check if the areas assigned to each CPS are of similar size.
+     * @param thres The maximum number of grid cells that the areas assigned to different CPSs is allowed to differ.
+     * @return True, if the maximum assigned area to any CPS is at most thresh larger than the minimum assigned area to any CPS, false otherwise.
      */
     bool isThisAGoalState (int thres);
 
@@ -97,7 +97,7 @@ private:
     int cols;
 
     /**
-     * @brief Number of robots.
+     * @brief Number of CPSs.
      */
     int nr;
 
@@ -137,12 +137,12 @@ private:
     valarray<int> A;
 
     /**
-     * @brief Grid cells not assigned to the robots.
+     * @brief Number of grid cells assigned to each CPS.
      */
     vector<int> ArrayOfElements;
 
     /**
-     * @brief Whether the regions of the robots are connected.
+     * @brief Whether the regions of the CPSs are connected.
      */
     vector<bool> regions;
 
