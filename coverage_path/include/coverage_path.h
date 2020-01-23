@@ -108,6 +108,11 @@ bool visualize;
 bool divide_area;
 
 /**
+ * @brief Whether the sweeping pattern is vertical or horizontal.
+ */
+bool vertical;
+
+/**
  * @brief Whether the swarm configuration has changed which requires a replanning of the path.
  */
 bool reconfigure;

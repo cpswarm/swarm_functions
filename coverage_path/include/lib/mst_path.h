@@ -58,9 +58,10 @@ public:
      * @param graph  gridmap The grid map for which the paths are generated.
      * @param vector The vector by which the map has been translated.
      * @param angle The angle by which the map has been rotated. Default 0.0.
+     * @param vertical Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle = 0.0, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle = 0.0, bool vertical = false, bool connect4 = true);
 
     /**
      * @brief Remove edges of the graph that overlap with the tree.
@@ -138,6 +139,11 @@ private:
      * @brief The translation of the output path.
      */
     geometry_msgs::Vector3 translation;
+
+    /**
+     * @brief Whether the sweeping pattern is vertical or horizontal.
+     */
+    bool vertical;
 };
 
 #endif // MST_PATH_H

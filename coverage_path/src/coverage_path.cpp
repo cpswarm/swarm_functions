@@ -183,7 +183,7 @@ bool generate_path (geometry_msgs::Point start)
 
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
-    tree.initialize_graph(map, translation, rotation);
+    tree.initialize_graph(map, translation, rotation, vertical);
     tree.construct();
 
     // visualize path
@@ -345,6 +345,7 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
     nh.param(this_node::getName() + "/visualize", visualize, false);
     nh.param(this_node::getName() + "/divide_area", divide_area, false);
+    nh.param(this_node::getName() + "/vertical", vertical, false);
 
     // initialize flags
     state_valid = false;

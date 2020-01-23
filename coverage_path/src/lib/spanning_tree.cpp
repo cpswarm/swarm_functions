@@ -44,8 +44,11 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
     return path;
 }
 
-void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vec, double angle, bool connect4)
+void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vec, double angle, bool vertical, bool connect4)
 {
+    // orientation of tree edges
+    this->vertical = vertical;
+
     // transformation of output tree
     rotation = -angle;
     translation.x = -vec.x;
@@ -129,7 +132,7 @@ void spanning_tree::construct ()
 void spanning_tree::add_edge (int from, int to, int cost)
 {
     // add edge to priority queue
-    edges.push(edge(from, to, cost));
+    edges.push(edge(from, to, cost, vertical));
 
     // create singleton set for both vertices
     if (nodes[from].size() == 0) {

@@ -1,6 +1,6 @@
 #include "lib/spanning_tree.h"
 
-edge::edge (int f, int t, int c) : from(f), to(t), cost(c)
+edge::edge (int f, int t, int c, bool v) : from(f), to(t), cost(c), vertical(v)
 {
 }
 
@@ -12,13 +12,17 @@ bool edge::operator== (const edge &e) const
 bool compare_edge::operator() (const edge& a, const edge& b) const
 {
     if (a.cost == b.cost) {
+        // third, edges on the top/right
         if (abs(a.to - a.from) == abs(b.to - b.from))
-            // third, edges on the right
             return a.from < b.from;
 
-        // second, horizontal edges
-        else
-            return abs(a.to - a.from) > abs(b.to - b.from);
+        // second, horizontal/vertical edges
+        else {
+            if (a.vertical)
+                return abs(a.to - a.from) <= abs(b.to - b.from);
+            else
+                return abs(a.to - a.from) > abs(b.to - b.from);
+        }
     }
 
     // first, edges with lowest cost
