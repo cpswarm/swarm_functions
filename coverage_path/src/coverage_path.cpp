@@ -200,6 +200,8 @@ bool generate_path (geometry_msgs::Point start)
     path.initialize_graph(map, translation, rotation);
     path.initialize_tree(tree.get_mst_edges());
     path.generate_path(cps);
+    if (turning_points)
+        path.reduce();
 
     // visualize path
     if (visualize)
@@ -346,6 +348,7 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/visualize", visualize, false);
     nh.param(this_node::getName() + "/divide_area", divide_area, false);
     nh.param(this_node::getName() + "/vertical", vertical, false);
+    nh.param(this_node::getName() + "/turning_points", turning_points, false);
 
     // initialize flags
     state_valid = false;

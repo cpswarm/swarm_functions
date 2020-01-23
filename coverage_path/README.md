@@ -83,6 +83,8 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
   Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map. If `true`, downsampling is not available.
 * `~vertical` (boolean, default: `false`)
   Whether the sweeping pattern is vertical or horizontal.
+* `~turning_points` (boolean, default: `false`)
+  Whether there are only waypoints at turning points of the path or also waypoints regularly spaced on straight line segments of the path.
 
 ## Code API
 [coverage_path package code API documentation](https://cpswarm.github.io/swarm_functions/coverage_path/docs/html/files.html)

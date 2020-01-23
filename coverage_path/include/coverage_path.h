@@ -113,6 +113,11 @@ bool divide_area;
 bool vertical;
 
 /**
+ * @brief Whether there are only waypoints at turning points of the path or also waypoints regularly spaced on straight line segments of the path.
+ */
+bool turning_points;
+
+/**
  * @brief Whether the swarm configuration has changed which requires a replanning of the path.
  */
 bool reconfigure;

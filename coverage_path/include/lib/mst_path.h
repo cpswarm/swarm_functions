@@ -70,6 +70,11 @@ public:
     void initialize_tree (vector<edge> mst);
 
     /**
+     * @brief Remove waypoints that are within straight line segments of the path. Only keep turning points of the path.
+     */
+    void reduce ();
+
+    /**
      * @brief Check whether the current waypoint index is valid.
      * @return True, if the waypoint index is within the limits of the path, false otherwise.
      */
