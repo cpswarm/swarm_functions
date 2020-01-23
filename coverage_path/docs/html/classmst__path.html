@@ -45,9 +45,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab0de39d2f4d227a86ed9f1d121e32ff1"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#ab0de39d2f4d227a86ed9f1d121e32ff1">get_waypoint</a> (geometry_msgs::Point position, double tolerance)</td></tr>
 <tr class="memdesc:ab0de39d2f4d227a86ed9f1d121e32ff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current waypoint and possibly select next waypoint, if close enough.  <a href="#ab0de39d2f4d227a86ed9f1d121e32ff1">More...</a><br /></td></tr>
 <tr class="separator:ab0de39d2f4d227a86ed9f1d121e32ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a906bc92766e579c4a3cd72492cdefc95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#a906bc92766e579c4a3cd72492cdefc95">initialize_graph</a> (nav_msgs::OccupancyGrid <a class="el" href="coverage__path_8h.html#afacddfe797ed24d30af6ec211cb9da6c">gridmap</a>, bool connect4=true)</td></tr>
-<tr class="memdesc:a906bc92766e579c4a3cd72492cdefc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the internal graph structure that represents the area division.  <a href="#a906bc92766e579c4a3cd72492cdefc95">More...</a><br /></td></tr>
-<tr class="separator:a906bc92766e579c4a3cd72492cdefc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f9f82cdd6dd17f4dfecbf48cb8d9b16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#a3f9f82cdd6dd17f4dfecbf48cb8d9b16">initialize_graph</a> (nav_msgs::OccupancyGrid <a class="el" href="coverage__path_8h.html#afacddfe797ed24d30af6ec211cb9da6c">gridmap</a>, geometry_msgs::Vector3 vector, double angle=0.0, bool <a class="el" href="classmst__path.html#ad69b173d0399f649d482905c0215b4e0">vertical</a>=false, bool connect4=true)</td></tr>
+<tr class="memdesc:a3f9f82cdd6dd17f4dfecbf48cb8d9b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the internal graph structure that represents the area division.  <a href="#a3f9f82cdd6dd17f4dfecbf48cb8d9b16">More...</a><br /></td></tr>
+<tr class="separator:a3f9f82cdd6dd17f4dfecbf48cb8d9b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18d8af971f6ce215d3055a81aedaea02"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#a18d8af971f6ce215d3055a81aedaea02">initialize_tree</a> (vector&lt; <a class="el" href="classedge.html">edge</a> &gt; mst)</td></tr>
 <tr class="memdesc:a18d8af971f6ce215d3055a81aedaea02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove edges of the graph that overlap with the tree.  <a href="#a18d8af971f6ce215d3055a81aedaea02">More...</a><br /></td></tr>
 <tr class="separator:a18d8af971f6ce215d3055a81aedaea02"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -87,6 +87,15 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:aa6e6ed381e4e6154e1ad0b522a09866d"><td class="memItemLeft" align="right" valign="top">deque&lt; geometry_msgs::Point &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#aa6e6ed381e4e6154e1ad0b522a09866d">path</a></td></tr>
 <tr class="memdesc:aa6e6ed381e4e6154e1ad0b522a09866d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The boustrophedon path.  <a href="#aa6e6ed381e4e6154e1ad0b522a09866d">More...</a><br /></td></tr>
 <tr class="separator:aa6e6ed381e4e6154e1ad0b522a09866d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abda9701dfab74e4e756b4d80fae4fe13"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#abda9701dfab74e4e756b4d80fae4fe13">rotation</a></td></tr>
+<tr class="memdesc:abda9701dfab74e4e756b4d80fae4fe13"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rotation of the output path.  <a href="#abda9701dfab74e4e756b4d80fae4fe13">More...</a><br /></td></tr>
+<tr class="separator:abda9701dfab74e4e756b4d80fae4fe13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:affc38d0d0e2d2f1ddc5f552e2a28508e"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#affc38d0d0e2d2f1ddc5f552e2a28508e">translation</a></td></tr>
+<tr class="memdesc:affc38d0d0e2d2f1ddc5f552e2a28508e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The translation of the output path.  <a href="#affc38d0d0e2d2f1ddc5f552e2a28508e">More...</a><br /></td></tr>
+<tr class="separator:affc38d0d0e2d2f1ddc5f552e2a28508e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad69b173d0399f649d482905c0215b4e0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#ad69b173d0399f649d482905c0215b4e0">vertical</a></td></tr>
+<tr class="memdesc:ad69b173d0399f649d482905c0215b4e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the sweeping pattern is vertical or horizontal.  <a href="#ad69b173d0399f649d482905c0215b4e0">More...</a><br /></td></tr>
+<tr class="separator:ad69b173d0399f649d482905c0215b4e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac9f50e4c7d717b708a549c72b82d1a21"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmst__path.html#ac9f50e4c7d717b708a549c72b82d1a21">wp</a></td></tr>
 <tr class="memdesc:ac9f50e4c7d717b708a549c72b82d1a21"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current way point.  <a href="#ac9f50e4c7d717b708a549c72b82d1a21">More...</a><br /></td></tr>
 <tr class="separator:ac9f50e4c7d717b708a549c72b82d1a21"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -94,7 +103,7 @@ Private Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An class to compute the coverage path based on a minimum-spanning-tree (MST). </p>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00021">21</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00022">22</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8e2344aa41ac2068254964fd49d727cf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8e2344aa41ac2068254964fd49d727cf">&#9670;&nbsp;</a></span>mst_path()</h2>
@@ -168,7 +177,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00240">240</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00252">252</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -216,7 +225,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The straight line distance between both points. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00251">251</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00263">263</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -328,7 +337,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A waypoint for the CPS to navigate to. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00141">141</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00144">144</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -365,12 +374,12 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The way point, if a valid offset was given. An empty point otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00256">256</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00268">268</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a906bc92766e579c4a3cd72492cdefc95"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a906bc92766e579c4a3cd72492cdefc95">&#9670;&nbsp;</a></span>initialize_graph()</h2>
+<a id="a3f9f82cdd6dd17f4dfecbf48cb8d9b16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f9f82cdd6dd17f4dfecbf48cb8d9b16">&#9670;&nbsp;</a></span>initialize_graph()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -380,6 +389,24 @@ Private Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype">nav_msgs::OccupancyGrid&#160;</td>
           <td class="paramname"><em>gridmap</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">geometry_msgs::Vector3&#160;</td>
+          <td class="paramname"><em>vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>angle</em> = <code>0.0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>vertical</em> = <code>false</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -399,12 +426,15 @@ Private Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">graph</td><td>gridmap The grid map for which the paths are generated. </td></tr>
+    <tr><td class="paramname">vector</td><td>The vector by which the map has been translated. </td></tr>
+    <tr><td class="paramname">angle</td><td>The angle by which the map has been rotated. Default 0.0. </td></tr>
+    <tr><td class="paramname">vertical</td><td>Whether the sweeping pattern is vertical or horizontal. Default horizontal. </td></tr>
     <tr><td class="paramname">connect4</td><td>Whether only the von Neumann neighborhood is considered. Default true. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00152">152</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00155">155</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -432,7 +462,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00209">209</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00221">221</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -468,7 +498,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00267">267</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00281">281</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -490,7 +520,7 @@ Private Attributes</h2></td></tr>
 <p>Check whether the current waypoint index is valid. </p>
 <dl class="section return"><dt>Returns</dt><dd>True, if the waypoint index is within the limits of the path, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00235">235</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8cpp_source.html#l00247">247</a> of file <a class="el" href="mst__path_8cpp_source.html">mst_path.cpp</a>.</p>
 
 </div>
 </div>
@@ -517,7 +547,7 @@ Private Attributes</h2></td></tr>
 
 <p>Priority queue of edge objects sorted by cost. </p>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00112">112</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00116">116</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
 
 </div>
 </div>
@@ -543,7 +573,7 @@ Private Attributes</h2></td></tr>
 
 <p>The grid map that needs to be covered by the MST path. </p>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00122">122</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00126">126</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
 
 </div>
 </div>
@@ -569,7 +599,7 @@ Private Attributes</h2></td></tr>
 
 <p>The sets of connected vertices. </p>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00117">117</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00121">121</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
 
 </div>
 </div>
@@ -595,7 +625,85 @@ Private Attributes</h2></td></tr>
 
 <p>The boustrophedon path. </p>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00107">107</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00111">111</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+
+</div>
+</div>
+<a id="abda9701dfab74e4e756b4d80fae4fe13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abda9701dfab74e4e756b4d80fae4fe13">&#9670;&nbsp;</a></span>rotation</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double mst_path::rotation</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The rotation of the output path. </p>
+
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00136">136</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+
+</div>
+</div>
+<a id="affc38d0d0e2d2f1ddc5f552e2a28508e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#affc38d0d0e2d2f1ddc5f552e2a28508e">&#9670;&nbsp;</a></span>translation</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">geometry_msgs::Vector3 mst_path::translation</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The translation of the output path. </p>
+
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00141">141</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+
+</div>
+</div>
+<a id="ad69b173d0399f649d482905c0215b4e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad69b173d0399f649d482905c0215b4e0">&#9670;&nbsp;</a></span>vertical</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mst_path::vertical</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether the sweeping pattern is vertical or horizontal. </p>
+
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00146">146</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
 
 </div>
 </div>
@@ -621,7 +729,7 @@ Private Attributes</h2></td></tr>
 
 <p>The current way point. </p>
 
-<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00127">127</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mst__path_8h_source.html#l00131">131</a> of file <a class="el" href="mst__path_8h_source.html">mst_path.h</a>.</p>
 
 </div>
 </div>
@@ -635,7 +743,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/coverage_path">coverage_path</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 14 2019 09:31:43</small>
+<small>autogenerated on Thu Jan 23 2020 10:34:17</small>
 </div>
 </body>
 </html>

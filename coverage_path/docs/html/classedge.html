@@ -32,9 +32,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9708fd450da9a497ea723282515790a9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedge.html#a9708fd450da9a497ea723282515790a9">edge</a> (int f, int t, int c)</td></tr>
-<tr class="memdesc:a9708fd450da9a497ea723282515790a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that initializes the private member variables.  <a href="#a9708fd450da9a497ea723282515790a9">More...</a><br /></td></tr>
-<tr class="separator:a9708fd450da9a497ea723282515790a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfc10de08b21f8993b597987da0c1c01"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedge.html#acfc10de08b21f8993b597987da0c1c01">edge</a> (int f, int t, int c, bool v=false)</td></tr>
+<tr class="memdesc:acfc10de08b21f8993b597987da0c1c01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor that initializes the private member variables.  <a href="#acfc10de08b21f8993b597987da0c1c01">More...</a><br /></td></tr>
+<tr class="separator:acfc10de08b21f8993b597987da0c1c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad82e1e82dc502b94ff9fc3939d5a06f5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedge.html#ad82e1e82dc502b94ff9fc3939d5a06f5">operator==</a> (const <a class="el" href="classedge.html">edge</a> &amp;e) const</td></tr>
 <tr class="memdesc:ad82e1e82dc502b94ff9fc3939d5a06f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare this edge to another one.  <a href="#ad82e1e82dc502b94ff9fc3939d5a06f5">More...</a><br /></td></tr>
 <tr class="separator:ad82e1e82dc502b94ff9fc3939d5a06f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -50,14 +50,17 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:aa9bd1a007fee3956a1e5fa5be411914d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedge.html#aa9bd1a007fee3956a1e5fa5be411914d">to</a></td></tr>
 <tr class="memdesc:aa9bd1a007fee3956a1e5fa5be411914d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending vertex of the edge.  <a href="#aa9bd1a007fee3956a1e5fa5be411914d">More...</a><br /></td></tr>
 <tr class="separator:aa9bd1a007fee3956a1e5fa5be411914d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aad35b5ba986c9c87b574624aa5ce6cca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classedge.html#aad35b5ba986c9c87b574624aa5ce6cca">vertical</a></td></tr>
+<tr class="memdesc:aad35b5ba986c9c87b574624aa5ce6cca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the sweeping pattern is vertical or horizontal.  <a href="#aad35b5ba986c9c87b574624aa5ce6cca">More...</a><br /></td></tr>
+<tr class="separator:aad35b5ba986c9c87b574624aa5ce6cca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class for representing edges. </p>
 
 <p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00009">9</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9708fd450da9a497ea723282515790a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9708fd450da9a497ea723282515790a9">&#9670;&nbsp;</a></span>edge()</h2>
+<a id="acfc10de08b21f8993b597987da0c1c01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfc10de08b21f8993b597987da0c1c01">&#9670;&nbsp;</a></span>edge()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -78,7 +81,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>c</em>&#160;</td>
+          <td class="paramname"><em>c</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>v</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -94,6 +103,7 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">f</td><td>The starting vertex. </td></tr>
     <tr><td class="paramname">t</td><td>The ending vertex. </td></tr>
     <tr><td class="paramname">c</td><td>The cost of the edge. </td></tr>
+    <tr><td class="paramname">v</td><td>Whether the sweeping pattern is vertical or horizontal. Default horizontal. </td></tr>
   </table>
   </dd>
 </dl>
@@ -147,7 +157,7 @@ Public Attributes</h2></td></tr>
 
 <p>The cost of the edge, i.e., length. </p>
 
-<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00040">40</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00041">41</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
 
 </div>
 </div>
@@ -165,7 +175,7 @@ Public Attributes</h2></td></tr>
 
 <p>The starting vertex of the edge. </p>
 
-<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00030">30</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00031">31</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
 
 </div>
 </div>
@@ -183,7 +193,25 @@ Public Attributes</h2></td></tr>
 
 <p>The ending vertex of the edge. </p>
 
-<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00035">35</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00036">36</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
+
+</div>
+</div>
+<a id="aad35b5ba986c9c87b574624aa5ce6cca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad35b5ba986c9c87b574624aa5ce6cca">&#9670;&nbsp;</a></span>vertical</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool edge::vertical</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the sweeping pattern is vertical or horizontal. </p>
+
+<p class="definition">Definition at line <a class="el" href="edge_8h_source.html#l00046">46</a> of file <a class="el" href="edge_8h_source.html">edge.h</a>.</p>
 
 </div>
 </div>
@@ -197,7 +225,7 @@ Public Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/coverage_path">coverage_path</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 14 2019 09:31:43</small>
+<small>autogenerated on Thu Jan 23 2020 10:34:17</small>
 </div>
 </body>
 </html>

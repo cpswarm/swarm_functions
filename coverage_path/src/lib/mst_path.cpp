@@ -152,8 +152,11 @@ geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, doub
     return get_wp();
 }
 
-void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle, bool connect4)
+void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle, bool vertical, bool connect4)
 {
+    // orientation of path edges
+    this->vertical = vertical;
+
     // transformation of output path
     rotation = -angle;
     translation.x = -vector.x;
@@ -249,7 +252,7 @@ bool mst_path::valid ()
 void mst_path::add_edge (int from, int to, int cost)
 {
     // add edge to priority queue
-    edge e(from,to,cost);
+    edge e(from,to,cost,vertical);
     edges.insert(e);
 
     // add vertices to sets

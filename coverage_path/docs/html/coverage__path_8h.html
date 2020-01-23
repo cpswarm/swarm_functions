@@ -30,11 +30,15 @@ $(function() {
 <code>#include &lt;geometry_msgs/Pose.h&gt;</code><br />
 <code>#include &lt;geometry_msgs/PoseStamped.h&gt;</code><br />
 <code>#include &lt;geometry_msgs/PointStamped.h&gt;</code><br />
+<code>#include &lt;geometry_msgs/PoseArray.h&gt;</code><br />
+<code>#include &lt;geometry_msgs/Vector3.h&gt;</code><br />
 <code>#include &lt;nav_msgs/Path.h&gt;</code><br />
 <code>#include &lt;nav_msgs/OccupancyGrid.h&gt;</code><br />
 <code>#include &lt;nav_msgs/GetMap.h&gt;</code><br />
 <code>#include &lt;nav_msgs/GetPlan.h&gt;</code><br />
 <code>#include &lt;cpswarm_msgs/GetWaypoint.h&gt;</code><br />
+<code>#include &lt;cpswarm_msgs/GetDouble.h&gt;</code><br />
+<code>#include &lt;cpswarm_msgs/GetVector.h&gt;</code><br />
 <code>#include &lt;cpswarm_msgs/ArrayOfStates.h&gt;</code><br />
 <code>#include &lt;cpswarm_msgs/StateEvent.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="spanning__tree_8h_source.html">lib/spanning_tree.h</a>&quot;</code><br />
@@ -44,9 +48,9 @@ Include dependency graph for coverage_path.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="coverage__path_8h__incl.png" border="0" usemap="#coverage__path_8h" alt=""/></div>
 <map name="coverage__path_8h" id="coverage__path_8h">
-<area shape="rect" id="node13" href="spanning__tree_8h.html" title="lib/spanning_tree.h" alt="" coords="455,80,586,107"/>
-<area shape="rect" id="node20" href="mst__path_8h.html" title="lib/mst_path.h" alt="" coords="610,80,714,107"/>
-<area shape="rect" id="node19" href="edge_8h.html" title="lib/edge.h" alt="" coords="396,155,475,181"/>
+<area shape="rect" id="node17" href="spanning__tree_8h.html" title="lib/spanning_tree.h" alt="" coords="571,80,702,107"/>
+<area shape="rect" id="node23" href="mst__path_8h.html" title="lib/mst_path.h" alt="" coords="726,80,830,107"/>
+<area shape="rect" id="node22" href="edge_8h.html" title="lib/edge.h" alt="" coords="595,155,673,181"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -62,12 +66,18 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:abd908c0aaf0ab61c8b7d0200d1d4fa7f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#abd908c0aaf0ab61c8b7d0200d1d4fa7f">divide_area</a></td></tr>
+<tr class="memdesc:abd908c0aaf0ab61c8b7d0200d1d4fa7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map.  <a href="#abd908c0aaf0ab61c8b7d0200d1d4fa7f">More...</a><br /></td></tr>
+<tr class="separator:abd908c0aaf0ab61c8b7d0200d1d4fa7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afacddfe797ed24d30af6ec211cb9da6c"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#afacddfe797ed24d30af6ec211cb9da6c">gridmap</a></td></tr>
 <tr class="memdesc:afacddfe797ed24d30af6ec211cb9da6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grid map representing the environment to be covered.  <a href="#afacddfe797ed24d30af6ec211cb9da6c">More...</a><br /></td></tr>
 <tr class="separator:afacddfe797ed24d30af6ec211cb9da6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea14b9eea17b48a7bbbc7bffad6b8993"><td class="memItemLeft" align="right" valign="top">ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#aea14b9eea17b48a7bbbc7bffad6b8993">map_getter</a></td></tr>
 <tr class="memdesc:aea14b9eea17b48a7bbbc7bffad6b8993"><td class="mdescLeft">&#160;</td><td class="mdescRight">Service client to get the assigned area.  <a href="#aea14b9eea17b48a7bbbc7bffad6b8993">More...</a><br /></td></tr>
 <tr class="separator:aea14b9eea17b48a7bbbc7bffad6b8993"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41cd7531a0c60b863bc559df554ed3b5"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a41cd7531a0c60b863bc559df554ed3b5">mst_publisher</a></td></tr>
+<tr class="memdesc:a41cd7531a0c60b863bc559df554ed3b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to visualize the minimum spanning tree.  <a href="#a41cd7531a0c60b863bc559df554ed3b5">More...</a><br /></td></tr>
+<tr class="separator:a41cd7531a0c60b863bc559df554ed3b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe0bf220c26db613deb84271d3c2528e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmst__path.html">mst_path</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#afe0bf220c26db613deb84271d3c2528e">path</a></td></tr>
 <tr class="memdesc:afe0bf220c26db613deb84271d3c2528e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The coverage path.  <a href="#afe0bf220c26db613deb84271d3c2528e">More...</a><br /></td></tr>
 <tr class="separator:afe0bf220c26db613deb84271d3c2528e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -77,6 +87,12 @@ Variables</h2></td></tr>
 <tr class="memitem:a872280165bf044da25860ac9ec5dd105"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a872280165bf044da25860ac9ec5dd105">reconfigure</a></td></tr>
 <tr class="memdesc:a872280165bf044da25860ac9ec5dd105"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the swarm configuration has changed which requires a replanning of the path.  <a href="#a872280165bf044da25860ac9ec5dd105">More...</a><br /></td></tr>
 <tr class="separator:a872280165bf044da25860ac9ec5dd105"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ae51501a858e6880146bae1ce297b45"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a0ae51501a858e6880146bae1ce297b45">resolution</a></td></tr>
+<tr class="memdesc:a0ae51501a858e6880146bae1ce297b45"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grid map underlying the path planning will be downsampled to this resolution in meter / cell.  <a href="#a0ae51501a858e6880146bae1ce297b45">More...</a><br /></td></tr>
+<tr class="separator:a0ae51501a858e6880146bae1ce297b45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a380b15f08dd066571a53e698d4ff5889"><td class="memItemLeft" align="right" valign="top">ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a380b15f08dd066571a53e698d4ff5889">rotater</a></td></tr>
+<tr class="memdesc:a380b15f08dd066571a53e698d4ff5889"><td class="mdescLeft">&#160;</td><td class="mdescRight">Service client to get the angle which the area has to be rotated by.  <a href="#a380b15f08dd066571a53e698d4ff5889">More...</a><br /></td></tr>
+<tr class="separator:a380b15f08dd066571a53e698d4ff5889"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a565f287f7b2370aca4f019d143227c5f"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a565f287f7b2370aca4f019d143227c5f">state</a></td></tr>
 <tr class="memdesc:a565f287f7b2370aca4f019d143227c5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current state of the CPS.  <a href="#a565f287f7b2370aca4f019d143227c5f">More...</a><br /></td></tr>
 <tr class="separator:a565f287f7b2370aca4f019d143227c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -92,9 +108,15 @@ Variables</h2></td></tr>
 <tr class="memitem:a82a6cee486e8468f00f066b8e78da77e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a82a6cee486e8468f00f066b8e78da77e">swarm_valid</a></td></tr>
 <tr class="memdesc:a82a6cee486e8468f00f066b8e78da77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether valid swarm information has been received.  <a href="#a82a6cee486e8468f00f066b8e78da77e">More...</a><br /></td></tr>
 <tr class="separator:a82a6cee486e8468f00f066b8e78da77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54486c83df0c0646ff23c8a68529f554"><td class="memItemLeft" align="right" valign="top">ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a54486c83df0c0646ff23c8a68529f554">translater</a></td></tr>
+<tr class="memdesc:a54486c83df0c0646ff23c8a68529f554"><td class="mdescLeft">&#160;</td><td class="mdescRight">Service client to get the offset which the area has to be translated by.  <a href="#a54486c83df0c0646ff23c8a68529f554">More...</a><br /></td></tr>
+<tr class="separator:a54486c83df0c0646ff23c8a68529f554"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89af7442db282e24b0d97f2bbecc5ec3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classspanning__tree.html">spanning_tree</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a89af7442db282e24b0d97f2bbecc5ec3">tree</a></td></tr>
 <tr class="memdesc:a89af7442db282e24b0d97f2bbecc5ec3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minimum-spanning-tree (MST) that defines the coverage path.  <a href="#a89af7442db282e24b0d97f2bbecc5ec3">More...</a><br /></td></tr>
 <tr class="separator:a89af7442db282e24b0d97f2bbecc5ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef08fd776d2f8ef00eeaea1128aa89c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#a0ef08fd776d2f8ef00eeaea1128aa89c">vertical</a></td></tr>
+<tr class="memdesc:a0ef08fd776d2f8ef00eeaea1128aa89c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the sweeping pattern is vertical or horizontal.  <a href="#a0ef08fd776d2f8ef00eeaea1128aa89c">More...</a><br /></td></tr>
+<tr class="separator:a0ef08fd776d2f8ef00eeaea1128aa89c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af619da743092d2d2c8a2377fe17a9e5b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="coverage__path_8h.html#af619da743092d2d2c8a2377fe17a9e5b">visualize</a></td></tr>
 <tr class="memdesc:af619da743092d2d2c8a2377fe17a9e5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to publish the coverage path on a topic for visualization.  <a href="#af619da743092d2d2c8a2377fe17a9e5b">More...</a><br /></td></tr>
 <tr class="separator:af619da743092d2d2c8a2377fe17a9e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -103,6 +125,24 @@ Variables</h2></td></tr>
 <tr class="separator:a3d5c674ffe74fefabb7b88721d23096d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="abd908c0aaf0ab61c8b7d0200d1d4fa7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd908c0aaf0ab61c8b7d0200d1d4fa7f">&#9670;&nbsp;</a></span>divide_area</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool divide_area</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map. </p>
+
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00108">108</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+
+</div>
+</div>
 <a id="afacddfe797ed24d30af6ec211cb9da6c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afacddfe797ed24d30af6ec211cb9da6c">&#9670;&nbsp;</a></span>gridmap</h2>
 
@@ -117,7 +157,7 @@ Variables</h2></td></tr>
 
 <p>The grid map representing the environment to be covered. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00059">59</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00078">78</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -135,7 +175,25 @@ Variables</h2></td></tr>
 
 <p>Service client to get the assigned area. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00034">34</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00043">43</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+
+</div>
+</div>
+<a id="a41cd7531a0c60b863bc559df554ed3b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41cd7531a0c60b863bc559df554ed3b5">&#9670;&nbsp;</a></span>mst_publisher</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Publisher mst_publisher</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Publisher to visualize the minimum spanning tree. </p>
+
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00038">38</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -153,7 +211,7 @@ Variables</h2></td></tr>
 
 <p>The coverage path. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00069">69</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00088">88</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -171,7 +229,7 @@ Variables</h2></td></tr>
 
 <p>Publisher to visualize the coverage path. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00024">24</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00028">28</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -189,7 +247,43 @@ Variables</h2></td></tr>
 
 <p>Whether the swarm configuration has changed which requires a replanning of the path. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00084">84</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00118">118</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+
+</div>
+</div>
+<a id="a0ae51501a858e6880146bae1ce297b45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ae51501a858e6880146bae1ce297b45">&#9670;&nbsp;</a></span>resolution</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double resolution</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The grid map underlying the path planning will be downsampled to this resolution in meter / cell. </p>
+
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00093">93</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+
+</div>
+</div>
+<a id="a380b15f08dd066571a53e698d4ff5889"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a380b15f08dd066571a53e698d4ff5889">&#9670;&nbsp;</a></span>rotater</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ServiceClient rotater</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Service client to get the angle which the area has to be rotated by. </p>
+
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00048">48</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -207,7 +301,7 @@ Variables</h2></td></tr>
 
 <p>Current state of the CPS. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00039">39</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00058">58</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -225,7 +319,7 @@ Variables</h2></td></tr>
 
 <p>Whether a valid state has been received. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00044">44</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00063">63</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -243,7 +337,7 @@ Variables</h2></td></tr>
 
 <p>The UUIDs of the other swarm members. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00049">49</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00068">68</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -261,7 +355,7 @@ Variables</h2></td></tr>
 
 <p>Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00074">74</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00098">98</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -279,7 +373,25 @@ Variables</h2></td></tr>
 
 <p>Whether valid swarm information has been received. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00054">54</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00073">73</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+
+</div>
+</div>
+<a id="a54486c83df0c0646ff23c8a68529f554"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54486c83df0c0646ff23c8a68529f554">&#9670;&nbsp;</a></span>translater</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ServiceClient translater</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Service client to get the offset which the area has to be translated by. </p>
+
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00053">53</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -297,7 +409,25 @@ Variables</h2></td></tr>
 
 <p>The minimum-spanning-tree (MST) that defines the coverage path. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00064">64</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00083">83</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+
+</div>
+</div>
+<a id="a0ef08fd776d2f8ef00eeaea1128aa89c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ef08fd776d2f8ef00eeaea1128aa89c">&#9670;&nbsp;</a></span>vertical</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool vertical</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the sweeping pattern is vertical or horizontal. </p>
+
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00113">113</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -315,7 +445,7 @@ Variables</h2></td></tr>
 
 <p>Whether to publish the coverage path on a topic for visualization. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00079">79</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00103">103</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -333,7 +463,7 @@ Variables</h2></td></tr>
 
 <p>Publisher to visualize the current waypoint. </p>
 
-<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00029">29</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="coverage__path_8h_source.html#l00033">33</a> of file <a class="el" href="coverage__path_8h_source.html">coverage_path.h</a>.</p>
 
 </div>
 </div>
@@ -343,7 +473,7 @@ Variables</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/coverage_path">coverage_path</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Nov 14 2019 09:31:43</small>
+<small>autogenerated on Thu Jan 23 2020 10:34:17</small>
 </div>
 </body>
 </html>
