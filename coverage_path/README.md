@@ -73,12 +73,14 @@ The `coverage_path` node generates a path that allows a CPS to cover a given are
   The frequency in Hz at which to run the control loops.
 * `~queue_size` (integer, default: `1`)
   The size of the message queue used for publishing and subscribing to topics.
+* `~resolution` (real, default: `1.0`)
+  The grid map underlying the path planning will be downsampled to this resolution in meter / cell.
 * `~swarm_timeout` (real, default: `5.0`)
   Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
 * `~visualize` (boolean, default: `false`)
   Whether to publish the coverage path on a topic for visualization.
 * `~divide_area` (boolean, default: `false`)
-  Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map.
+  Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map. If `true`, downsampling is not available.
 * `~vertical` (boolean, default: `false`)
   Whether the sweeping pattern is vertical or horizontal.
 
