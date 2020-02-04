@@ -244,6 +244,25 @@ void mst_path::initialize_tree (vector<edge> mst)
     }
 }
 
+void mst_path::reduce ()
+{
+    // iterate over path segments
+    for (auto it = path.begin()+1; it != path.end()-1; ) {
+        // direction of path segments
+        double dx1 = it->x - (it-1)->x;
+        double dy1 = it->y - (it-1)->y;
+        double dx2 = (it+1)->x - it->x;
+        double dy2 = (it+1)->y - it->y;
+
+        // two consecutive path segments are parallel, remove intermediate point
+        if (atan2(dy1,dx1) == atan2(dy2,dx2))
+            it = path.erase(it);
+
+        else
+            ++it;
+    }
+}
+
 bool mst_path::valid ()
 {
     return 0 <= wp && wp < path.size();
