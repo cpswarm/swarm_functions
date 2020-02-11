@@ -71,7 +71,7 @@ geometry_msgs::Pose target::get_pose ()
 void target::lost ()
 {
     // target is being tracked
-    if (state == TARGET_TRACKED) {
+    if (state == TARGET_TRACKED || state == TARGET_ASSIGNED) {
         // no updates received within timeout
         if (stamp + timeout < Time::now()) {
             // update target information
