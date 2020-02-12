@@ -145,14 +145,6 @@ void downsample (nav_msgs::OccupancyGrid& map)
  */
 bool generate_path (geometry_msgs::Point start)
 {
-    // get area to cover
-    nav_msgs::GetMap gm;
-    if (map_getter.call(gm) == false){
-        ROS_ERROR("Failed to get the assigned map, cannot compute coverage path!");
-        return false;
-    }
-    nav_msgs::OccupancyGrid map = gm.response.map;
-
     // divided area is already rotated, translated, and downsampled
     double rotation = 0.0;
     geometry_msgs::Vector3 translation;
@@ -171,11 +163,11 @@ bool generate_path (geometry_msgs::Point start)
     // original map still needs rotation and downsampling
     else {
         // rotate map
-        rotation = rotate(map);
+        rotation = rotate(area);
 
         // downsample resolution
-        if (map.info.resolution < resolution) {
-            downsample(map);
+        if (area.info.resolution < resolution) {
+            downsample(area);
         }
     }
 
@@ -183,7 +175,7 @@ bool generate_path (geometry_msgs::Point start)
 
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
-    tree.initialize_graph(map, translation, rotation, vertical);
+    tree.initialize_graph(area, translation, rotation, vertical);
     tree.construct();
 
     // visualize path
@@ -197,7 +189,7 @@ bool generate_path (geometry_msgs::Point start)
 
     // generate path
     ROS_DEBUG("Generate coverage path...");
-    path.initialize_graph(map, translation, rotation);
+    path.initialize_graph(area, translation, rotation);
     path.initialize_tree(tree.get_mst_edges());
     path.generate_path(cps);
     if (turning_points)
@@ -220,7 +212,7 @@ bool generate_path (geometry_msgs::Point start)
  */
 bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res)
 {
-    // compute new path if swarm configuration changed
+    // compute new path if area map has changed
     if (reconfigure) {
         if (generate_path(req.start.pose.position) == false)
             return false;
@@ -240,7 +232,7 @@ bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res
  */
 bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWaypoint::Response &res)
 {
-    // compute new path if swarm configuration changed
+    // compute new path if area map has changed
     if (reconfigure) {
         if (generate_path(req.position) == false)
             return false;
@@ -263,64 +255,14 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
 }
 
 /**
- * @brief Callback function for state updates.
- * @param msg State received from the CPS.
+ * @brief Callback function to receive the grid map.
+ * @param msg Grid map to be covered by this CPSs.
  */
-void state_callback (const cpswarm_msgs::StateEvent::ConstPtr& msg)
+void area_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
-    // store new position and orientation in class variables
-    state = msg->state;
-
-    // valid state received
-    if (msg->header.stamp.isValid())
-        state_valid = true;
-}
-
-/**
- * @brief Callback function to receive the states of the other CPSs.
- * @param msg UUIDs and states of the other CPSs.
- */
-void swarm_callback (const cpswarm_msgs::ArrayOfStates::ConstPtr& msg)
-{
-    // update cps uuids
-    for (auto cps : msg->states) {
-        // only consider cpss in the same state, i.e., coverage
-        if (cps.state != state)
-            continue;
-
-        // index of cps in map
-        auto idx = swarm.find(cps.swarmio.node);
-
-        // add new cps
-        if (idx == swarm.end()) {
-            swarm.emplace(cps.swarmio.node, Time::now());
-
-            // recompute path
-            reconfigure = true;
-            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
-        }
-
-        // update existing cps
-        else {
-            idx->second = Time::now();
-        }
-    }
-
-    // remove old cps
-    for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
-        if (cps->second + Duration(swarm_timeout) < Time::now()) {
-            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
-            swarm.erase(cps++);
-
-            // recompute path
-            reconfigure = true;
-        }
-        else {
-            ++cps;
-        }
-    }
-
-    swarm_valid = true;
+    area = *msg;
+    map_valid = true;
+    reconfigure = true;
 }
 
 /**
@@ -344,48 +286,36 @@ int main (int argc, char **argv)
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
-    nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
     nh.param(this_node::getName() + "/visualize", visualize, false);
     nh.param(this_node::getName() + "/divide_area", divide_area, false);
     nh.param(this_node::getName() + "/vertical", vertical, false);
     nh.param(this_node::getName() + "/turning_points", turning_points, false);
 
-    // initialize flags
-    state_valid = false;
-    swarm_valid = false;
-
     // publishers, subscribers, and service clients
-    Subscriber state_subscriber = nh.subscribe("state", queue_size, state_callback);
-    Subscriber swarm_subscriber = nh.subscribe("swarm_state", queue_size, swarm_callback);
     if (visualize) {
         path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
         mst_publisher = nh.advertise<geometry_msgs::PoseArray>("coverage_path/mst", queue_size, true);
     }
     if (divide_area) {
-        map_getter = nh.serviceClient<nav_msgs::GetMap>("area/assigned");
+        map_subscriber = nh.subscribe("area/assigned", queue_size, area_callback);
         translater = nh.serviceClient<cpswarm_msgs::GetVector>("area/get_translation");
         translater.waitForExistence();
     }
     else
-        map_getter = nh.serviceClient<nav_msgs::GetMap>("area/get_map");
-    map_getter.waitForExistence();
+        map_subscriber = nh.subscribe("area/map", queue_size, area_callback);
     rotater = nh.serviceClient<cpswarm_msgs::GetDouble>("area/get_rotation");
     rotater.waitForExistence();
 
     // init loop rate
     Rate rate(loop_rate);
 
-    // init state
-    while (ok() && state_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for valid state information...");
-        rate.sleep();
-        spinOnce();
-    }
+    // initialize flags
+    map_valid = false;
 
-    // init swarm
-    while (ok() && swarm_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for valid swarm information...");
+    // init map
+    while (ok() && map_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for grid map...");
         rate.sleep();
         spinOnce();
     }
