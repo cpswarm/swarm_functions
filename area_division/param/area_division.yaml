@@ -7,6 +7,7 @@ states:                  # Only CPSs in these states divide the area among each 
 - Coverage
 - Tracking
 - SelectRover
+- LocalCoverage
 optimizer:
   iterations:     100    # Maximum number of iterations of the optimization algorithm.
   variate_weight: 0.01   # Maximum variate weight of connected components.
