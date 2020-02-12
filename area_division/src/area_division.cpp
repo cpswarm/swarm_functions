@@ -260,6 +260,8 @@ void deinit ()
 
     // destroy optimizer
     delete division;
+
+    state = IDLE;
 }
 
 /**
