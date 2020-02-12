@@ -1,6 +1,297 @@
 #include "area_division.h"
 
 /**
+ * @brief Switch to the synchronization state.
+ */
+void to_sync ()
+{
+    state = SYNC;
+    ROS_DEBUG("Start synchronizing...");
+
+    // reset information about swarm
+    swarm_pose.clear();
+
+    // start of synchronization time window
+    sync_start = Time::now();
+}
+
+/**
+ * @brief Callback function to get the translation by which the area has been shifted.
+ * @param req Empty request.
+ * @param res The translation of the area.
+ * @return Whether the request succeeded.
+ */
+bool get_translation (cpswarm_msgs::GetVector::Request &req, cpswarm_msgs::GetVector::Response &res)
+{
+    res.vector = translation;
+    return true;
+}
+
+/**
+ * @brief Callback function for behavior state updates.
+ * @param msg State received from the CPS.
+ */
+void behavior_state_callback (const cpswarm_msgs::StateEvent::ConstPtr& msg)
+{
+    // store new state in class variables
+    behavior = msg->state;
+
+    // valid state received
+    if (msg->header.stamp.isValid())
+        behavior_valid = true;
+
+    // cps switched to a behavior state that requires area division
+    if (state == IDLE && find(behaviors.begin(), behaviors.end(), behavior) != behaviors.end())
+        state = INIT;
+
+    // cps switched to a behavior state that does not require area division
+    if (state == ACTIVE && find(behaviors.begin(), behaviors.end(), behavior) == behaviors.end())
+        state = DEINIT;
+}
+
+/**
+ * @brief Callback function to receive area division requests from other CPSs.
+ * @param msg UUIDs and position of the other CPS.
+ */
+void division_callback (const cpswarm_msgs::AreaDivisionEvent::ConstPtr& msg)
+{
+    // only divide area if active
+    if (state == ACTIVE)
+        to_sync();
+
+    // only synchronize if ready
+    if (state != SYNC)
+        return;
+
+    // check if cps is already known
+    auto idx = swarm_pose.find(msg->swarmio.node);
+
+    // add new cps
+    if (idx == swarm_pose.end()) {
+        ROS_DEBUG("Add CPS %s", msg->swarmio.node.c_str());
+
+        // add cps
+        swarm_pose.emplace(msg->swarmio.node, msg->pose);
+    }
+
+    // update existing cps
+    else {
+        ROS_DEBUG("Update CPS %s", msg->swarmio.node.c_str());
+
+        // update cps
+        idx->second.header.stamp = Time::now();
+        idx->second = msg->pose;
+    }
+}
+
+/**
+ * @brief Callback function to receive the grid map.
+ * @param msg Global grid map.
+ */
+void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
+{
+    // store map in class variable
+    gridmap = *msg;
+
+    // valid map received
+    map_valid = true;
+
+    // divide area
+    if (state == ACTIVE)
+        to_sync();
+}
+
+/**
+ * @brief Callback function for position updates.
+ * @param msg Position received from the CPS.
+ */
+void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
+{
+    // store new position and orientation in class variables
+    pose = msg->pose;
+
+    // valid pose received
+    if (msg->header.stamp.isValid())
+        pose_valid = true;
+}
+
+/**
+ * @brief Callback function to receive the states of the other CPSs.
+ * @param msg UUIDs and states of the other CPSs.
+ */
+void swarm_state_callback (const cpswarm_msgs::ArrayOfStates::ConstPtr& msg)
+{
+    // update cps uuids
+    for (auto cps : msg->states) {
+        // only consider cpss in the same behavior states
+        if (find(behaviors.begin(), behaviors.end(), cps.state) == behaviors.end())
+            continue;
+
+        // index of cps in map
+        auto idx = swarm.find(cps.swarmio.node);
+
+        // add new cps
+        if (idx == swarm.end()) {
+            swarm.emplace(cps.swarmio.node, Time::now());
+
+            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
+        }
+
+        // update existing cps
+        else {
+            idx->second = Time::now();
+        }
+    }
+
+    // remove old cps
+    for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
+        if (cps->second + Duration(swarm_timeout) < Time::now()) {
+            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
+            swarm.erase(cps++);
+
+            // divide area
+            if (state == ACTIVE)
+                to_sync();
+        }
+        else {
+            ++cps;
+        }
+    }
+
+    swarm_valid = true;
+}
+
+/**
+ * @brief Callback function to receive the UUID from the communication library.
+ * @param msg UUID of this node.
+ */
+void uuid_callback (const swarmros::String::ConstPtr& msg)
+{
+    uuid = msg->value;
+}
+
+/**
+ * @brief Initialize this node.
+ */
+void init ()
+{
+    NodeHandle nh;
+
+    // initialize flags
+    uuid = "";
+    pose_valid = false;
+    swarm_valid = false;
+    map_valid = false;
+
+    // publishers, subscribers, and service clients
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
+    uuid_sub = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
+    pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+    swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
+    map_sub = nh.subscribe("area/map", queue_size, map_callback); // TODO: use explored/merged map
+    division_sub = nh.subscribe("bridge/events/area_division", queue_size, division_callback);
+    pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
+    swarm_pub = nh.advertise<cpswarm_msgs::AreaDivisionEvent>("area_division", queue_size, true);
+    area_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/assigned", queue_size, true);
+    if (visualize) {
+        map_rot_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/rotated", queue_size, true);
+        map_ds_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/downsampled", queue_size, true);
+    }
+    rotater_cli = nh.serviceClient<cpswarm_msgs::GetDouble>("area/get_rotation");
+    rotater_cli.waitForExistence();
+
+    // init uuid
+    while (ok() && uuid == "") {
+        ROS_DEBUG_ONCE("Waiting for UUID...");
+        rate->sleep();
+        spinOnce();
+    }
+
+    // init position
+    while (ok() && pose_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid position information...");
+        rate->sleep();
+        spinOnce();
+    }
+
+    // init swarm
+    while (ok() && swarm_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid swarm information...");
+        rate->sleep();
+        spinOnce();
+    }
+
+    // init map
+    while (ok() && map_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid grid map...");
+        rate->sleep();
+        spinOnce();
+    }
+
+    // create area division object
+    division = new area_division();
+
+    // provide area translation services
+    translate_srv = nh.advertiseService("area/get_translation", get_translation);
+
+    // start area division
+    to_sync();
+}
+
+/**
+ * @brief Shutdown ROS communication.
+ */
+void deinit ()
+{
+    // shutdown ros communication
+    uuid_sub.shutdown();
+    pose_sub.shutdown();
+    swarm_sub.shutdown();
+    map_sub.shutdown();
+    division_sub.shutdown();
+    pos_pub.shutdown();
+    swarm_pub.shutdown();
+    area_pub.shutdown();
+    map_rot_pub.shutdown();
+    map_ds_pub.shutdown();
+    rotater_cli.shutdown();
+    translate_srv.shutdown();
+
+    // destroy optimizer
+    delete division;
+}
+
+/**
+ * @brief Synchronize The CPSs by exchanging an event.
+ */
+void sync ()
+{
+    // start synchronization sequence
+    if (sync_start + Duration(swarm_timeout) > Time::now()) {
+        // stop moving
+        geometry_msgs::PoseStamped goal_pose;
+        goal_pose.header.stamp = Time::now();
+        goal_pose.pose = pose;
+        pos_pub.publish(goal_pose);
+
+        // send event to swarm
+        cpswarm_msgs::AreaDivisionEvent event;
+        event.header.stamp = Time::now();
+        event.swarmio.name = "area_division";
+        geometry_msgs::PoseStamped ps;
+        ps.header.frame_id = "local_origin_ned";
+        ps.pose = pose;
+        event.pose = ps;
+        swarm_pub.publish(event);
+    }
+
+    // divide area
+    else
+        state = DIVIDE;
+}
+
+/**
  * @brief Rotate a point by a given angle around the origin.
  * @param point The point to rotate.
  * @param angle The angle by which to rotate the point.
@@ -28,7 +319,7 @@ double rotate (nav_msgs::OccupancyGrid& map)
 {
     // get angle
     cpswarm_msgs::GetDouble angle;
-    if (rotater.call(angle) == false) {
+    if (rotater_cli.call(angle) == false) {
         ROS_INFO("Not rotating map!");
         return 0.0;
     }
@@ -187,14 +478,16 @@ void divide_area ()
     // shift map
     translate(gridmap);
 
-    map_rot_publisher.publish(gridmap);
+    if (visualize)
+        map_rot_pub.publish(gridmap);
 
     // downsample resolution
     if (gridmap.info.resolution < resolution) {
         downsample(gridmap);
     }
 
-    map_ds_publisher.publish(gridmap);
+    if (visualize)
+        map_ds_pub.publish(gridmap);
 
     // convert swarm pose to grid
     map<string, vector<int>> swarm_grid;
@@ -226,150 +519,11 @@ void divide_area ()
     division->initialize_cps(swarm_grid);
     division->divide();
 
-    // visualize area
-    if (visualize)
-        area_pub.publish(division->get_grid(gridmap, uuid));
+    // publish result
+    area_pub.publish(division->get_grid(gridmap, uuid));
 
-    reconfigure = false;
-}
-
-/**
- * @brief Synchronize The CPSs by exchanging an event.
- */
-void sync ()
-{
-    // start synchronization sequence
-    if (sync_start + Duration(swarm_timeout) < Time::now()) {
-        // stop moving
-        geometry_msgs::PoseStamped goal_pose;
-        goal_pose.header.stamp = Time::now();
-        goal_pose.pose = pose;
-        pos_pub.publish(goal_pose);
-
-        // reset information about swarm
-        swarm_pose.clear();
-
-        // start of synchronization time window
-        sync_start = Time::now();
-
-        // send event to swarm
-        cpswarm_msgs::AreaDivisionEvent event;
-        event.header.stamp = Time::now();
-        event.swarmio.name = "area_division";
-        geometry_msgs::PoseStamped ps;
-        ps.header.frame_id = "local_origin_ned";
-        ps.pose = pose;
-        event.pose = ps;
-        swarm_pub.publish(event);
-    }
-}
-
-/**
- * @brief Callback function to get the area assignment of this CPS.
- * @param req Empty request.
- * @param res The grid map assigned to this CPS.
- * @return Whether the request succeeded.
- */
-bool get_area (nav_msgs::GetMap::Request &req, nav_msgs::GetMap::Response &res)
-{
-    // synchronize with swarm
-    sync();
-
-    // wait for swarm updates
-    while (Time::now() <= sync_start + Duration(swarm_timeout)) {
-        rate->sleep();
-        spinOnce();
-    }
-
-    // swarm configuration changed
-    if (reconfigure) {
-        // divide area
-        divide_area();
-    }
-
-    // return assigned area
-    res.map = division->get_grid(gridmap, uuid);
-
-    return true;
-}
-
-/**
- * @brief Callback function to get the translation by which the area has been shifted.
- * @param req Empty request.
- * @param res The translation of the area.
- * @return Whether the request succeeded.
- */
-bool get_translation (cpswarm_msgs::GetVector::Request &req, cpswarm_msgs::GetVector::Response &res)
-{
-    res.vector = translation;
-    return true;
-}
-
-/**
- * @brief Callback function to receive the UUID from the communication library.
- * @param msg UUID of this node.
- */
-void uuid_callback (const swarmros::String::ConstPtr& msg)
-{
-    uuid = msg->value;
-}
-
-/**
- * @brief Callback function for position updates.
- * @param msg Position received from the CPS.
- */
-void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg)
-{
-    // store new position and orientation in class variables
-    pose = msg->pose;
-
-    // valid pose received
-    if (msg->header.stamp.isValid())
-        pose_valid = true;
-}
-
-/**
- * @brief Callback function to receive area division requests from other CPSs.
- * @param msg UUIDs and position of the other CPS.
- */
-void swarm_callback (const cpswarm_msgs::AreaDivisionEvent::ConstPtr& msg)
-{
-    // synchronize with swarm
-    sync();
-
-    // recalculate area division
-    reconfigure = true;
-
-    // check if cps is already known
-    auto idx = swarm_pose.find(msg->swarmio.node);
-
-    // add new cps
-    if (idx == swarm_pose.end()) {
-        ROS_DEBUG("Add CPS %s", msg->swarmio.node.c_str());
-
-        // add cps
-        swarm_pose.emplace(msg->swarmio.node, msg->pose);
-    }
-
-    // update existing cps
-    else {
-        ROS_DEBUG("Update CPS %s", msg->swarmio.node.c_str());
-
-        // update cps
-        idx->second.header.stamp = Time::now();
-        idx->second = msg->pose;
-    }
-}
-
-/**
- * @brief Callback function to receive the grid map.
- * @param msg Merged grid map from all CPSs.
- */
-void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
-{
-    // TODO: react to map changes, i.e., reconfigure = true
-    gridmap = *msg;
-    map_valid = true;
+    // area division done
+    state = ACTIVE;
 }
 
 /**
@@ -384,75 +538,60 @@ int main (int argc, char **argv)
     init(argc, argv, "area_division");
     NodeHandle nh;
 
-    // init global variables
-    reconfigure = true;
-    sync_start = Time::now();
-
     // read parameters
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
+    rate = new Rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 10);
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
     nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
     nh.param(this_node::getName() + "/visualize", visualize, false);
+    nh.getParam(this_node::getName() + "/states", behaviors);
 
-    // initialize flags
-    uuid = "";
-    pose_valid = false;
-    swarm_valid = false;
-    map_valid = false;
+    // initially, this cps does not perform area division
+    state = IDLE;
 
-    // publishers, subscribers, and service clients
-    Subscriber uuid_sub = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
-    Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    Subscriber swarm_sub = nh.subscribe("bridge/events/area_division", queue_size, swarm_callback);
-    Subscriber map_sub = nh.subscribe("area_provider/map", queue_size, map_callback); // TODO: use explored/merged map
-    pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
-    swarm_pub = nh.advertise<cpswarm_msgs::AreaDivisionEvent>("area_division", queue_size, true);
-    if (visualize) {
-        area_pub = nh.advertise<nav_msgs::OccupancyGrid>("assigned_map", queue_size, true);
-        map_rot_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area_division/rotated_map", queue_size, true);
-        map_ds_publisher = nh.advertise<nav_msgs::OccupancyGrid>("area_division/downsampled_map", queue_size, true);
-    }
-    rotater = nh.serviceClient<cpswarm_msgs::GetDouble>("area/get_rotation");
-    rotater.waitForExistence();
-
-    // init loop rate
-    rate = new Rate(loop_rate);
-
-    // init uuid
-    while (ok() && uuid == "") {
-        ROS_DEBUG_ONCE("Waiting for UUID...");
+    // init behavior state
+    behavior_valid = false;
+    Subscriber behavior_state_subscriber = nh.subscribe("state", queue_size, behavior_state_callback);
+    while (ok() && behavior_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid behavior information...");
         rate->sleep();
         spinOnce();
     }
 
-    // init position
-    while (ok() && pose_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for valid position information...");
-        rate->sleep();
+    // check if area division is necessary
+    while (ok()) {
         spinOnce();
-    }
 
-    // init map
-    while (ok() && map_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for grid map...");
+        switch (state) {
+            // start up this node functionality
+            case INIT:
+                init();
+                break;
+
+            // synchronize with the other cpss
+            case SYNC:
+                sync();
+                break;
+
+            // divide area
+            case DIVIDE:
+                divide_area();
+                break;
+
+            // shutdown this node functionality
+            case DEINIT:
+                deinit();
+                break;
+        }
+
         rate->sleep();
-        spinOnce();
     }
-
-    // create area division object
-    division = new area_division();
-
-    // provide area services
-    ServiceServer area_service = nh.advertiseService("area/assigned", get_area);
-    ServiceServer translate_service = nh.advertiseService("area/get_translation", get_translation);
-    spin();
 
     // clean up
     delete rate;
-    delete division;
 
     return 0;
 }
