@@ -29,13 +29,15 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
     nh.param(this_node::getName() + "/target_tolerance", target_tolerance, 0.1);
 
     // initialize publishers
-    target_found_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_found", queue_size, true);
-    target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size, true);
-    target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size, true);
+    target_found_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_found", queue_size);
+    target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size);
+    target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size);
     target_done_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_done", queue_size, true);
 
     // init loop rate
     rate = new Rate(loop_rate);
+
+    ROS_DEBUG("Added target %d in state %d", id, state);
 
     // inform others about newly found target
     if (state == TARGET_TRACKED) {
@@ -71,11 +73,12 @@ geometry_msgs::Pose target::get_pose ()
 void target::lost ()
 {
     // target is being tracked
-    if (state == TARGET_TRACKED) {
+    if (state == TARGET_TRACKED || state == TARGET_ASSIGNED) {
         // no updates received within timeout
         if (stamp + timeout < Time::now()) {
             // update target information
             state = TARGET_LOST;
+            ROS_INFO("Lost target %d", id);
 
             // wait until subscriber is connected
             while (ok() && target_lost_pub.getNumSubscribers() <= 0)

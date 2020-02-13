@@ -9,13 +9,10 @@
 #include <geometry_msgs/Vector3.h>
 #include <nav_msgs/Path.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include <nav_msgs/GetMap.h>
 #include <nav_msgs/GetPlan.h>
 #include <cpswarm_msgs/GetWaypoint.h>
 #include <cpswarm_msgs/GetDouble.h>
 #include <cpswarm_msgs/GetVector.h>
-#include <cpswarm_msgs/ArrayOfStates.h>
-#include <cpswarm_msgs/StateEvent.h>
 #include "lib/spanning_tree.h"
 #include "lib/mst_path.h"
 
@@ -40,7 +37,7 @@ Publisher mst_publisher;
 /**
  * @brief Service client to get the assigned area.
  */
-ServiceClient map_getter;
+Subscriber map_subscriber;
 
 /**
  * @brief Service client to get the angle which the area has to be rotated by.
@@ -53,29 +50,14 @@ ServiceClient rotater;
 ServiceClient translater;
 
 /**
- * @brief Current state of the CPS.
- */
-string state;
-
-/**
- * @brief Whether a valid state has been received.
- */
-bool state_valid;
-
-/**
- * @brief The UUIDs of the other swarm members.
- */
-map<string, Time> swarm;
-
-/**
- * @brief Whether valid swarm information has been received.
- */
-bool swarm_valid;
-
-/**
  * @brief The grid map representing the environment to be covered.
  */
-nav_msgs::OccupancyGrid gridmap;
+nav_msgs::OccupancyGrid area;
+
+/**
+ * @brief Whether a valid grid map has been received.
+ */
+bool map_valid;
 
 /**
  * @brief The minimum-spanning-tree (MST) that defines the coverage path.
@@ -91,11 +73,6 @@ mst_path path;
  * @brief The grid map underlying the path planning will be downsampled to this resolution in meter / cell.
  */
 double resolution;
-
-/**
- * @brief Time in seconds after which it is assumed that a swarm member has left the swarm if no position update has been received.
- */
-double swarm_timeout;
 
 /**
  * @brief Whether to publish the coverage path on a topic for visualization.

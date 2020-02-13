@@ -99,6 +99,7 @@ int main (int argc, char **argv)
             cpswarm_msgs::StateEvent state_event;
             state_event.header.stamp = Time::now();
             state_event.swarmio.node = member->first;
+            state_event.state = member->second.state;
             swarm_state_msg.states.push_back(state_event);
 
             // next member
