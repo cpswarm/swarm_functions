@@ -46,6 +46,11 @@ bool pose_received;
 int task_id;
 
 /**
+ * @brief The bid duration.
+ */
+double timeout;
+
+/**
  * @brief Callback function to receive the position of this CPS.
  * @param msg The pose of this CPS.
  */
@@ -102,7 +107,8 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
     Rate rate(loop_rate);
-    while (ok() && !as->isPreemptRequested() && allocation.task_id < 0) {
+    Time start_time = Time::now();
+    while (ok() && !as->isPreemptRequested() && Time::now() - start_time < Duration(timeout) && allocation.task_id < 0) {
         ROS_DEBUG_ONCE("TASK_BID - Waiting for auction to end");
         publisher.publish(task_allocation);
         spinOnce();
@@ -117,7 +123,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     }
 
     // this cps has won the auction, return result
-    else if (allocation.cps_id.compare(uuid) == 0) {
+    else if (allocation.task_id >= 0 && allocation.cps_id.compare(uuid) == 0) {
         cpswarm_msgs::TaskAllocationResult result;
         result.task_id = allocation.task_id;
         result.task_pose = goal->task_pose;
@@ -158,6 +164,7 @@ int main(int argc, char **argv)
     Rate rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 10);
+    nh.param(this_node::getName() + "/timeout", timeout, 10.0);
 
     // publishers and subscribers
     Subscriber pose_subscriber = nh.subscribe<geometry_msgs::PoseStamped>("pos_provider/pose", queue_size, pose_callback);
