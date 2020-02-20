@@ -146,7 +146,7 @@ int main(int argc, char **argv)
     winner = "";
 
     // read parameters
-    nh.param(this_node::getName() + "/timeout", timeout, 10.0);
+    nh.param(this_node::getName() + "/auction_timeout", timeout, 10.0);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 10);
 

@@ -164,7 +164,7 @@ int main(int argc, char **argv)
     Rate rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 10);
-    nh.param(this_node::getName() + "/timeout", timeout, 10.0);
+    nh.param(this_node::getName() + "/bid_timeout", timeout, 60.0);
 
     // publishers and subscribers
     Subscriber pose_subscriber = nh.subscribe<geometry_msgs::PoseStamped>("pos_provider/pose", queue_size, pose_callback);
