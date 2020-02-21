@@ -91,7 +91,7 @@ void division_callback (const cpswarm_msgs::AreaDivisionEvent::ConstPtr& msg)
 void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
 {
     // store map in class variable
-    gridmap = *msg;
+    global_map = *msg;
 
     // valid map received
     map_valid = true;
@@ -474,6 +474,9 @@ void downsample (nav_msgs::OccupancyGrid& map)
  */
 void divide_area ()
 {
+    // initialize map
+    nav_msgs::OccupancyGrid gridmap = global_map;
+
     // rotate map
     double angle = rotate(gridmap);
 
