@@ -6,6 +6,9 @@ mst_path::mst_path ()
 
 void mst_path::generate_path (geometry_msgs::Point start)
 {
+    // reset counter of current waypoint
+    this->wp = 0;
+
     // starting vertex
     geometry_msgs::Point wp = start;
     path.push_back(wp);
@@ -147,6 +150,7 @@ geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, doub
     if (dist(position, get_wp()) < tolerance || dist(position, get_wp(1)) < dist(position, get_wp())) {
         // select next waypoint
         ++wp;
+        ROS_DEBUG("Select waypoint %d", wp);
     }
 
     return get_wp();
