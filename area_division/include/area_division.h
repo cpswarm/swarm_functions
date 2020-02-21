@@ -150,7 +150,7 @@ bool pose_valid;
 /**
  * @brief The complete grid map.
  */
-nav_msgs::OccupancyGrid gridmap;
+nav_msgs::OccupancyGrid global_map;
 
 /**
  * @brief Whether a valid grid map has been received.
