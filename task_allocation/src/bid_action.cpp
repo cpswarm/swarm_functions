@@ -6,6 +6,7 @@
 #include <cpswarm_msgs/TaskAllocationEvent.h>
 #include <cpswarm_msgs/TaskAllocatedEvent.h>
 #include <cpswarm_msgs/TaskAllocationAction.h>
+#include <cpswarm_msgs/StateEvent.h>
 
 using namespace std;
 using namespace ros;
@@ -19,6 +20,11 @@ typedef actionlib::SimpleActionServer<cpswarm_msgs::TaskAllocationAction> Server
  * @brief Publisher to submit a bid to the auction.
  */
 Publisher publisher;
+
+/**
+ * @brief Publisher to monitor the state from MT.
+ */
+Publisher state_publisher;
 
 /**
  * @brief Position of this CPS.
@@ -82,6 +88,13 @@ void uuid_callback(const swarmros::String::ConstPtr& msg)
  */
 void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server* as)
 {
+
+    //sending info to MT
+    cpswarm_msgs::StateEvent state_msg;
+    state_msg.swarmio.name = "cps_state";
+    state_msg.state = "[Stopped] Sending bid for cart " + std::to_string(goal->task_id);
+    state_publisher.publish(state_msg);
+
     // compute bid
     double distance = hypot(goal->task_pose.pose.position.x - pose.position.x, goal->task_pose.pose.position.y - pose.position.y);
     task_id = goal->task_id;
@@ -118,6 +131,9 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
 
     // this cps has won the auction, return result
     else if (allocation.cps_id.compare(uuid) == 0) {
+        //sending info to MT
+        state_msg.state = "CPS Selected for cart "+ std::to_string(task_id);
+        state_publisher.publish(state_msg);
         ROS_INFO("TASK_BID - I am the selected one (%s) for cart %d!", allocation.cps_id.c_str(), task_allocation.id);
         cpswarm_msgs::TaskAllocationResult result;
         result.task_id = allocation.task_id;
@@ -127,6 +143,9 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
 
     // auction lost, return negative result
     else {
+        //sending info to MT
+        state_msg.state = "[Stopped] Idle and waiting"+ std::to_string(task_id);
+        state_publisher.publish(state_msg);
         as->setAborted();
     }
 
@@ -165,6 +184,7 @@ int main(int argc, char **argv)
     Subscriber allocation_subscriber = nh.subscribe<cpswarm_msgs::TaskAllocatedEvent>("bridge/events/cps_selected", queue_size, allocation_callback);
     Subscriber uuid_subscriber = nh.subscribe<swarmros::String>("bridge/uuid", 1, uuid_callback);
     publisher = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("cps_selection", queue_size);
+    state_publisher = nh.advertise<cpswarm_msgs::StateEvent>("cps_state", queue_size);
 
     // wait for pose and uuid
     while (ok() && (!pose_received || uuid.compare("") == 0)) {
