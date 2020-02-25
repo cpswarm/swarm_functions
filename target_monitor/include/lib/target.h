@@ -92,6 +92,12 @@ public:
 
 private:
     /**
+     * @brief Publish a target position event to the swarm.
+     * @param event The name of the event.
+     */
+    void publish_event (string event);
+
+    /**
      * @brief A node handle for the main ROS node.
      */
     NodeHandle nh;
