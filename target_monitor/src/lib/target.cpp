@@ -41,22 +41,14 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
 
     // inform others about newly found target
     if (state == TARGET_TRACKED) {
-        // wait until subscriber is connected
-        while (ok() && target_found_pub.getNumSubscribers() <= 0)
-            rate->sleep();
-
-        ROS_DEBUG("Found target %d at (%.2f,%.2f)", id, pose.position.x, pose.position.y);
+        ROS_DEBUG("Target %d: unknown --> tracked, position (%.2f,%.2f)", id, pose.position.x, pose.position.y);
 
         // publish event
-        cpswarm_msgs::TargetPositionEvent target;
-        geometry_msgs::PoseStamped ps;
-        ps.pose = pose;
-        ps.header.frame_id = "local_origin_ned";
-        target.pose = ps;
-        target.header.stamp = Time::now();
-        target.swarmio.name = "target_found";
-        target.id = id;
-        target_found_pub.publish(target);
+        publish_event("target_found");
+    }
+
+    else {
+        ROS_DEBUG("Target %d: unknown --> known", id);
     }
 }
 
@@ -76,24 +68,18 @@ void target::lost ()
     if (state == TARGET_TRACKED || state == TARGET_ASSIGNED) {
         // no updates received within timeout
         if (stamp + timeout < Time::now()) {
+            if (state == TARGET_TRACKED)
+                ROS_INFO("Target %d: tracked --> lost", id);
+            else if (state == TARGET_ASSIGNED)
+                ROS_INFO("Target %d: assigned --> lost", id);
+            else
+                ROS_INFO("Target %d: lost", id);
+
             // update target information
             state = TARGET_LOST;
-            ROS_INFO("Lost target %d", id);
-
-            // wait until subscriber is connected
-            while (ok() && target_lost_pub.getNumSubscribers() <= 0)
-                rate->sleep();
 
             // publish event
-            cpswarm_msgs::TargetPositionEvent target;
-            geometry_msgs::PoseStamped ps;
-            ps.pose = pose;
-            ps.header.frame_id = "local_origin_ned";
-            target.pose = ps;
-            target.header.stamp = Time::now();
-            target.swarmio.name = "target_lost";
-            target.id = id;
-            target_lost_pub.publish(target);
+            publish_event("target_lost");
         }
     }
 }
@@ -108,111 +94,204 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
 {
     // this target has been completed already, nothing to do
     if (this->state == TARGET_DONE) {
-        ROS_DEBUG("Target %d already done", id);
+        ROS_DEBUG("Target %d: already done", id);
         return;
     }
 
-    // target completed
-    if (state == TARGET_DONE) {
-        // store target id in parameter server
-        vector<int> done;
-        nh.getParam(this_node::getNamespace() + "/targets_done", done);
-        done.push_back(id);
-        nh.setParam(this_node::getNamespace() + "/targets_done", done);
+    // this target has been assigned to another cps for completion but is still tracked
+    else if (this->state == TARGET_ASSIGNED) {
+        // update target information
+        this->state = state;
+        this->pose = pose;
+        this->stamp = stamp;
+
+        // target completed by the other cps
+        if (state == TARGET_DONE) {
+            ROS_DEBUG("Target %d: assigned --> done", id);
+
+            // store target id in parameter server
+            vector<int> done;
+            nh.getParam(this_node::getNamespace() + "/targets_done", done);
+            done.push_back(id);
+            nh.setParam(this_node::getNamespace() + "/targets_done", done);
+
+            // publish event
+            publish_event("target_done");
+        }
+
+        // target still being tracked, send update
+        else if (state == TARGET_TRACKED) {
+            ROS_DEBUG("Target %d: assigned, update", id);
+
+            // publish event
+            publish_event("target_update");
+        }
+
+        return;
+    }
+
+    // target is being tracked
+    else if (this->state == TARGET_TRACKED) {
+        // send update
+        if (state == TARGET_TRACKED) {
+            // update target information
+            this->state = state;
+            this->pose = pose;
+            this->stamp = stamp;
+
+            // compute distance that target moved
+            double moved = hypot(last_pose.position.x - pose.position.x, last_pose.position.y - pose.position.y);
+
+            // target has moved enough for update
+            if (moved > target_tolerance) {
+                ROS_DEBUG("Target %d: tracked, update", id);
+
+                // store current pose
+                last_pose = pose;
+
+                // publish event
+                publish_event("target_update");
+            }
+        }
+
+        // target has been assigned to another cps
+        else if (state == TARGET_ASSIGNED) {
+            ROS_DEBUG("Target %d: tracked --> assigned", id);
+
+            // update target information
+            this->state = state;
+            this->stamp = stamp;
+
+            // reaction to incoming swarm event, not necessary to publish event
+        }
+
+        return;
+    }
+
+    // target has been found by another cps
+    else if (this->state == TARGET_KNOWN) {
+        // target now found by this cps
+        if (state == TARGET_TRACKED) {
+            ROS_DEBUG("Target %d: known --> tracked, position (%.2f,%.2f)", id, pose.position.x, pose.position.y);
+
+            // update target information
+            this->state = state;
+            this->pose = pose;
+            this->stamp = stamp;
+
+            // publish event
+            publish_event("target_found");
+        }
+
+        // target has been assigned to another cps
+        else if (state == TARGET_ASSIGNED) {
+            ROS_DEBUG("Target %d: known --> assigned", id);
+
+            // update target information
+            this->state = state;
+            this->stamp = stamp;
+
+            // reaction to incoming swarm event, not necessary to publish event
+        }
+
+        // target has been lost by another cps
+        else if (state == TARGET_LOST) {
+            ROS_DEBUG("Target %d: known --> lost", id);
+
+            // update target information
+            this->state = state;
+            this->pose = pose;
+            this->stamp = stamp;
+
+            // reaction to incoming swarm event, not necessary to publish event
+        }
+
+        return;
+    }
+
+    // target has been lost by another cps
+    else if (this->state == TARGET_LOST) {
+        // update target information
+        this->state = state;
+        this->pose = pose;
+        this->stamp = stamp;
+
+        // target has been found by another cps
+        if (state == TARGET_KNOWN) {
+            ROS_DEBUG("Target %d: lost --> known", id);
+
+            // reaction to incoming swarm event, not necessary to publish event
+        }
+
+        // target has been found by this cps
+        else if (state == TARGET_TRACKED) {
+            ROS_DEBUG("Target %d: lost --> tracked", id);
+
+            // publish event
+            publish_event("target_found");
+        }
+
+        return;
+    }
+
+    else {
+        ROS_ERROR("Target %d: invalid state transition %d --> %d!", id, this->state, state);
+    }
+}
+
+void target::publish_event (string event)
+{
+
+
+
+    // create event
+    cpswarm_msgs::TargetPositionEvent target;
+    geometry_msgs::PoseStamped ps;
+    ps.pose = pose;
+    ps.header.frame_id = "local_origin_ned";
+    target.pose = ps;
+    target.header.stamp = Time::now();
+    target.swarmio.name = event;
+    target.id = id;
+
+    // publish target found event
+    if (event == "target_found") {
+        // wait until subscriber is connected
+        while (ok() && target_found_pub.getNumSubscribers() <= 0)
+            rate->sleep();
 
         // publish event
-        cpswarm_msgs::TargetPositionEvent target;
-        geometry_msgs::PoseStamped ps;
-        ps.pose = pose;
-        ps.header.frame_id = "local_origin_ned";
-        target.pose = ps;
-        target.header.stamp = Time::now();
-        target.swarmio.name = "target_done";
-        target.id = id;
+        target_found_pub.publish(target);
+    }
+
+    else if (event == "target_update") {
+        // wait until subscriber is connected
+        while (ok() && target_update_pub.getNumSubscribers() <= 0)
+            rate->sleep();
+
+        // publish event
+        target_update_pub.publish(target);
+    }
+
+    else if (event == "target_lost") {
+        // wait until subscriber is connected
+        while (ok() && target_lost_pub.getNumSubscribers() <= 0)
+            rate->sleep();
+
+        // publish event
+        target_lost_pub.publish(target);
+    }
+
+    else if (event == "target_done") {
+        // wait until subscriber is connected
+        while (ok() && target_done_pub.getNumSubscribers() <= 0)
+            rate->sleep();
+
+        // publish event
         target_done_pub.publish(target);
-
-        // update target information
-        this->state = state;
-        this->pose = pose;
-        this->stamp = stamp;
-
-        ROS_DEBUG("Target %d done", id);
-
-        return;
     }
 
-    // this target has been assigned already, nothing to do except setting it to done
-    if (this->state == TARGET_ASSIGNED) {
-        ROS_DEBUG("Target %d already assigned", id);
-        return;
-    }
-
-    // target has been assigned to a cps, stop tracking it
-    if (state == TARGET_ASSIGNED) {
-        // update target information
-        this->state = state;
-        this->stamp = stamp;
-
-        // not necessary to publish event, since assignment is a swarm scope event already
-
-        ROS_DEBUG("Target %d assigned", id);
-
-        return;
-    }
-
-    // target is being tracked, update for already known target
-    if (state == TARGET_TRACKED) {
-        // compute distance that target moved
-        double moved = hypot(last_pose.position.x - pose.position.x, last_pose.position.y - pose.position.y);
-
-        // new target found
-        if (this->state != TARGET_TRACKED) {
-            // wait until subscriber is connected
-            while (ok() && target_update_pub.getNumSubscribers() <= 0)
-                rate->sleep();
-
-            ROS_DEBUG("Found target %d at (%.2f,%.2f)", id, pose.position.x, pose.position.y);
-
-            // publish event
-            cpswarm_msgs::TargetPositionEvent target;
-            geometry_msgs::PoseStamped ps;
-            ps.pose = pose;
-            ps.header.frame_id = "local_origin_ned";
-            target.pose = ps;
-            target.header.stamp = Time::now();
-            target.swarmio.name = "target_found";
-            target.id = id;
-            target_found_pub.publish(target);
-        }
-
-        // target has moved enough for update
-        if (moved > target_tolerance) {
-            // wait until subscriber is connected
-            while (ok() && target_update_pub.getNumSubscribers() <= 0)
-                rate->sleep();
-
-            // publish event
-            cpswarm_msgs::TargetPositionEvent target;
-            geometry_msgs::PoseStamped ps;
-            ps.pose = pose;
-            ps.header.frame_id = "local_origin_ned";
-            target.pose = ps;
-            target.header.stamp = Time::now();
-            target.swarmio.name = "target_update";
-            target.id = id;
-            target_update_pub.publish(target);
-
-            ROS_DEBUG("Target %d update", id);
-        }
-
-        // store current pose
-        last_pose = pose;
-
-        // update target information
-        this->state = state;
-        this->pose = pose;
-        this->stamp = stamp;
-
-        return;
+    else {
+        ROS_ERROR("Not publishing invalid event %s!", event.c_str());
     }
 }
