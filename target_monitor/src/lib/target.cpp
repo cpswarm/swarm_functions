@@ -241,10 +241,7 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
 
 void target::publish_event (string event)
 {
-
-
-
-    // create event
+    // create target position event
     cpswarm_msgs::TargetPositionEvent target;
     geometry_msgs::PoseStamped ps;
     ps.pose = pose;
@@ -254,44 +251,19 @@ void target::publish_event (string event)
     target.swarmio.name = event;
     target.id = id;
 
-    // publish target found event
-    if (event == "target_found") {
-        // wait until subscriber is connected
-        while (ok() && target_found_pub.getNumSubscribers() <= 0)
-            rate->sleep();
-
-        // publish event
+    // publish target position event
+    if (event == "target_found")
         target_found_pub.publish(target);
-    }
 
-    else if (event == "target_update") {
-        // wait until subscriber is connected
-        while (ok() && target_update_pub.getNumSubscribers() <= 0)
-            rate->sleep();
-
-        // publish event
+    else if (event == "target_update")
         target_update_pub.publish(target);
-    }
 
-    else if (event == "target_lost") {
-        // wait until subscriber is connected
-        while (ok() && target_lost_pub.getNumSubscribers() <= 0)
-            rate->sleep();
-
-        // publish event
+    else if (event == "target_lost")
         target_lost_pub.publish(target);
-    }
 
-    else if (event == "target_done") {
-        // wait until subscriber is connected
-        while (ok() && target_done_pub.getNumSubscribers() <= 0)
-            rate->sleep();
-
-        // publish event
+    else if (event == "target_done")
         target_done_pub.publish(target);
-    }
 
-    else {
+    else
         ROS_ERROR("Not publishing invalid event %s!", event.c_str());
-    }
 }
