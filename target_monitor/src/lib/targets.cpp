@@ -81,7 +81,7 @@ void targets::update (geometry_msgs::Pose pose)
     }
 }
 
-void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
+bool targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
 {
     // determine target pose
     geometry_msgs::Pose pose;
@@ -92,12 +92,12 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
     // update existing target
     if (target_map.count(msg.id) > 0) {
         target_map[msg.id]->update(state, pose, msg.header.stamp);
+        return false;
     }
 
     // add new target
-    else {
-        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, pose, msg.header.stamp)));
-    }
+    target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, pose, msg.header.stamp)));
+    return true;
 }
 
 geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_msgs::Pose p2) const
