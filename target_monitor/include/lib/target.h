@@ -92,12 +92,6 @@ public:
 
 private:
     /**
-     * @brief Publish a target position event to the swarm.
-     * @param event The name of the event.
-     */
-    void publish_event (string event);
-
-    /**
      * @brief A node handle for the main ROS node.
      */
     NodeHandle nh;
@@ -142,25 +136,6 @@ private:
      */
     double target_tolerance;
 
-    /**
-     * @brief Publisher for transmitting information about found targets to other CPSs.
-     */
-    Publisher target_found_pub;
-
-    /**
-     * @brief Publisher for transmitting updated information about targets to other CPSs.
-     */
-    Publisher target_update_pub;
-
-    /**
-     * @brief Publisher for transmitting information about lost targets to other CPSs.
-     */
-    Publisher target_lost_pub;
-
-    /**
-     * @brief Publisher for transmitting information about completed targets to other CPSs.
-     */
-    Publisher target_done_pub;
 };
 
 #endif // TARGET_H

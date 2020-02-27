@@ -43,7 +43,7 @@ public:
      * @param state The target state.
      *
      */
-    void update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state);
+    bool update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state);
 
 private:
     /**

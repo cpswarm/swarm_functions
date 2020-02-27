@@ -28,28 +28,10 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
     this->timeout = Duration(timeout);
     nh.param(this_node::getName() + "/target_tolerance", target_tolerance, 0.1);
 
-    // initialize publishers
-    target_found_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_found", queue_size);
-    target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size);
-    target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size);
-    target_done_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_done", queue_size, true);
-
     // init loop rate
     rate = new Rate(loop_rate);
 
-    ROS_DEBUG("Added target %d in state %d", id, state);
-
-    // inform others about newly found target
-    if (state == TARGET_TRACKED) {
-        ROS_DEBUG("Target %d: unknown --> tracked, position (%.2f,%.2f)", id, pose.position.x, pose.position.y);
-
-        // publish event
-        publish_event("target_found");
-    }
-
-    else {
-        ROS_DEBUG("Target %d: unknown --> known", id);
-    }
+    ROS_INFO("Added target %d in state %d", id, state);
 }
 
 target::~target ()
@@ -77,9 +59,6 @@ void target::lost ()
 
             // update target information
             state = TARGET_LOST;
-
-            // publish event
-            publish_event("target_lost");
         }
     }
 }
@@ -114,17 +93,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             nh.getParam(this_node::getNamespace() + "/targets_done", done);
             done.push_back(id);
             nh.setParam(this_node::getNamespace() + "/targets_done", done);
-
-            // publish event
-            publish_event("target_done");
-        }
-
-        // target still being tracked, send update
-        else if (state == TARGET_TRACKED) {
-            ROS_DEBUG("Target %d: assigned, update", id);
-
-            // publish event
-            publish_event("target_update");
         }
 
         return;
@@ -148,9 +116,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
 
                 // store current pose
                 last_pose = pose;
-
-                // publish event
-                publish_event("target_update");
             }
         }
 
@@ -178,9 +143,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             this->state = state;
             this->pose = pose;
             this->stamp = stamp;
-
-            // publish event
-            publish_event("target_found");
         }
 
         // target has been assigned to another cps
@@ -226,9 +188,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
         // target has been found by this cps
         else if (state == TARGET_TRACKED) {
             ROS_DEBUG("Target %d: lost --> tracked", id);
-
-            // publish event
-            publish_event("target_found");
         }
 
         return;
@@ -237,33 +196,4 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
     else {
         ROS_ERROR("Target %d: invalid state transition %d --> %d!", id, this->state, state);
     }
-}
-
-void target::publish_event (string event)
-{
-    // create target position event
-    cpswarm_msgs::TargetPositionEvent target;
-    geometry_msgs::PoseStamped ps;
-    ps.pose = pose;
-    ps.header.frame_id = "local_origin_ned";
-    target.pose = ps;
-    target.header.stamp = Time::now();
-    target.swarmio.name = event;
-    target.id = id;
-
-    // publish target position event
-    if (event == "target_found")
-        target_found_pub.publish(target);
-
-    else if (event == "target_update")
-        target_update_pub.publish(target);
-
-    else if (event == "target_lost")
-        target_lost_pub.publish(target);
-
-    else if (event == "target_done")
-        target_done_pub.publish(target);
-
-    else
-        ROS_ERROR("Not publishing invalid event %s!", event.c_str());
 }
