@@ -17,29 +17,29 @@ using namespace ros;
 typedef actionlib::SimpleActionServer<cpswarm_msgs::TargetAction> action_server_t;
 
 /**
- * @brief Publisher for transmitting information about found targets to other CPSs.
+ * @brief Publisher for transmitting information about found targets locally to other nodes and remotely to other CPSs.
  */
 Publisher target_found_pub;
 
 /**
- * @brief Publisher for transmitting updated information about targets to other CPSs.
+ * @brief Publisher for transmitting updated information about targets locally to other nodes and remotely to other CPSs.
  */
 Publisher target_update_pub;
 
 /**
- * @brief Publisher for transmitting information about lost targets to other CPSs.
+ * @brief Publisher for transmitting information about lost targets locally to other nodes and remotely to other CPSs.
  */
 Publisher target_lost_pub;
 
 /**
- * @brief Publisher for transmitting information about completed targets to other CPSs.
+ * @brief Publisher for transmitting information about completed targets locally to other nodes and remotely to other CPSs.
  */
 Publisher target_done_pub;
 
 /**
  * @brief The targets being monitored.
  */
-targets *monitor;
+targets* monitor;
 
 /**
  * @brief Current position of the CPS.
@@ -55,141 +55,144 @@ bool pose_valid;
  * @brief Compute the current yaw orientation of the CPS.
  * @return The current yaw angle of the CPS counterclockwise starting from x-axis/east.
  */
-double yaw() {
-	tf2::Quaternion orientation;
-	tf2::fromMsg(pose.orientation, orientation);
-	return tf2::getYaw(orientation);
+double yaw () {
+    tf2::Quaternion orientation;
+    tf2::fromMsg(pose.orientation, orientation);
+    return tf2::getYaw(orientation);
 }
 
 /**
- * @brief Publish a target position event to the swarm.
+ * @brief Publish a target position event.
  * @param event The name of the event.
+ * @param id The ID of the target.
  */
-void publish_event(string event, int id) {
-	// create target position event
-	cpswarm_msgs::TargetPositionEvent target;
-	geometry_msgs::PoseStamped ps;
-	ps.pose = pose;
-	ps.header.frame_id = "local_origin_ned";
-	target.pose = ps;
-	target.header.stamp = Time::now();
-	target.swarmio.name = event;
-	target.id = id;
+void publish_event (string event, int id) {
+    // create target position event
+    cpswarm_msgs::TargetPositionEvent target;
+    geometry_msgs::PoseStamped ps;
+    ps.pose = pose; // TODO: should be position of target, not CPS
+    ps.header.frame_id = "local_origin_ned";
+    target.pose = ps;
+    target.header.stamp = Time::now();
+    target.swarmio.name = event;
+    target.id = id;
 
-	// publish target position event
-	if (event == "target_found")
-		target_found_pub.publish(target);
+    // publish target position event
+    if (event == "target_found")
+        target_found_pub.publish(target);
 
-	else if (event == "target_update")
-		target_update_pub.publish(target);
+    else if (event == "target_update")
+        target_update_pub.publish(target);
 
-	else if (event == "target_lost")
-		target_lost_pub.publish(target);
+    else if (event == "target_lost")
+        target_lost_pub.publish(target);
 
-	else if (event == "target_done")
-		target_done_pub.publish(target);
+    else if (event == "target_done")
+        target_done_pub.publish(target);
 
-	else
-		ROS_ERROR("Not publishing invalid event %s!", event.c_str());
+    else
+        ROS_ERROR("Not publishing invalid event %s!", event.c_str());
 }
 
 /**
  * @brief Compute the orientation resulting from the rotated CPS orientation.
  * @return The rotation to apply to the CPS orientation.
  */
-geometry_msgs::Quaternion rotate(geometry_msgs::Quaternion rotation) {
-	tf2::Quaternion cps_orientation;
-	tf2::fromMsg(pose.orientation, cps_orientation);
-	tf2::Quaternion target_rotation;
-	tf2::fromMsg(rotation, target_rotation);
-	tf2::Quaternion target_orientation = target_rotation * cps_orientation;
-	target_orientation.normalize();
-	return tf2::toMsg(target_orientation);
+geometry_msgs::Quaternion rotate (geometry_msgs::Quaternion rotation) {
+    tf2::Quaternion cps_orientation;
+    tf2::fromMsg(pose.orientation, cps_orientation);
+    tf2::Quaternion target_rotation;
+    tf2::fromMsg(rotation, target_rotation);
+    tf2::Quaternion target_orientation = target_rotation * cps_orientation;
+    target_orientation.normalize();
+    return tf2::toMsg(target_orientation);
 }
 
 /**
  * @brief Callback function for target position.
  * @param msg ID of target and translation between CPS and target as received from the OpenMV camera.
  */
-void tracking_callback(const cpswarm_msgs::TargetTracking::ConstPtr &msg) {
-	// compute distance and direction of target
-	double distance = hypot(msg->tf.translation.x, msg->tf.translation.y);
-	double direction = yaw() + atan2(msg->tf.translation.y, -msg->tf.translation.x) - M_PI / 2; // x is inverted in tracking camera tf
+void tracking_callback (const cpswarm_msgs::TargetTracking::ConstPtr& msg) {
+    // compute distance and direction of target
+    double distance = hypot(msg->tf.translation.x, msg->tf.translation.y);
+    double direction = yaw() + atan2(msg->tf.translation.y, -msg->tf.translation.x) - M_PI / 2; // x is inverted in tracking camera tf
 
-	// create position event message to update target internally
-	cpswarm_msgs::TargetPositionEvent event;
-	event.id = msg->id;
-	event.pose.pose.position.x = pose.position.x + distance * cos(direction);
-	event.pose.pose.position.y = pose.position.y + distance * sin(direction);
-	event.pose.pose.orientation = rotate(msg->tf.rotation);
-	event.header.stamp = msg->header.stamp;
-	bool new_target = monitor->update(event, TARGET_TRACKED);
-	if(new_target)
-		publish_event("target_found", event.id);
-	else
-		publish_event("target_update", event.id);
+    // create position event message to update target internally
+    cpswarm_msgs::TargetPositionEvent event;
+    event.id = msg->id;
+    event.pose.pose.position.x = pose.position.x + distance * cos(direction);
+    event.pose.pose.position.y = pose.position.y + distance * sin(direction);
+    event.pose.pose.orientation = rotate(msg->tf.rotation);
+    event.header.stamp = msg->header.stamp;
+    bool new_target = monitor->update(event, TARGET_TRACKED);
+
+    // publish event
+    if(new_target)
+        publish_event("target_found", event.id);
+    else
+        publish_event("target_update", event.id);
 }
 
 /**
  * @brief Callback function to receive information about targets found by other CPSs.
  * @param msg ID and position of target.
  */
-void found_callback(const cpswarm_msgs::TargetPositionEvent::ConstPtr &msg) {
-	monitor->update(*msg, TARGET_KNOWN);
+void found_callback (const cpswarm_msgs::TargetPositionEvent::ConstPtr& msg) {
+    monitor->update(*msg, TARGET_KNOWN);
 }
 
 /**
  * @brief Callback function to receive updated information about targets from other CPSs.
  * @param msg ID and position of target.
  */
-void update_callback(const cpswarm_msgs::TargetPositionEvent::ConstPtr &msg) {
-	monitor->update(*msg, TARGET_KNOWN);
+void update_callback (const cpswarm_msgs::TargetPositionEvent::ConstPtr& msg) {
+    monitor->update(*msg, TARGET_KNOWN);
 }
 
 /**
  * @brief Callback function to receive information about targets assigned to a CPSs.
  * @param msg ID and position of target.
  */
-void assigned_callback(const cpswarm_msgs::TaskAllocatedEvent::ConstPtr &msg) {
-	// create position event message to update target internally
-	cpswarm_msgs::TargetPositionEvent event;
-	event.id = msg->task_id;
-	event.header.stamp = msg->header.stamp;
-	monitor->update(event, TARGET_ASSIGNED);
+void assigned_callback (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg) {
+    // create position event message to update target internally
+    cpswarm_msgs::TargetPositionEvent event;
+    event.id = msg->task_id;
+    event.header.stamp = msg->header.stamp;
+    monitor->update(event, TARGET_ASSIGNED);
 }
 
 /**
  * @brief Callback function to receive information about targets lost by other CPSs.
  * @param msg ID and last known position of target.
  */
-void lost_callback(const cpswarm_msgs::TargetPositionEvent::ConstPtr &msg) {
-	monitor->update(*msg, TARGET_LOST);
-	publish_event("target_lost", msg->id);
+void lost_callback (const cpswarm_msgs::TargetPositionEvent::ConstPtr& msg) {
+    monitor->update(*msg, TARGET_LOST);
+    publish_event("target_lost", msg->id);
 }
 
 /**
  * @brief Callback function for incoming target done events.
  * @param msg ID and last position of target.
  */
-void done_callback(const cpswarm_msgs::TargetPositionEvent::ConstPtr &msg) {
-	monitor->update(*msg, TARGET_DONE);
-	publish_event("target_done", msg->id);
+void done_callback (const cpswarm_msgs::TargetPositionEvent::ConstPtr& msg) {
+    monitor->update(*msg, TARGET_DONE);
+    publish_event("target_done", msg->id);
 }
 
 /**
  * @brief Callback function for position updates.
  * @param msg Position received from the CPS.
  */
-void pose_callback(const geometry_msgs::PoseStamped::ConstPtr &msg) {
-	// valid pose received
-	if (msg->header.stamp.isValid())
-		pose_valid = true;
+void pose_callback (const geometry_msgs::PoseStamped::ConstPtr& msg) {
+    // valid pose received
+    if (msg->header.stamp.isValid())
+        pose_valid = true;
 
-	// store new position and orientation in class variables
-	pose = msg->pose;
+    // store new position and orientation in class variables
+    pose = msg->pose;
 
-	ROS_DEBUG_THROTTLE(1, "Yaw %.2f", yaw());
-	ROS_DEBUG_THROTTLE(1, "Pose [%.2f, %.2f, %.2f]", pose.position.x, pose.position.y, pose.position.z);
+    ROS_DEBUG_THROTTLE(1, "Yaw %.2f", yaw());
+    ROS_DEBUG_THROTTLE(1, "Pose [%.2f, %.2f, %.2f]", pose.position.x, pose.position.y, pose.position.z);
 }
 
 /**
@@ -197,18 +200,18 @@ void pose_callback(const geometry_msgs::PoseStamped::ConstPtr &msg) {
  * @param goal The goal message received from the action client.
  * @param as The action server offered by this node.
  */
-void set_done(const cpswarm_msgs::TargetGoalConstPtr &goal, action_server_t *as) {
-	// create position event message
-	cpswarm_msgs::TargetPositionEvent event;
-	event.id = goal->id;
-	event.pose = goal->pose;
-	event.header = goal->pose.header;
+void set_done (const cpswarm_msgs::TargetGoalConstPtr &goal, action_server_t* as) {
+    // create position event message
+    cpswarm_msgs::TargetPositionEvent event;
+    event.id = goal->id;
+    event.pose = goal->pose;
+    event.header = goal->pose.header;
 
-	// update target internally
-	monitor->update(event, TARGET_DONE);
+    // update target internally
+    monitor->update(event, TARGET_DONE);
 
-	// action server finished successfully
-	as->setSucceeded();
+    // action server finished successfully
+    as->setSucceeded();
 }
 
 /**
@@ -217,70 +220,70 @@ void set_done(const cpswarm_msgs::TargetGoalConstPtr &goal, action_server_t *as)
  * @param argv Array of command line arguments.
  * @return Success.
  */
-int main(int argc, char **argv) {
-	// init ros node
-	init(argc, argv, "target_monitor");
-	NodeHandle nh;
+int main (int argc, char** argv) {
+    // init ros node
+    init(argc, argv, "target_monitor");
+    NodeHandle nh;
 
-	// read parameters
-	bool simulation;
-	nh.param(this_node::getName() + "/simulation", simulation, false);
-	int queue_size;
-	nh.param(this_node::getName() + "/queue_size", queue_size, 10);
+    // read parameters
+    bool simulation;
+    nh.param(this_node::getName() + "/simulation", simulation, false);
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 10);
 
-	// rate of update loop
-	double loop_rate;
-	nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
-	Rate rate(loop_rate);
+    // rate of update loop
+    double loop_rate;
+    nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
+    Rate rate(loop_rate);
 
-	// create target monitor
-	monitor = new targets();
+    // create target monitor
+    monitor = new targets();
 
-	// read target positions from parameter file
-	if (simulation) {
-		monitor->simulate();
-	}
+    // read target positions from parameter file
+    if (simulation) {
+        monitor->simulate();
+    }
 
-	// no pose received yet
-	pose_valid = false;
+    // no pose received yet
+    pose_valid = false;
 
-	// publishers and subscribers
-	Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-	Subscriber tracking_sub = nh.subscribe("target_tracking", queue_size, tracking_callback);
-	Subscriber local_assigned_sub = nh.subscribe("cps_selected", queue_size, assigned_callback);
-	Subscriber local_done_sub = nh.subscribe("target_done", queue_size, done_callback);
-	Subscriber found_sub = nh.subscribe("bridge/events/target_found", queue_size, found_callback);
-	Subscriber update_sub = nh.subscribe("bridge/events/target_update", queue_size, update_callback);
-	Subscriber assigned_sub = nh.subscribe("bridge/events/cps_selected", queue_size, assigned_callback);
-	Subscriber lost_sub = nh.subscribe("bridge/events/target_lost", queue_size, lost_callback);
-	Subscriber done_sub = nh.subscribe("bridge/events/target_done", queue_size, done_callback);
+    // publishers
+    target_found_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_found", queue_size);
+    target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size);
+    target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size);
+    target_done_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_done", queue_size, true);
 
-	// initialize publishers
-	target_found_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_found", queue_size);
-	target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size);
-	target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size);
-	target_done_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_done", queue_size, true);
+    // subscribers
+    Subscriber pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+    Subscriber tracking_sub = nh.subscribe("target_tracking", queue_size, tracking_callback);
+    Subscriber local_assigned_sub = nh.subscribe("cps_selected", queue_size, assigned_callback);
+    Subscriber local_done_sub = nh.subscribe("target_done", queue_size, done_callback);
+    Subscriber found_sub = nh.subscribe("bridge/events/target_found", queue_size, found_callback);
+    Subscriber update_sub = nh.subscribe("bridge/events/target_update", queue_size, update_callback);
+    Subscriber assigned_sub = nh.subscribe("bridge/events/cps_selected", queue_size, assigned_callback);
+    Subscriber lost_sub = nh.subscribe("bridge/events/target_lost", queue_size, lost_callback);
+    Subscriber done_sub = nh.subscribe("bridge/events/target_done", queue_size, done_callback);
 
-	// action servers
-	action_server_t set_done_as(nh, "cmd/target_done", boost::bind(&set_done, _1, &set_done_as), false);
-	set_done_as.start();
+    // action server
+    action_server_t set_done_as(nh, "cmd/target_done", boost::bind(&set_done, _1, &set_done_as), false);
+    set_done_as.start();
 
-	// init position and yaw
-	while (ok() && pose_valid == false) {
-		ROS_DEBUG_ONCE("Waiting for valid pose...");
-		rate.sleep();
-		spinOnce();
-	}
+    // init position and yaw
+    while (ok() && pose_valid == false) {
+        ROS_DEBUG_ONCE("Waiting for valid pose...");
+        rate.sleep();
+        spinOnce();
+    }
 
-	// update information about targets
-	while (ok()) {
-		monitor->update(pose);
-		rate.sleep();
-		spinOnce();
-	}
+    // update information about targets
+    while (ok()) {
+        monitor->update(pose);
+        rate.sleep();
+        spinOnce();
+    }
 
-	// destroy target monitor
-	delete monitor;
+    // destroy target monitor
+    delete monitor;
 
-	return 0;
+    return 0;
 }

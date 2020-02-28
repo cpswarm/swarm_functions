@@ -41,6 +41,7 @@ public:
      * @brief Update the information of a target.
      * @param msg The target position event message.
      * @param state The target state.
+     * @return Whether the target is new to the monitor.
      *
      */
     bool update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state);

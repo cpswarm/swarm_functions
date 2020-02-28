@@ -26,7 +26,6 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
     double timeout;
     nh.param(this_node::getName() + "/tracking_timeout", timeout, 5.0);
     this->timeout = Duration(timeout);
-    nh.param(this_node::getName() + "/target_tolerance", target_tolerance, 0.1);
 
     // init loop rate
     rate = new Rate(loop_rate);
@@ -102,21 +101,12 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
     else if (this->state == TARGET_TRACKED) {
         // send update
         if (state == TARGET_TRACKED) {
+            ROS_DEBUG("Target %d: tracked, update", id);
+
             // update target information
             this->state = state;
             this->pose = pose;
             this->stamp = stamp;
-
-            // compute distance that target moved
-            double moved = hypot(last_pose.position.x - pose.position.x, last_pose.position.y - pose.position.y);
-
-            // target has moved enough for update
-            if (moved > target_tolerance) {
-                ROS_DEBUG("Target %d: tracked, update", id);
-
-                // store current pose
-                last_pose = pose;
-            }
         }
 
         // target has been assigned to another cps
@@ -126,8 +116,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             // update target information
             this->state = state;
             this->stamp = stamp;
-
-            // reaction to incoming swarm event, not necessary to publish event
         }
 
         return;
@@ -152,8 +140,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             // update target information
             this->state = state;
             this->stamp = stamp;
-
-            // reaction to incoming swarm event, not necessary to publish event
         }
 
         // target has been lost by another cps
@@ -164,8 +150,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
             this->state = state;
             this->pose = pose;
             this->stamp = stamp;
-
-            // reaction to incoming swarm event, not necessary to publish event
         }
 
         return;
@@ -181,8 +165,6 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
         // target has been found by another cps
         if (state == TARGET_KNOWN) {
             ROS_DEBUG("Target %d: lost --> known", id);
-
-            // reaction to incoming swarm event, not necessary to publish event
         }
 
         // target has been found by this cps
