@@ -11,6 +11,12 @@ void to_sync ()
     // reset information about swarm
     swarm_pose.clear();
 
+    // stop moving
+    geometry_msgs::PoseStamped goal_pose;
+    goal_pose.header.stamp = Time::now();
+    goal_pose.pose = pose;
+    pos_pub.publish(goal_pose);
+
     // start of synchronization time window
     sync_start = Time::now();
 }
@@ -269,15 +275,8 @@ void deinit ()
  */
 void sync ()
 {
-    // start synchronization sequence
+    // publish synchronization event for some time
     if (sync_start + Duration(swarm_timeout) > Time::now()) {
-        // stop moving
-        geometry_msgs::PoseStamped goal_pose;
-        goal_pose.header.stamp = Time::now();
-        goal_pose.pose = pose;
-        pos_pub.publish(goal_pose);
-
-        // send event to swarm
         cpswarm_msgs::AreaDivisionEvent event;
         event.header.stamp = Time::now();
         event.swarmio.name = "area_division";
