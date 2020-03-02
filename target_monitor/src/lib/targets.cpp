@@ -23,6 +23,11 @@ targets::targets ()
 
     // publishers and subscribers
     tracking_pub = nh.advertise<cpswarm_msgs::TargetTracking>("target_tracking", queue_size, true);
+    target_found_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_found", queue_size);
+    target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size);
+    target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size);
+    target_done_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_done", queue_size, true);
+
     Subscriber uuid_sub = nh.subscribe("bridge/uuid", queue_size, &targets::uuid_callback, this);
 
     // init uuid
@@ -60,7 +65,9 @@ void targets::update (geometry_msgs::Pose pose)
     // check if a target is lost
     for (auto t : target_map) {
         // update target and inform others in case target is lost
-        t.second->lost();
+        if (t.second->lost()) {
+            publish_event("target_lost", t.first);
+        }
     }
 
     // check if a new target is found in simulation
@@ -82,7 +89,7 @@ void targets::update (geometry_msgs::Pose pose)
     }
 }
 
-bool targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
+void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
 {
     // determine target pose
     geometry_msgs::Pose pose;
@@ -90,15 +97,68 @@ bool targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
 
     ROS_DEBUG("Target %d at [%.2f, %.2f]", msg.id, pose.position.x, pose.position.y);
 
-    // update existing target
+    // existing target
     if (target_map.count(msg.id) > 0) {
+        // get previous state of target
+        target_state_t prev_state = target_map[msg.id]->get_state();
+
+        // update target
         target_map[msg.id]->update(state, pose, msg.header.stamp);
-        return false;
+
+        // publish event for certain state transitions
+        if (prev_state == TARGET_ASSIGNED && state == TARGET_DONE && msg.swarmio.node == "") // only if local event
+            publish_event("target_done", msg.id);
+        else if (prev_state == TARGET_ASSIGNED && state == TARGET_TRACKED)
+            publish_event("target_update", msg.id);
+        else if (prev_state == TARGET_TRACKED && state == TARGET_TRACKED)
+            publish_event("target_update", msg.id);
+        else if (prev_state == TARGET_KNOWN && state == TARGET_TRACKED)
+            publish_event("target_found", msg.id);
+        else if (prev_state == TARGET_LOST && state == TARGET_TRACKED)
+            publish_event("target_found", msg.id);
+        else
+            ROS_DEBUG("Not publishing event for target");
     }
 
-    // add new target
-    target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, pose, msg.header.stamp)));
-    return true;
+    // new target
+    else {
+        // add to target map
+        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, pose, msg.header.stamp)));
+
+        // publish event if target has been found by this cps
+        if (state == TARGET_TRACKED) {
+            publish_event("target_found", msg.id);
+        }
+    }
+}
+
+void targets::publish_event (string event, int id)
+{
+    // create target position event
+    cpswarm_msgs::TargetPositionEvent target;
+    geometry_msgs::PoseStamped ps;
+    ps.pose = target_map[id]->get_pose();
+    ps.header.frame_id = "local_origin_ned";
+    target.pose = ps;
+    target.header.stamp = Time::now();
+    target.swarmio.name = event;
+    target.id = id;
+
+    // publish target position event
+    if (event == "target_found")
+        target_found_pub.publish(target);
+
+    else if (event == "target_update")
+        target_update_pub.publish(target);
+
+    else if (event == "target_lost")
+        target_lost_pub.publish(target);
+
+    else if (event == "target_done")
+        target_done_pub.publish(target);
+
+    else
+        ROS_ERROR("Not publishing invalid event %s!", event.c_str());
 }
 
 geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_msgs::Pose p2) const

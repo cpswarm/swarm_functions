@@ -527,7 +527,11 @@ void divide_area ()
     area_pub.publish(division->get_grid(gridmap, uuid));
 
     // wait a bit to avoid directly redividing again
-    Duration(swarm_timeout).sleep();
+    Time sleep_start = Time::now();
+    while (ok() && sleep_start + Duration(swarm_timeout) > Time::now()) {
+        spinOnce();
+        rate->sleep();
+    }
 
     // area division done
     state = ACTIVE;
