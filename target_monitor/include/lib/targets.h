@@ -7,6 +7,7 @@
 #include <geometry_msgs/Transform.h>
 #include <swarmros/String.h>
 #include <cpswarm_msgs/TargetTracking.h>
+#include <cpswarm_msgs/TargetPositionEvent.h>
 #include "target.h"
 
 /**
@@ -41,12 +42,18 @@ public:
      * @brief Update the information of a target.
      * @param msg The target position event message.
      * @param state The target state.
-     * @return Whether the target is new to the monitor.
      *
      */
-    bool update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state);
+    void update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state);
 
 private:
+    /**
+     * @brief Publish a target position event.
+     * @param event The name of the event.
+     * @param id The ID of the target.
+     */
+    void publish_event (string event, int id);
+
     /**
      * @brief Compute the transformation between two poses.
      * @param p1 The first pose.
@@ -67,9 +74,29 @@ private:
     NodeHandle nh;
 
     /**
-     * @brief Publisher for transmitting target tracking information.
+     * @brief Publisher for transmitting target tracking information in simulation.
      */
     Publisher tracking_pub;
+
+    /**
+     * @brief Publisher for transmitting information about found targets locally to other nodes and remotely to other CPSs.
+     */
+    Publisher target_found_pub;
+
+    /**
+     * @brief Publisher for transmitting updated information about targets locally to other nodes and remotely to other CPSs.
+     */
+    Publisher target_update_pub;
+
+    /**
+     * @brief Publisher for transmitting information about lost targets locally to other nodes and remotely to other CPSs.
+     */
+    Publisher target_lost_pub;
+
+    /**
+     * @brief Publisher for transmitting information about completed targets locally to other nodes and remotely to other CPSs.
+     */
+    Publisher target_done_pub;
 
     /**
      * @brief A map holding ID and target object of all known targets.

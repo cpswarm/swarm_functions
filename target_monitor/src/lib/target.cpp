@@ -43,7 +43,12 @@ geometry_msgs::Pose target::get_pose ()
     return pose;
 }
 
-void target::lost ()
+target_state_t target::get_state ()
+{
+    return state;
+}
+
+bool target::lost ()
 {
     // target is being tracked
     if (state == TARGET_TRACKED || state == TARGET_ASSIGNED) {
@@ -58,8 +63,12 @@ void target::lost ()
 
             // update target information
             state = TARGET_LOST;
+
+            return true;
         }
     }
+
+    return false;
 }
 
 void target::operator= (const target& t)

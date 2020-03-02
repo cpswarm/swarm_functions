@@ -71,9 +71,16 @@ public:
     geometry_msgs::Pose get_pose ();
 
     /**
-     * @brief Check whether the target tracked by this CPS has been lost. Switch state from TARGET_TRACKED to TARGET_LOST if the tracking timeout has expired.
+     * @brief Get the state of the target.
+     * @return The current target state.
      */
-    void lost ();
+    target_state_t get_state ();
+
+    /**
+     * @brief Check whether the target tracked by this CPS has been lost. Switch state from TARGET_TRACKED to TARGET_LOST if the tracking timeout has expired.
+     * @return Whether the target has been lost.
+     */
+    bool lost ();
 
     /**
      * @brief Assignment operator.
