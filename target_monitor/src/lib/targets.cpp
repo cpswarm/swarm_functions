@@ -1,3 +1,4 @@
+#include <cpswarm_msgs/TargetTracking.h>
 #include "lib/targets.h"
 
 targets::targets ()

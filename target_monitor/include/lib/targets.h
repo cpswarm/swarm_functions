@@ -6,7 +6,7 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Transform.h>
 #include <swarmros/String.h>
-#include <cpswarm_msgs/TargetTracking.h>
+#include <cpswarm_msgs/TargetPositionEvent.h>
 #include "target.h"
 
 /**

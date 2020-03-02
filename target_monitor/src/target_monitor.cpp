@@ -3,7 +3,6 @@
 #include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/Pose.h>
 #include <cpswarm_msgs/TaskAllocatedEvent.h>
-#include <cpswarm_msgs/TargetPositionEvent.h>
 #include <cpswarm_msgs/TargetTracking.h>
 #include <cpswarm_msgs/TargetAction.h>
 #include "lib/targets.h"
