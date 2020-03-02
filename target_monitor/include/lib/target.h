@@ -3,7 +3,6 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
-#include <cpswarm_msgs/TargetPositionEvent.h>
 
 using namespace std;
 using namespace ros;
@@ -72,7 +71,7 @@ public:
     geometry_msgs::Pose get_pose ();
 
     /**
-     * @brief Check whether the target tracked by this CPS has been lost. Switch state from TARGET_TRACKED to TARGET_LOST if the tracking timeout has expired and publish event.
+     * @brief Check whether the target tracked by this CPS has been lost. Switch state from TARGET_TRACKED to TARGET_LOST if the tracking timeout has expired.
      */
     void lost ();
 
@@ -112,11 +111,6 @@ private:
     geometry_msgs::Pose pose;
 
     /**
-     * @brief The position of the target the last time it was published as target position event.
-     */
-    geometry_msgs::Pose last_pose;
-
-    /**
      * @brief Time stamp of latest update of the target.
      */
     Time stamp;
@@ -130,12 +124,6 @@ private:
      * @brief The loop rate object for running the behavior control loops at a specific frequency.
      */
     Rate* rate;
-
-    /**
-     * @brief Minimum distance between two consecutive target positions such that a target update event is published.
-     */
-    double target_tolerance;
-
 };
 
 #endif // TARGET_H
