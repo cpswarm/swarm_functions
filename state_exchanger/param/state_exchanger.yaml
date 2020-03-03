@@ -1,4 +1,4 @@
-loop_rate:  1.0  # The frequency in Hz at which to run the control loops.
+loop_rate:  0.5  # The frequency in Hz at which to run the control loops.
 queue_size: 10   # The size of the message queue used for publishing and subscribing to topics.
 timeout:    20.0 # The time in seconds after which another CPS is considered to have left the swarm.
 sm_path:    /SM_TOP/SarThreads/SarBehavior # The path of the smach state machine whose state shall be exchanged.
