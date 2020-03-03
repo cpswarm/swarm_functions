@@ -9,7 +9,7 @@ states:                  # Only CPSs in these states divide the area among each 
 - SelectRover
 - LocalCoverage
 - TargetFound
-- Idle
+- IdleThreads
 optimizer:
   iterations:     100    # Maximum number of iterations of the optimization algorithm.
   variate_weight: 0.01   # Maximum variate weight of connected components.
