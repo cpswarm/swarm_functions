@@ -22,18 +22,6 @@ void to_sync ()
 }
 
 /**
- * @brief Callback function to get the translation by which the area has been shifted.
- * @param req Empty request.
- * @param res The translation of the area.
- * @return Whether the request succeeded.
- */
-bool get_translation (cpswarm_msgs::GetVector::Request &req, cpswarm_msgs::GetVector::Response &res)
-{
-    res.vector = translation;
-    return true;
-}
-
-/**
  * @brief Callback function for behavior state updates.
  * @param msg State received from the CPS.
  */
@@ -238,9 +226,6 @@ void init ()
     // create area division object
     division = new area_division();
 
-    // provide area translation services
-    translate_srv = nh.advertiseService("area/get_translation", get_translation);
-
     // start area division
     to_sync();
 }
@@ -262,7 +247,6 @@ void deinit ()
     map_rot_pub.shutdown();
     map_ds_pub.shutdown();
     rotater_cli.shutdown();
-    translate_srv.shutdown();
 
     // destroy optimizer
     delete division;
@@ -321,12 +305,12 @@ double rotate (nav_msgs::OccupancyGrid& map)
     // get angle
     cpswarm_msgs::GetDouble angle;
     if (rotater_cli.call(angle) == false) {
-        ROS_INFO("Not rotating map!");
+        ROS_DEBUG("Not rotating map!");
         return 0.0;
     }
     double a = angle.response.value;
 
-    ROS_INFO("Rotate map by %.2f...", a);
+    ROS_DEBUG("Rotate map by %.2f...", a);
 
     // rotate origin
     geometry_msgs::Pose origin_new;
@@ -408,7 +392,7 @@ void translate (nav_msgs::OccupancyGrid& map)
     // compute required translation
     translation.x = round(map.info.origin.position.x) - map.info.origin.position.x;
     translation.y = round(map.info.origin.position.y) - map.info.origin.position.y;
-    ROS_INFO("Translate map by (%.2f,%.2f)...", translation.x, translation.y);
+    ROS_DEBUG("Translate map by (%.2f,%.2f)...", translation.x, translation.y);
 
     // translate origin
     map.info.origin.position.x += translation.x;
@@ -431,7 +415,7 @@ void downsample (nav_msgs::OccupancyGrid& map)
     // reduction factor
     int f = int(round(resolution / map.info.resolution));
 
-    ROS_INFO("Downsample map by %d...", f);
+    ROS_DEBUG("Downsample map by %d...", f);
 
     // downsample map data
     vector<signed char> lr;
@@ -466,6 +450,31 @@ void downsample (nav_msgs::OccupancyGrid& map)
     map.info.resolution = resolution;
     map.info.width = int(floor(double(map.info.width) / double(f)));
     map.info.height = int(floor(double(map.info.height) / double(f)));
+
+    // remove rows with obstacles only
+    for (int i=0; i<map.info.height; ++i) {
+        // count number of occupied cells in a row
+        int obst = 0;
+        for (int j=0; j<map.info.width; ++j) {
+            if (map.data[i*map.info.width + j] == 100) {
+                ++obst;
+            }
+        }
+
+        // remove row
+        if (obst == map.info.width) {
+            // delete grid cells
+            map.data.erase(map.data.begin() + i*map.info.width, map.data.begin() + (i+1)*map.info.width);
+
+            // update meta data
+            map.info.map_load_time = Time::now();
+            --map.info.height;
+            map.info.origin.position.y += map.info.resolution;
+
+            // stay in current row
+            --i;
+        }
+    }
 }
 
 /**
@@ -479,9 +488,6 @@ void divide_area ()
     // rotate map
     double angle = rotate(gridmap);
 
-    // shift map
-    translate(gridmap);
-
     if (visualize)
         map_rot_pub.publish(gridmap);
 
@@ -489,6 +495,9 @@ void divide_area ()
     if (gridmap.info.resolution < resolution) {
         downsample(gridmap);
     }
+
+    // shift map
+    translate(gridmap);
 
     if (visualize)
         map_ds_pub.publish(gridmap);
