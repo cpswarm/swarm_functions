@@ -16,7 +16,7 @@ $(function() {
 <div id="main-nav"></div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d766324bf60c5f36127d157513a18b4b.html">area_division</a></li><li class="navelem"><a class="el" href="dir_4cd467f570805a921dd5b8bf28b60e36.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -31,20 +31,30 @@ $(function() {
 Include dependency graph for area_division.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="area__division_8cpp__incl.png" border="0" usemap="#area__division_8cpp" alt=""/></div>
-<map name="area__division_8cpp" id="area__division_8cpp">
-</map>
 </div>
 </div>
 <p><a href="area__division_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a91b56b1168573ad9ae35e2742acba2f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a91b56b1168573ad9ae35e2742acba2f9">behavior_state_callback</a> (const cpswarm_msgs::StateEvent::ConstPtr &amp;msg)</td></tr>
+<tr class="memdesc:a91b56b1168573ad9ae35e2742acba2f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for behavior state updates.  <a href="#a91b56b1168573ad9ae35e2742acba2f9">More...</a><br /></td></tr>
+<tr class="separator:a91b56b1168573ad9ae35e2742acba2f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a967fb9235af58c66165b0d619c6cc584"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a967fb9235af58c66165b0d619c6cc584">deinit</a> ()</td></tr>
+<tr class="memdesc:a967fb9235af58c66165b0d619c6cc584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shutdown ROS communication.  <a href="#a967fb9235af58c66165b0d619c6cc584">More...</a><br /></td></tr>
+<tr class="separator:a967fb9235af58c66165b0d619c6cc584"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb89fc6ecb82650bd26bf826b0d9d221"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#acb89fc6ecb82650bd26bf826b0d9d221">divide_area</a> ()</td></tr>
 <tr class="memdesc:acb89fc6ecb82650bd26bf826b0d9d221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide the area of the grid map equally among multiple CPSs.  <a href="#acb89fc6ecb82650bd26bf826b0d9d221">More...</a><br /></td></tr>
 <tr class="separator:acb89fc6ecb82650bd26bf826b0d9d221"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68a4571070bc0b48a57e2cf0cec0235a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a68a4571070bc0b48a57e2cf0cec0235a">get_area</a> (nav_msgs::GetMap::Request &amp;req, nav_msgs::GetMap::Response &amp;res)</td></tr>
-<tr class="memdesc:a68a4571070bc0b48a57e2cf0cec0235a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to get the area assignment of this CPS.  <a href="#a68a4571070bc0b48a57e2cf0cec0235a">More...</a><br /></td></tr>
-<tr class="separator:a68a4571070bc0b48a57e2cf0cec0235a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2d5e2ee67c366f3d8891db8bd7d3601"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#af2d5e2ee67c366f3d8891db8bd7d3601">division_callback</a> (const cpswarm_msgs::AreaDivisionEvent::ConstPtr &amp;msg)</td></tr>
+<tr class="memdesc:af2d5e2ee67c366f3d8891db8bd7d3601"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to receive area division requests from other CPSs.  <a href="#af2d5e2ee67c366f3d8891db8bd7d3601">More...</a><br /></td></tr>
+<tr class="separator:af2d5e2ee67c366f3d8891db8bd7d3601"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10d121afb25ebafc3e1a310d764ed17e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a10d121afb25ebafc3e1a310d764ed17e">downsample</a> (nav_msgs::OccupancyGrid &amp;map)</td></tr>
+<tr class="memdesc:a10d121afb25ebafc3e1a310d764ed17e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrease the resolution of a occupancy grid map.  <a href="#a10d121afb25ebafc3e1a310d764ed17e">More...</a><br /></td></tr>
+<tr class="separator:a10d121afb25ebafc3e1a310d764ed17e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02fd73d861ef2e4aabb38c0c9ff82947"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a02fd73d861ef2e4aabb38c0c9ff82947">init</a> ()</td></tr>
+<tr class="memdesc:a02fd73d861ef2e4aabb38c0c9ff82947"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize this node.  <a href="#a02fd73d861ef2e4aabb38c0c9ff82947">More...</a><br /></td></tr>
+<tr class="separator:a02fd73d861ef2e4aabb38c0c9ff82947"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (int argc, char **argv)</td></tr>
 <tr class="memdesc:a3c04138a5bfe5d72780bb7e82a18e627"><td class="mdescLeft">&#160;</td><td class="mdescRight">A ROS node that divides the available area among a swarm of CPSs.  <a href="#a3c04138a5bfe5d72780bb7e82a18e627">More...</a><br /></td></tr>
 <tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -54,17 +64,78 @@ Functions</h2></td></tr>
 <tr class="memitem:a535f048a2557c01d671d0f9a3da40009"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a535f048a2557c01d671d0f9a3da40009">pose_callback</a> (const geometry_msgs::PoseStamped::ConstPtr &amp;msg)</td></tr>
 <tr class="memdesc:a535f048a2557c01d671d0f9a3da40009"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function for position updates.  <a href="#a535f048a2557c01d671d0f9a3da40009">More...</a><br /></td></tr>
 <tr class="separator:a535f048a2557c01d671d0f9a3da40009"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa5685c2cdc19c511c934484ef452e9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#afa5685c2cdc19c511c934484ef452e9f">swarm_callback</a> (const cpswarm_msgs::AreaDivisionEvent::ConstPtr &amp;msg)</td></tr>
-<tr class="memdesc:afa5685c2cdc19c511c934484ef452e9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to receive area division requests from other CPSs.  <a href="#afa5685c2cdc19c511c934484ef452e9f">More...</a><br /></td></tr>
-<tr class="separator:afa5685c2cdc19c511c934484ef452e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4beaba7341a8cdb32baca1a262c17b69"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a4beaba7341a8cdb32baca1a262c17b69">rotate</a> (geometry_msgs::Point point, double angle)</td></tr>
+<tr class="memdesc:a4beaba7341a8cdb32baca1a262c17b69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rotate a point by a given angle around the origin.  <a href="#a4beaba7341a8cdb32baca1a262c17b69">More...</a><br /></td></tr>
+<tr class="separator:a4beaba7341a8cdb32baca1a262c17b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a715fab96d044ed110abdcafda220cf60"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a715fab96d044ed110abdcafda220cf60">rotate</a> (nav_msgs::OccupancyGrid &amp;map)</td></tr>
+<tr class="memdesc:a715fab96d044ed110abdcafda220cf60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rotate an occupancy grid map so the lower boundary is horizontal.  <a href="#a715fab96d044ed110abdcafda220cf60">More...</a><br /></td></tr>
+<tr class="separator:a715fab96d044ed110abdcafda220cf60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67fed7fbe567b98620d508df728c16d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a67fed7fbe567b98620d508df728c16d5">swarm_state_callback</a> (const cpswarm_msgs::ArrayOfStates::ConstPtr &amp;msg)</td></tr>
+<tr class="memdesc:a67fed7fbe567b98620d508df728c16d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to receive the states of the other CPSs.  <a href="#a67fed7fbe567b98620d508df728c16d5">More...</a><br /></td></tr>
+<tr class="separator:a67fed7fbe567b98620d508df728c16d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad55f80ed3cd8b6c4f247763b747016af"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#ad55f80ed3cd8b6c4f247763b747016af">sync</a> ()</td></tr>
 <tr class="memdesc:ad55f80ed3cd8b6c4f247763b747016af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronize The CPSs by exchanging an event.  <a href="#ad55f80ed3cd8b6c4f247763b747016af">More...</a><br /></td></tr>
 <tr class="separator:ad55f80ed3cd8b6c4f247763b747016af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f6e06d048a8d4232ec6bdb931941733"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a3f6e06d048a8d4232ec6bdb931941733">to_sync</a> ()</td></tr>
+<tr class="memdesc:a3f6e06d048a8d4232ec6bdb931941733"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch to the synchronization state.  <a href="#a3f6e06d048a8d4232ec6bdb931941733">More...</a><br /></td></tr>
+<tr class="separator:a3f6e06d048a8d4232ec6bdb931941733"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e7212ca5de2a3cbbcbf7134826b06d0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#a2e7212ca5de2a3cbbcbf7134826b06d0">translate</a> (nav_msgs::OccupancyGrid &amp;map)</td></tr>
+<tr class="memdesc:a2e7212ca5de2a3cbbcbf7134826b06d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shift a map to be aligned with the grid, i.e., the origin should be an even number.  <a href="#a2e7212ca5de2a3cbbcbf7134826b06d0">More...</a><br /></td></tr>
+<tr class="separator:a2e7212ca5de2a3cbbcbf7134826b06d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb310d246f1a90cc10ff38056f195b85"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8cpp.html#aeb310d246f1a90cc10ff38056f195b85">uuid_callback</a> (const swarmros::String::ConstPtr &amp;msg)</td></tr>
 <tr class="memdesc:aeb310d246f1a90cc10ff38056f195b85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function to receive the UUID from the communication library.  <a href="#aeb310d246f1a90cc10ff38056f195b85">More...</a><br /></td></tr>
 <tr class="separator:aeb310d246f1a90cc10ff38056f195b85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a91b56b1168573ad9ae35e2742acba2f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91b56b1168573ad9ae35e2742acba2f9">&#9670;&nbsp;</a></span>behavior_state_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void behavior_state_callback </td>
+          <td>(</td>
+          <td class="paramtype">const cpswarm_msgs::StateEvent::ConstPtr &amp;&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Callback function for behavior state updates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>State received from the CPS. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00028">28</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a967fb9235af58c66165b0d619c6cc584"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a967fb9235af58c66165b0d619c6cc584">&#9670;&nbsp;</a></span>deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void deinit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shutdown ROS communication. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00236">236</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
 <a id="acb89fc6ecb82650bd26bf826b0d9d221"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acb89fc6ecb82650bd26bf826b0d9d221">&#9670;&nbsp;</a></span>divide_area()</h2>
 
@@ -82,47 +153,84 @@ Functions</h2></td></tr>
 
 <p>Divide the area of the grid map equally among multiple CPSs. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00006">6</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00483">483</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a68a4571070bc0b48a57e2cf0cec0235a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68a4571070bc0b48a57e2cf0cec0235a">&#9670;&nbsp;</a></span>get_area()</h2>
+<a id="af2d5e2ee67c366f3d8891db8bd7d3601"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2d5e2ee67c366f3d8891db8bd7d3601">&#9670;&nbsp;</a></span>division_callback()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool get_area </td>
+          <td class="memname">void division_callback </td>
           <td>(</td>
-          <td class="paramtype">nav_msgs::GetMap::Request &amp;&#160;</td>
-          <td class="paramname"><em>req</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const cpswarm_msgs::AreaDivisionEvent::ConstPtr &amp;&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
-          <td class="paramtype">nav_msgs::GetMap::Response &amp;&#160;</td>
-          <td class="paramname"><em>res</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback function to get the area assignment of this CPS. </p>
+<p>Callback function to receive area division requests from other CPSs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">req</td><td>Empty request. </td></tr>
-    <tr><td class="paramname">res</td><td>The grid map assigned to this CPS. </td></tr>
+    <tr><td class="paramname">msg</td><td>UUIDs and position of the other CPS. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the request succeeded. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00076">76</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00050">50</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a10d121afb25ebafc3e1a310d764ed17e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10d121afb25ebafc3e1a310d764ed17e">&#9670;&nbsp;</a></span>downsample()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void downsample </td>
+          <td>(</td>
+          <td class="paramtype">nav_msgs::OccupancyGrid &amp;&#160;</td>
+          <td class="paramname"><em>map</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Decrease the resolution of a occupancy grid map. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">map</td><td>A reference to the occupancy grid map to downsample. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00409">409</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a02fd73d861ef2e4aabb38c0c9ff82947"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02fd73d861ef2e4aabb38c0c9ff82947">&#9670;&nbsp;</a></span>init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void init </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize this node. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00170">170</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -162,7 +270,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Success. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00172">172</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00555">555</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -185,12 +293,12 @@ Functions</h2></td></tr>
 <p>Callback function to receive the grid map. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">msg</td><td>Merged grid map from all CPSs. </td></tr>
+    <tr><td class="paramname">msg</td><td>Global grid map. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00159">159</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00085">85</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -218,35 +326,104 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00112">112</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00102">102</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
-<a id="afa5685c2cdc19c511c934484ef452e9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa5685c2cdc19c511c934484ef452e9f">&#9670;&nbsp;</a></span>swarm_callback()</h2>
+<a id="a4beaba7341a8cdb32baca1a262c17b69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4beaba7341a8cdb32baca1a262c17b69">&#9670;&nbsp;</a></span>rotate() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void swarm_callback </td>
+          <td class="memname">geometry_msgs::Point rotate </td>
           <td>(</td>
-          <td class="paramtype">const cpswarm_msgs::AreaDivisionEvent::ConstPtr &amp;&#160;</td>
+          <td class="paramtype">geometry_msgs::Point&#160;</td>
+          <td class="paramname"><em>point</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>angle</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Rotate a point by a given angle around the origin. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">point</td><td>The point to rotate. </td></tr>
+    <tr><td class="paramname">angle</td><td>The angle by which to rotate the point. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The rotated point. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00285">285</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a715fab96d044ed110abdcafda220cf60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a715fab96d044ed110abdcafda220cf60">&#9670;&nbsp;</a></span>rotate() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double rotate </td>
+          <td>(</td>
+          <td class="paramtype">nav_msgs::OccupancyGrid &amp;&#160;</td>
+          <td class="paramname"><em>map</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Rotate an occupancy grid map so the lower boundary is horizontal. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">map</td><td>A reference to the occupancy grid map to rotate. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The angle by which the map has been rotated. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00303">303</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a67fed7fbe567b98620d508df728c16d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a67fed7fbe567b98620d508df728c16d5">&#9670;&nbsp;</a></span>swarm_state_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void swarm_state_callback </td>
+          <td>(</td>
+          <td class="paramtype">const cpswarm_msgs::ArrayOfStates::ConstPtr &amp;&#160;</td>
           <td class="paramname"><em>msg</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Callback function to receive area division requests from other CPSs. </p>
+<p>Callback function to receive the states of the other CPSs. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">msg</td><td>UUIDs and position of the other CPS. </td></tr>
+    <tr><td class="paramname">msg</td><td>UUIDs and states of the other CPSs. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00126">126</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00116">116</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -267,7 +444,56 @@ Functions</h2></td></tr>
 
 <p>Synchronize The CPSs by exchanging an event. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00042">42</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00260">260</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a3f6e06d048a8d4232ec6bdb931941733"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f6e06d048a8d4232ec6bdb931941733">&#9670;&nbsp;</a></span>to_sync()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void to_sync </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Switch to the synchronization state. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00006">6</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a2e7212ca5de2a3cbbcbf7134826b06d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e7212ca5de2a3cbbcbf7134826b06d0">&#9670;&nbsp;</a></span>translate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void translate </td>
+          <td>(</td>
+          <td class="paramtype">nav_msgs::OccupancyGrid &amp;&#160;</td>
+          <td class="paramname"><em>map</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Shift a map to be aligned with the grid, i.e., the origin should be an even number. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">map</td><td>The map to shift. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00390">390</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -295,7 +521,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00103">103</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8cpp_source.html#l00162">162</a> of file <a class="el" href="area__division_8cpp_source.html">area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -305,7 +531,7 @@ Functions</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_division">area_division</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Oct 31 2019 09:22:46</small>
+<small>autogenerated on Wed Mar 4 2020 15:16:02</small>
 </div>
 </body>
 </html>

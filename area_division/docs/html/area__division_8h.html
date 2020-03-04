@@ -16,11 +16,12 @@ $(function() {
 <div id="main-nav"></div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d766324bf60c5f36127d157513a18b4b.html">area_division</a></li><li class="navelem"><a class="el" href="dir_bde7ba3e4bb515100ccbddac4fe58208.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">area_division.h File Reference</div>  </div>
@@ -31,9 +32,13 @@ $(function() {
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;geometry_msgs/Pose.h&gt;</code><br />
 <code>#include &lt;geometry_msgs/PoseStamped.h&gt;</code><br />
+<code>#include &lt;geometry_msgs/Vector3.h&gt;</code><br />
 <code>#include &lt;nav_msgs/OccupancyGrid.h&gt;</code><br />
 <code>#include &lt;nav_msgs/GetMap.h&gt;</code><br />
 <code>#include &lt;cpswarm_msgs/AreaDivisionEvent.h&gt;</code><br />
+<code>#include &lt;cpswarm_msgs/GetDouble.h&gt;</code><br />
+<code>#include &lt;cpswarm_msgs/ArrayOfStates.h&gt;</code><br />
+<code>#include &lt;cpswarm_msgs/StateEvent.h&gt;</code><br />
 <code>#include &lt;swarmros/String.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="lib_2area__division_8h_source.html">lib/area_division.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -41,24 +46,60 @@ Include dependency graph for area_division.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="area__division_8h__incl.png" border="0" usemap="#area__division_8h" alt=""/></div>
 <map name="area__division_8h" id="area__division_8h">
-<area shape="rect" id="node11" href="lib_2area__division_8h.html" title="lib/area_division.h" alt="" coords="387,87,514,114"/>
-<area shape="rect" id="node13" href="connected__components_8h.html" title="lib/connected_components.h" alt="" coords="380,169,568,196"/>
+<area shape="rect" id="node15" href="lib_2area__division_8h.html" title="lib/area_division.h" alt="" coords="387,87,514,114"/>
+<area shape="rect" id="node17" href="connected__components_8h.html" title="lib/connected_components.h" alt="" coords="380,169,568,196"/>
 </map>
 </div>
 </div>
 <p><a href="area__division_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:aa0aafed44fec19806d8f9ad834be1248"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248">state_t</a> { <br />
+&#160;&#160;<a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248afd6a0e4343048b10646dd2976cc5ad18">IDLE</a> = 0, 
+<a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248a0cb1b2c6a7db1f1084886c98909a3f36">INIT</a>, 
+<a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248a33cf1d8ef1d06ee698a7fabf40eb3a7f">ACTIVE</a>, 
+<a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248a447bfe7992c2fe70bfe561225f74d379">SYNC</a>, 
+<br />
+&#160;&#160;<a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248a0cb86713ee09fe297dde9ab03d50d5da">DIVIDE</a>, 
+<a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248ac9389608c675f597731377ea7e25dc7d">DEINIT</a>
+<br />
+ }<tr class="memdesc:aa0aafed44fec19806d8f9ad834be1248"><td class="mdescLeft">&#160;</td><td class="mdescRight">An enumeration for the state of the division.  <a href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:aa0aafed44fec19806d8f9ad834be1248"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:ac08b2e2e7e0960bbc174b8ee4f805151"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#ac08b2e2e7e0960bbc174b8ee4f805151">area_pub</a></td></tr>
 <tr class="memdesc:ac08b2e2e7e0960bbc174b8ee4f805151"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to visualize the assigned area grid map.  <a href="#ac08b2e2e7e0960bbc174b8ee4f805151">More...</a><br /></td></tr>
 <tr class="separator:ac08b2e2e7e0960bbc174b8ee4f805151"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd31b5e44a3a3206f48d340a2d346f48"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#acd31b5e44a3a3206f48d340a2d346f48">behavior</a></td></tr>
+<tr class="memdesc:acd31b5e44a3a3206f48d340a2d346f48"><td class="mdescLeft">&#160;</td><td class="mdescRight">The current behavior state of this CPS.  <a href="#acd31b5e44a3a3206f48d340a2d346f48">More...</a><br /></td></tr>
+<tr class="separator:acd31b5e44a3a3206f48d340a2d346f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a849686fb1dff5195550be36f34c8de1e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a849686fb1dff5195550be36f34c8de1e">behavior_valid</a></td></tr>
+<tr class="memdesc:a849686fb1dff5195550be36f34c8de1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a valid state has been received.  <a href="#a849686fb1dff5195550be36f34c8de1e">More...</a><br /></td></tr>
+<tr class="separator:a849686fb1dff5195550be36f34c8de1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f33958a3dc1bcc543b35b20fc79ac31"><td class="memItemLeft" align="right" valign="top">vector&lt; string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a5f33958a3dc1bcc543b35b20fc79ac31">behaviors</a></td></tr>
+<tr class="memdesc:a5f33958a3dc1bcc543b35b20fc79ac31"><td class="mdescLeft">&#160;</td><td class="mdescRight">The behavior states in which area division is active.  <a href="#a5f33958a3dc1bcc543b35b20fc79ac31">More...</a><br /></td></tr>
+<tr class="separator:a5f33958a3dc1bcc543b35b20fc79ac31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4549fefc9a26ccc93b8cb466a5049e86"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classarea__division.html">area_division</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a4549fefc9a26ccc93b8cb466a5049e86">division</a></td></tr>
 <tr class="memdesc:a4549fefc9a26ccc93b8cb466a5049e86"><td class="mdescLeft">&#160;</td><td class="mdescRight">The object encapsulating the area division optimization algorithm.  <a href="#a4549fefc9a26ccc93b8cb466a5049e86">More...</a><br /></td></tr>
 <tr class="separator:a4549fefc9a26ccc93b8cb466a5049e86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afacddfe797ed24d30af6ec211cb9da6c"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#afacddfe797ed24d30af6ec211cb9da6c">gridmap</a></td></tr>
-<tr class="memdesc:afacddfe797ed24d30af6ec211cb9da6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The complete grid map.  <a href="#afacddfe797ed24d30af6ec211cb9da6c">More...</a><br /></td></tr>
-<tr class="separator:afacddfe797ed24d30af6ec211cb9da6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2120626d86c8b1733b07e723a29bcc59"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a2120626d86c8b1733b07e723a29bcc59">division_sub</a></td></tr>
+<tr class="memdesc:a2120626d86c8b1733b07e723a29bcc59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber to get area division requests from other CPSs.  <a href="#a2120626d86c8b1733b07e723a29bcc59">More...</a><br /></td></tr>
+<tr class="separator:a2120626d86c8b1733b07e723a29bcc59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c04047bef9fea7356f13d90a7689177"><td class="memItemLeft" align="right" valign="top">nav_msgs::OccupancyGrid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a3c04047bef9fea7356f13d90a7689177">global_map</a></td></tr>
+<tr class="memdesc:a3c04047bef9fea7356f13d90a7689177"><td class="mdescLeft">&#160;</td><td class="mdescRight">The complete grid map.  <a href="#a3c04047bef9fea7356f13d90a7689177">More...</a><br /></td></tr>
+<tr class="separator:a3c04047bef9fea7356f13d90a7689177"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c646b807e29086ff7b7506b757cc5fe"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a4c646b807e29086ff7b7506b757cc5fe">map_ds_pub</a></td></tr>
+<tr class="memdesc:a4c646b807e29086ff7b7506b757cc5fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to visualize the downsampled map.  <a href="#a4c646b807e29086ff7b7506b757cc5fe">More...</a><br /></td></tr>
+<tr class="separator:a4c646b807e29086ff7b7506b757cc5fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97934b2a49e865a810ebc0c4b8710c55"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a97934b2a49e865a810ebc0c4b8710c55">map_rot_pub</a></td></tr>
+<tr class="memdesc:a97934b2a49e865a810ebc0c4b8710c55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to visualize the rotated map.  <a href="#a97934b2a49e865a810ebc0c4b8710c55">More...</a><br /></td></tr>
+<tr class="separator:a97934b2a49e865a810ebc0c4b8710c55"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5108944a455679cf302dcb84f965313a"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a5108944a455679cf302dcb84f965313a">map_sub</a></td></tr>
+<tr class="memdesc:a5108944a455679cf302dcb84f965313a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber to get grid map.  <a href="#a5108944a455679cf302dcb84f965313a">More...</a><br /></td></tr>
+<tr class="separator:a5108944a455679cf302dcb84f965313a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5de381e8b62fd3902befd666e684e1c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#ac5de381e8b62fd3902befd666e684e1c">map_valid</a></td></tr>
 <tr class="memdesc:ac5de381e8b62fd3902befd666e684e1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a valid grid map has been received.  <a href="#ac5de381e8b62fd3902befd666e684e1c">More...</a><br /></td></tr>
 <tr class="separator:ac5de381e8b62fd3902befd666e684e1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -68,37 +109,85 @@ Variables</h2></td></tr>
 <tr class="memitem:a7debd75727e1d1e3e960ed6d28108474"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Pose&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a7debd75727e1d1e3e960ed6d28108474">pose</a></td></tr>
 <tr class="memdesc:a7debd75727e1d1e3e960ed6d28108474"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current position of the CPS.  <a href="#a7debd75727e1d1e3e960ed6d28108474">More...</a><br /></td></tr>
 <tr class="separator:a7debd75727e1d1e3e960ed6d28108474"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97146a90a3a7dd256e152a5d8d12edb"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#af97146a90a3a7dd256e152a5d8d12edb">pose_sub</a></td></tr>
+<tr class="memdesc:af97146a90a3a7dd256e152a5d8d12edb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber to get CPS position.  <a href="#af97146a90a3a7dd256e152a5d8d12edb">More...</a><br /></td></tr>
+<tr class="separator:af97146a90a3a7dd256e152a5d8d12edb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eb68a5cacf280803e7a43c24f244b36"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a6eb68a5cacf280803e7a43c24f244b36">pose_valid</a></td></tr>
 <tr class="memdesc:a6eb68a5cacf280803e7a43c24f244b36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a valid position has been received.  <a href="#a6eb68a5cacf280803e7a43c24f244b36">More...</a><br /></td></tr>
 <tr class="separator:a6eb68a5cacf280803e7a43c24f244b36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7387ff71ecf1987ca5b5e47f64743a4"><td class="memItemLeft" align="right" valign="top">Rate *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#aa7387ff71ecf1987ca5b5e47f64743a4">rate</a></td></tr>
 <tr class="memdesc:aa7387ff71ecf1987ca5b5e47f64743a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">ROS rate object for controlling loop rates.  <a href="#aa7387ff71ecf1987ca5b5e47f64743a4">More...</a><br /></td></tr>
 <tr class="separator:aa7387ff71ecf1987ca5b5e47f64743a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a872280165bf044da25860ac9ec5dd105"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a872280165bf044da25860ac9ec5dd105">reconfigure</a></td></tr>
-<tr class="memdesc:a872280165bf044da25860ac9ec5dd105"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the swarm configuration has changed and the area needs to be divided again.  <a href="#a872280165bf044da25860ac9ec5dd105">More...</a><br /></td></tr>
-<tr class="separator:a872280165bf044da25860ac9ec5dd105"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ae51501a858e6880146bae1ce297b45"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a0ae51501a858e6880146bae1ce297b45">resolution</a></td></tr>
+<tr class="memdesc:a0ae51501a858e6880146bae1ce297b45"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grid map underlying the area division will be downsampled to this resolution in meter / cell.  <a href="#a0ae51501a858e6880146bae1ce297b45">More...</a><br /></td></tr>
+<tr class="separator:a0ae51501a858e6880146bae1ce297b45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a226aa461269d049e62c3fc124e21d88c"><td class="memItemLeft" align="right" valign="top">ServiceClient&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a226aa461269d049e62c3fc124e21d88c">rotater_cli</a></td></tr>
+<tr class="memdesc:a226aa461269d049e62c3fc124e21d88c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Service client to get the angle which the area has to be rotated by.  <a href="#a226aa461269d049e62c3fc124e21d88c">More...</a><br /></td></tr>
+<tr class="separator:a226aa461269d049e62c3fc124e21d88c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a499e7824037af983d0524a98081e7f0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248">state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a499e7824037af983d0524a98081e7f0b">state</a></td></tr>
+<tr class="memdesc:a499e7824037af983d0524a98081e7f0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The state of the area division node.  <a href="#a499e7824037af983d0524a98081e7f0b">More...</a><br /></td></tr>
+<tr class="separator:a499e7824037af983d0524a98081e7f0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25598ba1844eddfc65cf5ef7bc4c783a"><td class="memItemLeft" align="right" valign="top">map&lt; string, Time &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a25598ba1844eddfc65cf5ef7bc4c783a">swarm</a></td></tr>
+<tr class="memdesc:a25598ba1844eddfc65cf5ef7bc4c783a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UUIDs of the other swarm members.  <a href="#a25598ba1844eddfc65cf5ef7bc4c783a">More...</a><br /></td></tr>
+<tr class="separator:a25598ba1844eddfc65cf5ef7bc4c783a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c498b02078c4245c8585571bd94137e"><td class="memItemLeft" align="right" valign="top">map&lt; string, geometry_msgs::PoseStamped &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a4c498b02078c4245c8585571bd94137e">swarm_pose</a></td></tr>
 <tr class="memdesc:a4c498b02078c4245c8585571bd94137e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The positions of the other swarm members.  <a href="#a4c498b02078c4245c8585571bd94137e">More...</a><br /></td></tr>
 <tr class="separator:a4c498b02078c4245c8585571bd94137e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f3c1c878ad613ed1e61a132853c6205"><td class="memItemLeft" align="right" valign="top">Publisher&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a6f3c1c878ad613ed1e61a132853c6205">swarm_pub</a></td></tr>
 <tr class="memdesc:a6f3c1c878ad613ed1e61a132853c6205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Publisher to syncronize with other CPSs.  <a href="#a6f3c1c878ad613ed1e61a132853c6205">More...</a><br /></td></tr>
 <tr class="separator:a6f3c1c878ad613ed1e61a132853c6205"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a448ec37c056a226627c446fec5a5c486"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a448ec37c056a226627c446fec5a5c486">swarm_sub</a></td></tr>
+<tr class="memdesc:a448ec37c056a226627c446fec5a5c486"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber to get information about other CPSs in the swarm.  <a href="#a448ec37c056a226627c446fec5a5c486">More...</a><br /></td></tr>
+<tr class="separator:a448ec37c056a226627c446fec5a5c486"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0db5cba3013e0b665dce3adf28359834"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a0db5cba3013e0b665dce3adf28359834">swarm_timeout</a></td></tr>
-<tr class="memdesc:a0db5cba3013e0b665dce3adf28359834"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time in seconds to wait after an area division event before starting the area division.  <a href="#a0db5cba3013e0b665dce3adf28359834">More...</a><br /></td></tr>
+<tr class="memdesc:a0db5cba3013e0b665dce3adf28359834"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.  <a href="#a0db5cba3013e0b665dce3adf28359834">More...</a><br /></td></tr>
 <tr class="separator:a0db5cba3013e0b665dce3adf28359834"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82a6cee486e8468f00f066b8e78da77e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a82a6cee486e8468f00f066b8e78da77e">swarm_valid</a></td></tr>
-<tr class="memdesc:a82a6cee486e8468f00f066b8e78da77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether valid position information has been received from the other swarm members.  <a href="#a82a6cee486e8468f00f066b8e78da77e">More...</a><br /></td></tr>
+<tr class="memdesc:a82a6cee486e8468f00f066b8e78da77e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether valid state information has been received from the other swarm members.  <a href="#a82a6cee486e8468f00f066b8e78da77e">More...</a><br /></td></tr>
 <tr class="separator:a82a6cee486e8468f00f066b8e78da77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa570e8e42fe60884c6388868ce118a5a"><td class="memItemLeft" align="right" valign="top">Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#aa570e8e42fe60884c6388868ce118a5a">sync_start</a></td></tr>
 <tr class="memdesc:aa570e8e42fe60884c6388868ce118a5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time at which the synchronization for the area division started.  <a href="#aa570e8e42fe60884c6388868ce118a5a">More...</a><br /></td></tr>
 <tr class="separator:aa570e8e42fe60884c6388868ce118a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b8dc00505994908744a89e28b7a7efd"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a6b8dc00505994908744a89e28b7a7efd">translation</a></td></tr>
+<tr class="memdesc:a6b8dc00505994908744a89e28b7a7efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The translation by which the area has been shifted.  <a href="#a6b8dc00505994908744a89e28b7a7efd">More...</a><br /></td></tr>
+<tr class="separator:a6b8dc00505994908744a89e28b7a7efd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0cad29fcd2c4b1b611e71e249a65fcc"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#af0cad29fcd2c4b1b611e71e249a65fcc">uuid</a></td></tr>
 <tr class="memdesc:af0cad29fcd2c4b1b611e71e249a65fcc"><td class="mdescLeft">&#160;</td><td class="mdescRight">UUID of this CPS.  <a href="#af0cad29fcd2c4b1b611e71e249a65fcc">More...</a><br /></td></tr>
 <tr class="separator:af0cad29fcd2c4b1b611e71e249a65fcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a035a7b324ea8828b6506c46cddc4ebcb"><td class="memItemLeft" align="right" valign="top">Subscriber&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#a035a7b324ea8828b6506c46cddc4ebcb">uuid_sub</a></td></tr>
+<tr class="memdesc:a035a7b324ea8828b6506c46cddc4ebcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subscriber to get CPS UUID.  <a href="#a035a7b324ea8828b6506c46cddc4ebcb">More...</a><br /></td></tr>
+<tr class="separator:a035a7b324ea8828b6506c46cddc4ebcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af619da743092d2d2c8a2377fe17a9e5b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="area__division_8h.html#af619da743092d2d2c8a2377fe17a9e5b">visualize</a></td></tr>
 <tr class="memdesc:af619da743092d2d2c8a2377fe17a9e5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to publish the area division on a topic for visualization.  <a href="#af619da743092d2d2c8a2377fe17a9e5b">More...</a><br /></td></tr>
 <tr class="separator:af619da743092d2d2c8a2377fe17a9e5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="aa0aafed44fec19806d8f9ad834be1248"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0aafed44fec19806d8f9ad834be1248">&#9670;&nbsp;</a></span>state_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248">state_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An enumeration for the state of the division. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa0aafed44fec19806d8f9ad834be1248afd6a0e4343048b10646dd2976cc5ad18"></a>IDLE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa0aafed44fec19806d8f9ad834be1248a0cb1b2c6a7db1f1084886c98909a3f36"></a>INIT&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa0aafed44fec19806d8f9ad834be1248a33cf1d8ef1d06ee698a7fabf40eb3a7f"></a>ACTIVE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa0aafed44fec19806d8f9ad834be1248a447bfe7992c2fe70bfe561225f74d379"></a>SYNC&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa0aafed44fec19806d8f9ad834be1248a0cb86713ee09fe297dde9ab03d50d5da"></a>DIVIDE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="aa0aafed44fec19806d8f9ad834be1248ac9389608c675f597731377ea7e25dc7d"></a>DEINIT&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00025">25</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="ac08b2e2e7e0960bbc174b8ee4f805151"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac08b2e2e7e0960bbc174b8ee4f805151">&#9670;&nbsp;</a></span>area_pub</h2>
@@ -114,7 +203,61 @@ Variables</h2></td></tr>
 
 <p>Publisher to visualize the assigned area grid map. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00035">35</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00077">77</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="acd31b5e44a3a3206f48d340a2d346f48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd31b5e44a3a3206f48d340a2d346f48">&#9670;&nbsp;</a></span>behavior</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string behavior</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The current behavior state of this CPS. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00107">107</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a849686fb1dff5195550be36f34c8de1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a849686fb1dff5195550be36f34c8de1e">&#9670;&nbsp;</a></span>behavior_valid</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool behavior_valid</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether a valid state has been received. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00112">112</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a5f33958a3dc1bcc543b35b20fc79ac31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f33958a3dc1bcc543b35b20fc79ac31">&#9670;&nbsp;</a></span>behaviors</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">vector&lt;string&gt; behaviors</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The behavior states in which area division is active. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00117">117</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -132,25 +275,97 @@ Variables</h2></td></tr>
 
 <p>The object encapsulating the area division optimization algorithm. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00075">75</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00157">157</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
-<a id="afacddfe797ed24d30af6ec211cb9da6c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afacddfe797ed24d30af6ec211cb9da6c">&#9670;&nbsp;</a></span>gridmap</h2>
+<a id="a2120626d86c8b1733b07e723a29bcc59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2120626d86c8b1733b07e723a29bcc59">&#9670;&nbsp;</a></span>division_sub</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nav_msgs::OccupancyGrid gridmap</td>
+          <td class="memname">Subscriber division_sub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subscriber to get area division requests from other CPSs. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00062">62</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a3c04047bef9fea7356f13d90a7689177"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c04047bef9fea7356f13d90a7689177">&#9670;&nbsp;</a></span>global_map</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nav_msgs::OccupancyGrid global_map</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>The complete grid map. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00065">65</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00147">147</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a4c646b807e29086ff7b7506b757cc5fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c646b807e29086ff7b7506b757cc5fe">&#9670;&nbsp;</a></span>map_ds_pub</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Publisher map_ds_pub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Publisher to visualize the downsampled map. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00087">87</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a97934b2a49e865a810ebc0c4b8710c55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97934b2a49e865a810ebc0c4b8710c55">&#9670;&nbsp;</a></span>map_rot_pub</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Publisher map_rot_pub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Publisher to visualize the rotated map. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00082">82</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a5108944a455679cf302dcb84f965313a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5108944a455679cf302dcb84f965313a">&#9670;&nbsp;</a></span>map_sub</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Subscriber map_sub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subscriber to get grid map. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00057">57</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -168,7 +383,7 @@ Variables</h2></td></tr>
 
 <p>Whether a valid grid map has been received. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00070">70</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00152">152</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -186,7 +401,7 @@ Variables</h2></td></tr>
 
 <p>Publisher to stop the CPS. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00025">25</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00067">67</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -204,7 +419,25 @@ Variables</h2></td></tr>
 
 <p>Current position of the CPS. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00055">55</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00137">137</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="af97146a90a3a7dd256e152a5d8d12edb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af97146a90a3a7dd256e152a5d8d12edb">&#9670;&nbsp;</a></span>pose_sub</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Subscriber pose_sub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subscriber to get CPS position. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00047">47</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -222,7 +455,7 @@ Variables</h2></td></tr>
 
 <p>Whether a valid position has been received. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00060">60</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00142">142</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -240,25 +473,79 @@ Variables</h2></td></tr>
 
 <p>ROS rate object for controlling loop rates. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00040">40</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00097">97</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
-<a id="a872280165bf044da25860ac9ec5dd105"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a872280165bf044da25860ac9ec5dd105">&#9670;&nbsp;</a></span>reconfigure</h2>
+<a id="a0ae51501a858e6880146bae1ce297b45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ae51501a858e6880146bae1ce297b45">&#9670;&nbsp;</a></span>resolution</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool reconfigure</td>
+          <td class="memname">double resolution</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Whether the swarm configuration has changed and the area needs to be divided again. </p>
+<p>The grid map underlying the area division will be downsampled to this resolution in meter / cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00090">90</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00167">167</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a226aa461269d049e62c3fc124e21d88c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a226aa461269d049e62c3fc124e21d88c">&#9670;&nbsp;</a></span>rotater_cli</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ServiceClient rotater_cli</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Service client to get the angle which the area has to be rotated by. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00092">92</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a499e7824037af983d0524a98081e7f0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a499e7824037af983d0524a98081e7f0b">&#9670;&nbsp;</a></span>state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="area__division_8h.html#aa0aafed44fec19806d8f9ad834be1248">state_t</a> state</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The state of the area division node. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00037">37</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a25598ba1844eddfc65cf5ef7bc4c783a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25598ba1844eddfc65cf5ef7bc4c783a">&#9670;&nbsp;</a></span>swarm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">map&lt;string, Time&gt; swarm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The UUIDs of the other swarm members. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00127">127</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -276,7 +563,7 @@ Variables</h2></td></tr>
 
 <p>The positions of the other swarm members. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00045">45</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00122">122</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -294,7 +581,25 @@ Variables</h2></td></tr>
 
 <p>Publisher to syncronize with other CPSs. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00030">30</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00072">72</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a448ec37c056a226627c446fec5a5c486"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a448ec37c056a226627c446fec5a5c486">&#9670;&nbsp;</a></span>swarm_sub</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Subscriber swarm_sub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subscriber to get information about other CPSs in the swarm. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00052">52</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -310,9 +615,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The time in seconds to wait after an area division event before starting the area division. </p>
+<p>The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00080">80</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00172">172</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -328,9 +633,9 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Whether valid position information has been received from the other swarm members. </p>
+<p>Whether valid state information has been received from the other swarm members. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00050">50</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00132">132</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -348,7 +653,25 @@ Variables</h2></td></tr>
 
 <p>The time at which the synchronization for the area division started. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00095">95</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00182">182</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a6b8dc00505994908744a89e28b7a7efd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b8dc00505994908744a89e28b7a7efd">&#9670;&nbsp;</a></span>translation</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">geometry_msgs::Vector3 translation</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The translation by which the area has been shifted. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00162">162</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -366,7 +689,25 @@ Variables</h2></td></tr>
 
 <p>UUID of this CPS. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00020">20</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00102">102</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+
+</div>
+</div>
+<a id="a035a7b324ea8828b6506c46cddc4ebcb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a035a7b324ea8828b6506c46cddc4ebcb">&#9670;&nbsp;</a></span>uuid_sub</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Subscriber uuid_sub</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Subscriber to get CPS UUID. </p>
+
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00042">42</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -384,7 +725,7 @@ Variables</h2></td></tr>
 
 <p>Whether to publish the area division on a topic for visualization. </p>
 
-<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00085">85</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="area__division_8h_source.html#l00177">177</a> of file <a class="el" href="area__division_8h_source.html">area_division.h</a>.</p>
 
 </div>
 </div>
@@ -394,7 +735,7 @@ Variables</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_division">area_division</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Oct 31 2019 09:22:46</small>
+<small>autogenerated on Wed Mar 4 2020 15:16:02</small>
 </div>
 </body>
 </html>
