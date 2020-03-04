@@ -1,26 +1,81 @@
 #include "coverage_path.h"
 
 /**
+ * @brief Determine properties of an area.
+ * @param coords The coordinates defining the area polygon.
+ * @param origin Returns the bottom left coordinate of the area.
+ * @param rotation Returns the angle which the area has to be rotated so the lower boundary is horizontal.
+ * @param width Returns the width of the area after rotation.
+ * @param height Returns the height of the area after rotation.
+ */
+void analyze_area (vector<geometry_msgs::Point> coords, geometry_msgs::Point& origin, double& rotation, double& width, double& height)
+{
+    // get coordinates
+    geometry_msgs::Point pl, pb, pr, pt;
+    pl.x = numeric_limits<double>::max();
+    pb.y = numeric_limits<double>::max();
+    pr.x = numeric_limits<double>::min();
+    pt.y = numeric_limits<double>::min();
+    for (auto p : coords) {
+        // left most point
+        if (p.x < pl.x || (p.x == pl.x && p.y < pl.y))
+            pl = p;
+
+        // bottom most point
+        if (p.y < pb.y)
+            pb = p;
+
+        // right most point
+        if (p.x > pr.x || (p.x == pr.x && p.y < pr.y))
+            pr = p;
+
+        // top most point
+        if (p.y > pt.y)
+            pt = p;
+    }
+
+    // no rotation required
+    if ((pl.x == pb.x && pl.y == pb.y) || (pr.x == pb.x && pr.y == pb.y)) {
+        origin = pl;
+        rotation = 0;
+        width = pr.x - pl.x;
+        height = pt.y - pb.y;
+    }
+
+    // rotate clockwise
+    else if (pr.y < pl.y) {
+        origin = pb;
+        rotation = -atan2(pr.y - pb.y, pr.x - pb.x);
+        width = hypot(pr.x - pb.x, pr.y - pb.y);
+        height = hypot(pl.x - pb.x, pl.y - pb.y);
+    }
+
+    // rotate counter clockwise
+    else {
+        origin = pl;
+        rotation = -atan2(pb.y - pl.y, pb.x - pl.x);
+        width = hypot(pl.x - pb.x, pl.y - pb.y);
+        height = hypot(pr.x - pb.x, pr.y - pb.y);
+    }
+
+    ROS_DEBUG("Origin (%.2f,%.2f)", origin.x, origin.y);
+    ROS_DEBUG("Rotation %.2f", rotation);
+    ROS_DEBUG("Size %.2fx%.2f", width, height);
+}
+
+/**
  * @brief Rotate an occupancy grid map so the lower boundary is horizontal.
  * @param map A reference to the occupancy grid map to rotate.
- * @return The angle by which the map has been rotated.
+ * @param angle The angle to rotate the map by.
  */
-double rotate (nav_msgs::OccupancyGrid& map)
+void rotate (nav_msgs::OccupancyGrid& map, double angle)
 {
-    // get angle
-    cpswarm_msgs::GetDouble angle;
-    if (rotater.call(angle) == false) {
-        ROS_INFO("Not rotating map!");
-        return 0.0;
-    }
-    double a = angle.response.value;
-
-    ROS_DEBUG("Rotate map by %.2f...", a);
+    ROS_DEBUG("Rotate map by %.2f...", angle);
 
     // rotate origin
     geometry_msgs::Pose origin_new;
-    origin_new.position.x = map.info.origin.position.x*cos(a) - map.info.origin.position.y*sin(a);
-    origin_new.position.y = map.info.origin.position.x*sin(a) + map.info.origin.position.y*cos(a);
+    origin_new.position.x = map.info.origin.position.x*cos(angle) - map.info.origin.position.y*sin(angle);
+    origin_new.position.y = map.info.origin.position.x*sin(angle) + map.info.origin.position.y*cos(angle);
 
     // create empty rotated map extra large
     vector<vector<signed char>> rt;
@@ -37,8 +92,8 @@ double rotate (nav_msgs::OccupancyGrid& map)
             // rotate coordinates
             x = double(j) * map.info.resolution + map.info.origin.position.x;
             y = double(i) * map.info.resolution + map.info.origin.position.y;
-            x_new = x*cos(a) - y*sin(a);
-            y_new = x*sin(a) + y*cos(a);
+            x_new = x*cos(angle) - y*sin(angle);
+            y_new = x*sin(angle) + y*cos(angle);
             j_new = int(round((x_new - origin_new.position.x) / map.info.resolution));
             i_new = int(round((y_new - origin_new.position.y) / map.info.resolution));
 
@@ -84,8 +139,6 @@ double rotate (nav_msgs::OccupancyGrid& map)
     map.info.width = width_new;
     map.info.height= height_new;
     map.info.origin = origin_new;
-
-    return a;
 }
 
 /**
@@ -136,6 +189,31 @@ void downsample (nav_msgs::OccupancyGrid& map)
     map.info.resolution = resolution;
     map.info.width = int(floor(double(map.info.width) / double(f)));
     map.info.height = int(floor(double(map.info.height) / double(f)));
+
+    // remove rows with obstacles only
+    for (int i=0; i<map.info.height; ++i) {
+        // count number of occupied cells in a row
+        int obst = 0;
+        for (int j=0; j<map.info.width; ++j) {
+            if (map.data[i*map.info.width + j] == 100) {
+                ++obst;
+            }
+        }
+
+        // remove row
+        if (obst == map.info.width) {
+            // delete grid cells
+            map.data.erase(map.data.begin() + i*map.info.width, map.data.begin() + (i+1)*map.info.width);
+
+            // update meta data
+            map.info.map_load_time = Time::now();
+            --map.info.height;
+            map.info.origin.position.y += map.info.resolution;
+
+            // stay in current row
+            --i;
+        }
+    }
 }
 
 /**
@@ -145,25 +223,27 @@ void downsample (nav_msgs::OccupancyGrid& map)
  */
 bool generate_path (geometry_msgs::Point start)
 {
-    // divided area is already rotated, translated, and downsampled
-    double rotation = 0.0;
-    geometry_msgs::Vector3 translation;
-    if (divide_area) {
-        // get angle of rotation
-        cpswarm_msgs::GetDouble get_angle;
-        if (rotater.call(get_angle))
-            rotation = get_angle.response.value;
+    ROS_DEBUG("Starting at (%.2f,%.2f)", start.x, start.y);
 
-        // get translation vector
-        cpswarm_msgs::GetVector get_translation;
-        if (translater.call(get_translation))
-            translation = get_translation.response.vector;
+    // get coordinates of area to cover
+    vector<geometry_msgs::Point> coords;
+    cpswarm_msgs::GetPoints get_coords;
+    if (area_getter.call(get_coords))
+        coords = get_coords.response.points;
+    else {
+        ROS_ERROR("Failed to get area coordinates!");
+        return false;
     }
 
+    // get properties of area to cover
+    geometry_msgs::Point origin;
+    double rotation, width, height;
+    analyze_area(coords, origin, rotation, width, height);
+
     // original map still needs rotation and downsampling
-    else {
+    if (divide_area == false) {
         // rotate map
-        rotation = rotate(area);
+        rotate(area, rotation);
 
         // downsample resolution
         if (area.info.resolution < resolution) {
@@ -175,23 +255,19 @@ bool generate_path (geometry_msgs::Point start)
 
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
-    tree.initialize_graph(area, translation, rotation, vertical);
+    tree.initialize_graph(area, vertical);
     tree.construct();
 
     // visualize path
     if (visualize)
         mst_publisher.publish(tree.get_tree());
 
-    // transform starting point
-    geometry_msgs::Point cps;
-    cps.x = (start.x + translation.x) * cos(rotation) - (start.y + translation.y) * sin(rotation);
-    cps.y = (start.x + translation.x) * sin(rotation) + (start.y + translation.y) * cos(rotation);
-
     // generate path
     ROS_DEBUG("Generate coverage path...");
-    path.initialize_graph(area, translation, rotation);
+    path.initialize_graph(area);
+    path.initialize_map(origin, rotation, width, height);
     path.initialize_tree(tree.get_mst_edges());
-    path.generate_path(cps);
+    path.generate_path(start);
     if (turning_points)
         path.reduce();
 
@@ -297,15 +373,12 @@ int main (int argc, char **argv)
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
         mst_publisher = nh.advertise<geometry_msgs::PoseArray>("coverage_path/mst", queue_size, true);
     }
-    if (divide_area) {
+    if (divide_area)
         map_subscriber = nh.subscribe("area/assigned", queue_size, area_callback);
-        translater = nh.serviceClient<cpswarm_msgs::GetVector>("area/get_translation");
-        translater.waitForExistence();
-    }
     else
         map_subscriber = nh.subscribe("area/map", queue_size, area_callback);
-    rotater = nh.serviceClient<cpswarm_msgs::GetDouble>("area/get_rotation");
-    rotater.waitForExistence();
+    area_getter = nh.serviceClient<cpswarm_msgs::GetPoints>("area/get_area");
+    area_getter.waitForExistence();
 
     // init loop rate
     Rate rate(loop_rate);

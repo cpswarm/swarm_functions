@@ -39,13 +39,10 @@ public:
 
     /**
      * @brief Initialize the internal tree structure from a given grid map.
-     * @param gridmap The grid map that needs to be covered by the tree.
-     * @param vec The vector by which the map has been translated.
-     * @param angle The angle by which the map has been rotated. Default 0.0.
      * @param vertical Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vec, double angle = 0.0, bool vertical = false, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical = false, bool connect4 = true);
 
     /**
      * @brief Generate the MST using Kruskal's algorithm.

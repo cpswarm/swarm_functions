@@ -11,8 +11,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetPlan.h>
 #include <cpswarm_msgs/GetWaypoint.h>
-#include <cpswarm_msgs/GetDouble.h>
-#include <cpswarm_msgs/GetVector.h>
+#include "cpswarm_msgs/GetPoints.h"
 #include "lib/spanning_tree.h"
 #include "lib/mst_path.h"
 
@@ -40,14 +39,9 @@ Publisher mst_publisher;
 Subscriber map_subscriber;
 
 /**
- * @brief Service client to get the angle which the area has to be rotated by.
+ * @brief Service client to get coordinates of the area to cover.
  */
-ServiceClient rotater;
-
-/**
- * @brief Service client to get the offset which the area has to be translated by.
- */
-ServiceClient translater;
+ServiceClient area_getter;
 
 /**
  * @brief The grid map representing the environment to be covered.

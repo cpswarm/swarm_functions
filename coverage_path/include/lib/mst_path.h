@@ -31,13 +31,7 @@ public:
      * @brief Generate all way points for the path.
      * @param start The current position of the CPS.
      */
-    void generate_path (geometry_msgs::Point);
-
-    /**
-     * @brief Get the graph generated from the grid map.
-     * @return An array of poses representing the vertices of the grid.
-     */
-    geometry_msgs::PoseArray get_grid ();
+    void generate_path (geometry_msgs::Point start);
 
     /**
      * @brief Get the complete path.
@@ -56,12 +50,19 @@ public:
     /**
      * @brief Initialize the internal graph structure that represents the area division.
      * @param graph  gridmap The grid map for which the paths are generated.
-     * @param vector The vector by which the map has been translated.
-     * @param angle The angle by which the map has been rotated. Default 0.0.
      * @param vertical Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle = 0.0, bool vertical = false, bool connect4 = true);
+    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical = false, bool connect4 = true);
+
+    /**
+     * @brief Initialize properties of the area to be covered.
+     * @param origin Coordinate of the bottom left point of the area.
+     * @param rotation The angle by which the map has been rotated.
+     * @param width The width of the area.
+     * @param height The height of the area.
+     */
+    void initialize_map (geometry_msgs::Point origin, double rotation, double width, double height);
 
     /**
      * @brief Remove edges of the graph that overlap with the tree.
@@ -136,14 +137,44 @@ private:
     int wp;
 
     /**
-     * @brief The rotation of the output path.
+     * @brief Coordinate of the bottom left bounding point of the area.
+     */
+    geometry_msgs::Point origin;
+
+    /**
+     * @brief The rotation of the map.
      */
     double rotation;
 
     /**
-     * @brief The translation of the output path.
+     * @brief Width of the area to cover.
      */
-    geometry_msgs::Vector3 translation;
+    double width;
+
+    /**
+     * @brief Height of the area to cover.
+     */
+    double height;
+
+    /**
+     * @brief Maximum x coordinate of the path.
+     */
+    double x_max;
+
+    /**
+     * @brief Maximum y coordinate of the path.
+     */
+    double y_max;
+
+    /**
+     * @brief Minimum x coordinate of the path.
+     */
+    double x_min;
+
+    /**
+     * @brief Minimum y coordinate of the path.
+     */
+    double y_min;
 
     /**
      * @brief Whether the sweeping pattern is vertical or horizontal.

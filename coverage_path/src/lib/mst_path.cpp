@@ -2,6 +2,9 @@
 
 mst_path::mst_path ()
 {
+    // initialize max and min
+    x_max = y_max = numeric_limits<double>::min();
+    x_min = y_min = numeric_limits<double>::max();
 }
 
 void mst_path::generate_path (geometry_msgs::Point start)
@@ -10,11 +13,11 @@ void mst_path::generate_path (geometry_msgs::Point start)
     this->wp = 0;
 
     // starting vertex
-    geometry_msgs::Point wp = start;
+    geometry_msgs::Point wp;
+    wp.x = (start.x - origin.x) * cos(rotation) - (start.y - origin.y) * sin(rotation);
+    wp.y = (start.x - origin.x) * sin(rotation) + (start.y - origin.y) * cos(rotation);
     path.push_back(wp);
-    int(round((wp.x - map.info.origin.position.x) / map.info.resolution));
-    int(round((wp.y - map.info.origin.position.y) / map.info.resolution));
-    int current = 2 * round((wp.y - map.info.origin.position.y) / map.info.resolution) * 2*map.info.width + 2 * round((wp.x - map.info.origin.position.x) / map.info.resolution);
+    int current = 2 * round(wp.y / map.info.resolution) * 2*map.info.width + 2 * round(wp.x / map.info.resolution);
 
     // visited vertices
     unordered_set<int> removed;
@@ -70,23 +73,20 @@ void mst_path::generate_path (geometry_msgs::Point start)
             }
         }
         if (!found) {
-            ROS_DEBUG("Path terminated at %d (%.2f,%.2f)", current, (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x, (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y);
             return;
         }
-
-        ROS_DEBUG("Path at %d (%.2f,%.2f)", current, (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x, (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y);
 
         // remove vertices from sets
         nodes[current].erase(previous);
         nodes[previous].erase(current);
 
-        // convert index to waypoint position on map
-        wp.x = (current % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x;
-        wp.y = (current / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y;
+        // convert index to relative waypoint position on map
+        wp.x = (current % (2*map.info.width)) / 2.0 * map.info.resolution;
+        wp.y = (current / (2*map.info.width)) / 2.0 * map.info.resolution;
 
-        // shift waypoint to center path on cell
-        wp.x += 0.25 * map.info.resolution;
-        wp.y += 0.25 * map.info.resolution;
+        // shift waypoint to center path on map
+        wp.x += (width - x_max+x_min) / 2.0;
+        wp.y += (height - y_max+y_min) / 2.0;
 
         // add vertex to path
         path.push_back(wp);
@@ -97,44 +97,19 @@ void mst_path::generate_path (geometry_msgs::Point start)
     path.push_back(wp);
 }
 
-geometry_msgs::PoseArray mst_path::get_grid ()
-{
-    geometry_msgs::PoseArray grid;
-    vector<geometry_msgs::Pose> poses;
-    geometry_msgs::Pose pose;
-
-    for (int i=0; i<nodes.size(); ++i) {
-        // from
-        pose.position.x = (i % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x;
-        pose.position.y = (i / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y;
-
-        // orientation
-        for (auto it=nodes[i].begin(); it!=nodes[i].end(); ++it) {
-            double dx = (*it % (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.x - pose.position.x;
-            double dy = (*it / (2*map.info.width)) / 2.0 * map.info.resolution + map.info.origin.position.y - pose.position.y;
-            tf2::Quaternion direction;
-            direction.setRPY(0, 0, atan2(dy, dx));
-            pose.orientation = tf2::toMsg(direction);
-
-            poses.push_back(pose);
-        }
-    }
-
-    grid.poses = poses;
-    grid.header.stamp = Time::now();
-    grid.header.frame_id = "local_origin_ned";
-    return grid;
-}
-
 nav_msgs::Path mst_path::get_path ()
 {
     nav_msgs::Path nav_path;
     vector<geometry_msgs::PoseStamped> poses;
     geometry_msgs::PoseStamped pose;
     for (auto p : path) {
-        // transform
-        pose.pose.position.x = (p.x + translation.x) * cos(rotation) - (p.y + translation.y) * sin(rotation);
-        pose.pose.position.y = (p.x + translation.x) * sin(rotation) + (p.y + translation.y) * cos(rotation);
+        // rotate
+        pose.pose.position.x = p.x * cos(-rotation) - p.y * sin(-rotation);
+        pose.pose.position.y = p.x * sin(-rotation) + p.y * cos(-rotation);
+
+        // relative to original map
+        pose.pose.position.x += origin.x;
+        pose.pose.position.y += origin.y;
 
         poses.push_back(pose);
     }
@@ -156,15 +131,11 @@ geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, doub
     return get_wp();
 }
 
-void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs::Vector3 vector, double angle, bool vertical, bool connect4)
+void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical, bool connect4)
 {
+    ROS_DEBUG("Gridmap size %dx%d origin (%.2f,%.2f)", gridmap.info.width, gridmap.info.height, gridmap.info.origin.position.x, gridmap.info.origin.position.y);
     // orientation of path edges
     this->vertical = vertical;
-
-    // transformation of output path
-    rotation = -angle;
-    translation.x = -vector.x;
-    translation.y = -vector.y;
 
     // initialize path
     map = gridmap;
@@ -222,8 +193,24 @@ void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, geometry_msgs:
     }
 }
 
+void mst_path::initialize_map (geometry_msgs::Point origin, double rotation, double width, double height)
+{
+    // bottom left of area
+    this->origin = origin;
+
+    // rotation of map
+    this->rotation = rotation;
+
+    // dimensions of area
+    this->width = width;
+    this->height = height;
+
+    ROS_DEBUG("Area size %.2fx%.2f origin (%.2f,%.2f)", width, height, origin.x, origin.y);
+}
+
 void mst_path::initialize_tree (vector<edge> mst)
 {
+    // remove edges not required by mst
     int cols = map.info.width;
     int alpha, vmax, vmin;
     for (int i=0; i<mst.size(); i++) {
@@ -281,6 +268,29 @@ void mst_path::add_edge (int from, int to, int cost)
     // add vertices to sets
     nodes[from].insert(to);
     nodes[to].insert(from);
+
+    // check if edge defines new extremum
+    double x,y;
+    x = (e.from % (2*map.info.width)) / 2.0 * map.info.resolution;
+    y = (e.from / (2*map.info.width)) / 2.0 * map.info.resolution;
+    if (x > x_max)
+        x_max = x;
+    if (x < x_min)
+        x_min = x;
+    if (y > y_max)
+        y_max = y;
+    if (y < y_min)
+        y_min = y;
+    x = (e.to % (2*map.info.width)) / 2.0 * map.info.resolution;
+    y = (e.to / (2*map.info.width)) / 2.0 * map.info.resolution;
+    if (x > x_max)
+        x_max = x;
+    if (x < x_min)
+        x_min = x;
+    if (y > y_max)
+        y_max = y;
+    if (y < y_min)
+        y_min = y;
 }
 
 double mst_path::dist (geometry_msgs::Point p1, geometry_msgs::Point p2)
@@ -293,9 +303,13 @@ geometry_msgs::Point mst_path::get_wp (int offset)
     geometry_msgs::Point waypoint;
 
     if (0 <= wp+offset && wp+offset < path.size()) {
-        // transform
-        waypoint.x = (path[wp+offset].x + translation.x) * cos(rotation) - (path[wp+offset].y + translation.y) * sin(rotation);
-        waypoint.y = (path[wp+offset].x + translation.x) * sin(rotation) + (path[wp+offset].y + translation.y) * cos(rotation);
+        // rotate
+        waypoint.x = path[wp+offset].x * cos(-rotation) - path[wp+offset].y * sin(-rotation);
+        waypoint.y = path[wp+offset].x * sin(-rotation) + path[wp+offset].y * cos(-rotation);
+
+        // relative to original map
+        waypoint.x += origin.x;
+        waypoint.y += origin.y;
     }
 
     return waypoint;
