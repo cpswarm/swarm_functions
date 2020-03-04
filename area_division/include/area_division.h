@@ -11,7 +11,6 @@
 #include <nav_msgs/GetMap.h>
 #include <cpswarm_msgs/AreaDivisionEvent.h>
 #include <cpswarm_msgs/GetDouble.h>
-#include <cpswarm_msgs/GetVector.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
 #include <cpswarm_msgs/StateEvent.h>
 #include <swarmros/String.h>
@@ -86,11 +85,6 @@ Publisher map_rot_pub;
  * @brief Publisher to visualize the downsampled map.
  */
 Publisher map_ds_pub;
-
-/**
- * @brief Service to provide the amount the map has been rotated.
- */
-ServiceServer translate_srv;
 
 /**
  * @brief Service client to get the angle which the area has to be rotated by.
