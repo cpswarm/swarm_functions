@@ -42,9 +42,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aad04a080e7aa3eab1764510eff4e49f6"><td class="memItemLeft" align="right" valign="top">geometry_msgs::PoseArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classspanning__tree.html#aad04a080e7aa3eab1764510eff4e49f6">get_tree</a> ()</td></tr>
 <tr class="memdesc:aad04a080e7aa3eab1764510eff4e49f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the generated MST for visualization.  <a href="#aad04a080e7aa3eab1764510eff4e49f6">More...</a><br /></td></tr>
 <tr class="separator:aad04a080e7aa3eab1764510eff4e49f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7a6efaf7065ae198539e4f42b83829c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classspanning__tree.html#ae7a6efaf7065ae198539e4f42b83829c">initialize_graph</a> (nav_msgs::OccupancyGrid <a class="el" href="coverage__path_8h.html#afacddfe797ed24d30af6ec211cb9da6c">gridmap</a>, geometry_msgs::Vector3 vec, double angle=0.0, bool <a class="el" href="classspanning__tree.html#af8187ae8a4b1495c79235f808c85431c">vertical</a>=false, bool connect4=true)</td></tr>
-<tr class="memdesc:ae7a6efaf7065ae198539e4f42b83829c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the internal tree structure from a given grid map.  <a href="#ae7a6efaf7065ae198539e4f42b83829c">More...</a><br /></td></tr>
-<tr class="separator:ae7a6efaf7065ae198539e4f42b83829c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c16f6629606136b8babe1bf785fea57"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classspanning__tree.html#a5c16f6629606136b8babe1bf785fea57">initialize_graph</a> (nav_msgs::OccupancyGrid gridmap, bool <a class="el" href="classspanning__tree.html#af8187ae8a4b1495c79235f808c85431c">vertical</a>=false, bool connect4=true)</td></tr>
+<tr class="memdesc:a5c16f6629606136b8babe1bf785fea57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the internal tree structure from a given grid map.  <a href="#a5c16f6629606136b8babe1bf785fea57">More...</a><br /></td></tr>
+<tr class="separator:a5c16f6629606136b8babe1bf785fea57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05a1cbc22cc6f6e4ad40f0baa3156a43"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classspanning__tree.html#a05a1cbc22cc6f6e4ad40f0baa3156a43">spanning_tree</a> ()</td></tr>
 <tr class="memdesc:a05a1cbc22cc6f6e4ad40f0baa3156a43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a05a1cbc22cc6f6e4ad40f0baa3156a43">More...</a><br /></td></tr>
 <tr class="separator:a05a1cbc22cc6f6e4ad40f0baa3156a43"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,7 +159,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00132">132</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00119">119</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
 
 </div>
 </div>
@@ -180,7 +180,7 @@ Private Attributes</h2></td></tr>
 
 <p>Generate the MST using Kruskal's algorithm. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00106">106</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00093">93</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
 
 </div>
 </div>
@@ -228,7 +228,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if the vertices are in different connected components, i.e., the set for vertex a is different from that for vertex b. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00146">146</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00133">133</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
 
 </div>
 </div>
@@ -276,8 +276,8 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ae7a6efaf7065ae198539e4f42b83829c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7a6efaf7065ae198539e4f42b83829c">&#9670;&nbsp;</a></span>initialize_graph()</h2>
+<a id="a5c16f6629606136b8babe1bf785fea57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c16f6629606136b8babe1bf785fea57">&#9670;&nbsp;</a></span>initialize_graph()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -287,18 +287,6 @@ Private Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype">nav_msgs::OccupancyGrid&#160;</td>
           <td class="paramname"><em>gridmap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">geometry_msgs::Vector3&#160;</td>
-          <td class="paramname"><em>vec</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>angle</em> = <code>0.0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -323,16 +311,13 @@ Private Attributes</h2></td></tr>
 <p>Initialize the internal tree structure from a given grid map. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gridmap</td><td>The grid map that needs to be covered by the tree. </td></tr>
-    <tr><td class="paramname">vec</td><td>The vector by which the map has been translated. </td></tr>
-    <tr><td class="paramname">angle</td><td>The angle by which the map has been rotated. Default 0.0. </td></tr>
     <tr><td class="paramname">vertical</td><td>Whether the sweeping pattern is vertical or horizontal. Default horizontal. </td></tr>
     <tr><td class="paramname">connect4</td><td>Whether only the von Neumann neighborhood is considered. Default true. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00047">47</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8cpp_source.html#l00039">39</a> of file <a class="el" href="spanning__tree_8cpp_source.html">spanning_tree.cpp</a>.</p>
 
 </div>
 </div>
@@ -359,7 +344,7 @@ Private Attributes</h2></td></tr>
 
 <p>Priority queue of edge objects sorted by cost. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00080">80</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00077">77</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -385,7 +370,7 @@ Private Attributes</h2></td></tr>
 
 <p>The grid map that needs to be covered by the MST. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00090">90</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00087">87</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -411,7 +396,7 @@ Private Attributes</h2></td></tr>
 
 <p>Edges in Minimal-Spanning Tree. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00085">85</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00082">82</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -437,7 +422,7 @@ Private Attributes</h2></td></tr>
 
 <p>The sets of connected vertices. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00075">75</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00072">72</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -463,7 +448,7 @@ Private Attributes</h2></td></tr>
 
 <p>The rotation of the output tree. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00095">95</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00092">92</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -489,7 +474,7 @@ Private Attributes</h2></td></tr>
 
 <p>The translation of the output tree. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00100">100</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00097">97</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -515,7 +500,7 @@ Private Attributes</h2></td></tr>
 
 <p>Whether the sweeping pattern is vertical or horizontal. </p>
 
-<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00105">105</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spanning__tree_8h_source.html#l00102">102</a> of file <a class="el" href="spanning__tree_8h_source.html">spanning_tree.h</a>.</p>
 
 </div>
 </div>
@@ -529,7 +514,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/coverage_path">coverage_path</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Jan 23 2020 10:34:17</small>
+<small>autogenerated on Wed Mar 4 2020 15:16:12</small>
 </div>
 </body>
 </html>
