@@ -2,9 +2,6 @@
 
 mst_path::mst_path ()
 {
-    // initialize max and min
-    x_max = y_max = numeric_limits<double>::min();
-    x_min = y_min = numeric_limits<double>::max();
 }
 
 void mst_path::generate_path (geometry_msgs::Point start)
@@ -85,8 +82,10 @@ void mst_path::generate_path (geometry_msgs::Point start)
         wp.y = (current / (2*map.info.width)) / 2.0 * map.info.resolution;
 
         // shift waypoint to center path on map
-        wp.x += (width - x_max+x_min) / 2.0;
-        wp.y += (height - y_max+y_min) / 2.0;
+        double width_path = (round(width / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
+        double height_path = (round(height / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
+        wp.x += (width - width_path) / 2.0;
+        wp.y += (height - height_path) / 2.0;
 
         // add vertex to path
         path.push_back(wp);
@@ -268,29 +267,6 @@ void mst_path::add_edge (int from, int to, int cost)
     // add vertices to sets
     nodes[from].insert(to);
     nodes[to].insert(from);
-
-    // check if edge defines new extremum
-    double x,y;
-    x = (e.from % (2*map.info.width)) / 2.0 * map.info.resolution;
-    y = (e.from / (2*map.info.width)) / 2.0 * map.info.resolution;
-    if (x > x_max)
-        x_max = x;
-    if (x < x_min)
-        x_min = x;
-    if (y > y_max)
-        y_max = y;
-    if (y < y_min)
-        y_min = y;
-    x = (e.to % (2*map.info.width)) / 2.0 * map.info.resolution;
-    y = (e.to / (2*map.info.width)) / 2.0 * map.info.resolution;
-    if (x > x_max)
-        x_max = x;
-    if (x < x_min)
-        x_min = x;
-    if (y > y_max)
-        y_max = y;
-    if (y < y_min)
-        y_min = y;
 }
 
 double mst_path::dist (geometry_msgs::Point p1, geometry_msgs::Point p2)

@@ -157,26 +157,6 @@ private:
     double height;
 
     /**
-     * @brief Maximum x coordinate of the path.
-     */
-    double x_max;
-
-    /**
-     * @brief Maximum y coordinate of the path.
-     */
-    double y_max;
-
-    /**
-     * @brief Minimum x coordinate of the path.
-     */
-    double x_min;
-
-    /**
-     * @brief Minimum y coordinate of the path.
-     */
-    double y_min;
-
-    /**
      * @brief Whether the sweeping pattern is vertical or horizontal.
      */
     bool vertical;
