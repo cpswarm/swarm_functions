@@ -88,13 +88,14 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp)
     // this target has been assigned to another cps for completion but is still tracked
     else if (this->state == TARGET_ASSIGNED) {
         // update target information
-        this->state = state;
         this->pose = pose;
         this->stamp = stamp;
 
         // target completed by the other cps
         if (state == TARGET_DONE) {
             ROS_DEBUG("Target %d: assigned --> done", id);
+
+            this->state = state;
 
             // store target id in parameter server
             vector<int> done;
