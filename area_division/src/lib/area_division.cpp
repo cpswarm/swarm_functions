@@ -22,6 +22,7 @@ void area_division::divide ()
     else {
         termThr=0;
     }
+    ROS_DEBUG("%d free cells.", effectiveSize);
 
     // initialize distances of cells to cps
     vector<valarray<double>> AllDistances(nr, valarray<double>(rows*cols));
@@ -32,6 +33,7 @@ void area_division::divide ()
             }
         }
     }
+    ROS_DEBUG("Computed distances from CPSs to all cells.");
 
 
     vector<valarray<double>> MetricMatrix = AllDistances;
@@ -39,6 +41,8 @@ void area_division::divide ()
     // perform area division
     success = false;
     while (termThr<=discr && !success) {
+        ROS_DEBUG("Try division with discrepancy %d<=discr.", termThr, discr);
+
         // initializations
         double downThres = ((double)NoTiles-(double)termThr*(nr-1)) / (double)(NoTiles*nr);
         double upperThres = ((double)NoTiles+termThr) / (double)(NoTiles*nr);
@@ -118,9 +122,14 @@ void area_division::divide ()
             max_iter = max_iter/2;
             success = false;
 
+            ROS_DEBUG("Failed to divide in %d iterations.", iter);
+
             // increase allowed area discrepancy
             termThr++;
         }
+
+        else
+            ROS_DEBUG("Succeeded division with discrepancy %d after %d < %d iterations", termThr, iter, max_iter);
     }
 
     if (success == false)
@@ -172,6 +181,8 @@ void area_division::initialize_cps (map<string, vector<int>> cpss)
         // index of position in grid map
         int idx = y * cols + x;
 
+        ROS_DEBUG("CPS %d (%s) at (%d,%d) index %d", nr, c.first.c_str(), x, y, idx);
+
         // place cps in data structures
         gridmap[idx] = numeric_limits<signed char>::max();
         A[idx] = nr;
@@ -197,6 +208,8 @@ void area_division::initialize_map (int r, int c, vector<signed char> src)
     for (int i=0; i<gridmap.size(); ++i)
         if (gridmap[i] >= 50)
             ++ob;
+
+    ROS_DEBUG("There are %d occupied cells.", ob);
 }
 
 void area_division::assign (vector<valarray<double>> matrix)
