@@ -4,7 +4,7 @@ mst_path::mst_path ()
 {
 }
 
-void mst_path::generate_path (geometry_msgs::Point start)
+bool mst_path::generate_path (geometry_msgs::Point start)
 {
     // reset counter of current waypoint
     this->wp = 0;
@@ -47,7 +47,7 @@ void mst_path::generate_path (geometry_msgs::Point start)
     // no valid first step found
     if (!found) {
         ROS_ERROR("No path found!");
-        return;
+        return false;
     }
 
     // generate path
@@ -70,7 +70,7 @@ void mst_path::generate_path (geometry_msgs::Point start)
             }
         }
         if (!found) {
-            return;
+            break;
         }
 
         // remove vertices from sets
@@ -94,6 +94,8 @@ void mst_path::generate_path (geometry_msgs::Point start)
     // final waypoint
     wp = path.front();
     path.push_back(wp);
+
+    return true;
 }
 
 nav_msgs::Path mst_path::get_path ()
@@ -237,19 +239,21 @@ void mst_path::initialize_tree (vector<edge> mst)
 void mst_path::reduce ()
 {
     // iterate over path segments
-    for (auto it = path.begin()+1; it != path.end()-1; ) {
-        // direction of path segments
-        double dx1 = it->x - (it-1)->x;
-        double dy1 = it->y - (it-1)->y;
-        double dx2 = (it+1)->x - it->x;
-        double dy2 = (it+1)->y - it->y;
+    if (path.size() > 2) {
+        for (auto it = path.begin()+1; it != path.end()-1; ) {
+            // direction of path segments
+            double dx1 = it->x - (it-1)->x;
+            double dy1 = it->y - (it-1)->y;
+            double dx2 = (it+1)->x - it->x;
+            double dy2 = (it+1)->y - it->y;
 
-        // two consecutive path segments are parallel, remove intermediate point
-        if (atan2(dy1,dx1) == atan2(dy2,dx2))
-            it = path.erase(it);
+            // two consecutive path segments are parallel, remove intermediate point
+            if (atan2(dy1,dx1) == atan2(dy2,dx2))
+                it = path.erase(it);
 
-        else
-            ++it;
+            else
+                ++it;
+        }
     }
 }
 

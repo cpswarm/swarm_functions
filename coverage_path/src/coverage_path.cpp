@@ -267,7 +267,8 @@ bool generate_path (geometry_msgs::Point start)
     path.initialize_graph(area);
     path.initialize_map(origin, rotation, width, height);
     path.initialize_tree(tree.get_mst_edges());
-    path.generate_path(start);
+    if (path.generate_path(start) == false)
+        return false;
     if (turning_points)
         path.reduce();
 
