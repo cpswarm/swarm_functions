@@ -5,7 +5,7 @@
     <arg name="output" default="log" />
 
     <!-- Swarm coverage path generation -->
-    <node pkg="coverage_path" type="coverage_path" name="coverage_path_$(arg id)" output="$(arg output)" required="true">
+    <node pkg="coverage_path" type="coverage_path" name="coverage_path_$(arg id)" output="$(arg output)" required="false" respawn="true">
         <rosparam file="$(find coverage_path)/param/coverage_path.yaml" command="load" />
     </node>
 
