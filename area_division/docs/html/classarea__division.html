@@ -61,7 +61,7 @@ Private Member Functions</h2></td></tr>
 <tr class="memdesc:a1140e6a5004aa9c6948f0bb3ccd9408f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the metric matrix.  <a href="#a1140e6a5004aa9c6948f0bb3ccd9408f">More...</a><br /></td></tr>
 <tr class="separator:a1140e6a5004aa9c6948f0bb3ccd9408f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f8c988a85320924b761e5e17cd84154"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#a9f8c988a85320924b761e5e17cd84154">isThisAGoalState</a> (int thres)</td></tr>
-<tr class="memdesc:a9f8c988a85320924b761e5e17cd84154"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the areas assigned to each robot are of similar size.  <a href="#a9f8c988a85320924b761e5e17cd84154">More...</a><br /></td></tr>
+<tr class="memdesc:a9f8c988a85320924b761e5e17cd84154"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the areas assigned to each CPS are of similar size.  <a href="#a9f8c988a85320924b761e5e17cd84154">More...</a><br /></td></tr>
 <tr class="separator:a9f8c988a85320924b761e5e17cd84154"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
@@ -70,7 +70,7 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:a92d350c4032dd95db71a8f4e3af25731"><td class="mdescLeft">&#160;</td><td class="mdescRight">Area assignment matrix.  <a href="#a92d350c4032dd95db71a8f4e3af25731">More...</a><br /></td></tr>
 <tr class="separator:a92d350c4032dd95db71a8f4e3af25731"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42d17f6feba3c64ac64680ef7524aa2b"><td class="memItemLeft" align="right" valign="top">vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#a42d17f6feba3c64ac64680ef7524aa2b">ArrayOfElements</a></td></tr>
-<tr class="memdesc:a42d17f6feba3c64ac64680ef7524aa2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Grid cells not assigned to the robots.  <a href="#a42d17f6feba3c64ac64680ef7524aa2b">More...</a><br /></td></tr>
+<tr class="memdesc:a42d17f6feba3c64ac64680ef7524aa2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of grid cells assigned to each CPS.  <a href="#a42d17f6feba3c64ac64680ef7524aa2b">More...</a><br /></td></tr>
 <tr class="separator:a42d17f6feba3c64ac64680ef7524aa2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a214a9bc10c0f78b7b7c76b0ad695f3da"><td class="memItemLeft" align="right" valign="top">vector&lt; valarray&lt; int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#a214a9bc10c0f78b7b7c76b0ad695f3da">BWlist</a></td></tr>
 <tr class="memdesc:a214a9bc10c0f78b7b7c76b0ad695f3da"><td class="mdescLeft">&#160;</td><td class="mdescRight">A binary array for each CPS which indicates free space.  <a href="#a214a9bc10c0f78b7b7c76b0ad695f3da">More...</a><br /></td></tr>
@@ -91,13 +91,13 @@ Private Attributes</h2></td></tr>
 <tr class="memdesc:ab0bfdecb561b7dca75930cb312ababfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum number of iterations of the optimization process.  <a href="#ab0bfdecb561b7dca75930cb312ababfe">More...</a><br /></td></tr>
 <tr class="separator:ab0bfdecb561b7dca75930cb312ababfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae629c98c6f4a82e60ed6faa7153ab0ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#ae629c98c6f4a82e60ed6faa7153ab0ac">nr</a></td></tr>
-<tr class="memdesc:ae629c98c6f4a82e60ed6faa7153ab0ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of robots.  <a href="#ae629c98c6f4a82e60ed6faa7153ab0ac">More...</a><br /></td></tr>
+<tr class="memdesc:ae629c98c6f4a82e60ed6faa7153ab0ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of CPSs.  <a href="#ae629c98c6f4a82e60ed6faa7153ab0ac">More...</a><br /></td></tr>
 <tr class="separator:ae629c98c6f4a82e60ed6faa7153ab0ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c8cea02863ec45a92d58a2b41a0339d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#a7c8cea02863ec45a92d58a2b41a0339d">ob</a></td></tr>
 <tr class="memdesc:a7c8cea02863ec45a92d58a2b41a0339d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of obstacles.  <a href="#a7c8cea02863ec45a92d58a2b41a0339d">More...</a><br /></td></tr>
 <tr class="separator:a7c8cea02863ec45a92d58a2b41a0339d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a786926fb0dd71074105956527d0cbbf8"><td class="memItemLeft" align="right" valign="top">vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#a786926fb0dd71074105956527d0cbbf8">regions</a></td></tr>
-<tr class="memdesc:a786926fb0dd71074105956527d0cbbf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the regions of the robots are connected.  <a href="#a786926fb0dd71074105956527d0cbbf8">More...</a><br /></td></tr>
+<tr class="memdesc:a786926fb0dd71074105956527d0cbbf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the regions of the CPSs are connected.  <a href="#a786926fb0dd71074105956527d0cbbf8">More...</a><br /></td></tr>
 <tr class="separator:a786926fb0dd71074105956527d0cbbf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcc441f8386d21229a93871b40947dbd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classarea__division.html#abcc441f8386d21229a93871b40947dbd">rows</a></td></tr>
 <tr class="memdesc:abcc441f8386d21229a93871b40947dbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of rows in the grid map.  <a href="#abcc441f8386d21229a93871b40947dbd">More...</a><br /></td></tr>
@@ -171,7 +171,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00196">196</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00202">202</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -219,7 +219,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The connected multiplier array. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00265">265</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00240">240</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -295,7 +295,7 @@ Private Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The updated metric matrix. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00231">231</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00262">262</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -363,7 +363,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00155">155</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00156">156</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -409,7 +409,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00187">187</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00188">188</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -437,16 +437,16 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Check if the areas assigned to each robot are of similar size. </p>
+<p>Check if the areas assigned to each CPS are of similar size. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">thres</td><td>The maximum number of grid cells that the areas assigned to different robots is allowed to differ. </td></tr>
+    <tr><td class="paramname">thres</td><td>The maximum number of grid cells that the areas assigned to different CPSs is allowed to differ. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True, if the maximum assigned area to any robot is at most thresh larger than the minimum assigned area to any robot, false otherwise. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True, if the maximum assigned area to any CPS is at most thresh larger than the minimum assigned area to any CPS, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00243">243</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="lib_2area__division_8cpp_source.html#l00274">274</a> of file <a class="el" href="lib_2area__division_8cpp_source.html">lib/area_division.cpp</a>.</p>
 
 </div>
 </div>
@@ -497,7 +497,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Grid cells not assigned to the robots. </p>
+<p>Number of grid cells assigned to each CPS. </p>
 
 <p class="definition">Definition at line <a class="el" href="lib_2area__division_8h_source.html#l00142">142</a> of file <a class="el" href="lib_2area__division_8h_source.html">lib/area_division.h</a>.</p>
 
@@ -679,7 +679,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Number of robots. </p>
+<p>Number of CPSs. </p>
 
 <p class="definition">Definition at line <a class="el" href="lib_2area__division_8h_source.html#l00102">102</a> of file <a class="el" href="lib_2area__division_8h_source.html">lib/area_division.h</a>.</p>
 
@@ -731,7 +731,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Whether the regions of the robots are connected. </p>
+<p>Whether the regions of the CPSs are connected. </p>
 
 <p class="definition">Definition at line <a class="el" href="lib_2area__division_8h_source.html#l00147">147</a> of file <a class="el" href="lib_2area__division_8h_source.html">lib/area_division.h</a>.</p>
 
@@ -851,7 +851,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/area_division">area_division</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Thu Oct 31 2019 09:22:46</small>
+<small>autogenerated on Wed Mar 4 2020 15:16:02</small>
 </div>
 </body>
 </html>
