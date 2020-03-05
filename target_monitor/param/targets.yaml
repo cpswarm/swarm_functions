@@ -1,6 +1,8 @@
 targets_x: # The locations of the targets in simulation, given as two separate lists of local x-coordinates and y-coordinates. Make sure they are given in order. The target IDs are the list indexes.
-- -3
-- -3.5
+- 1.78
+- 3.68
+- -3.92
 targets_y:
-- 0.2
-- 0.2
+- -1.45
+- 2.09
+- 1.84
