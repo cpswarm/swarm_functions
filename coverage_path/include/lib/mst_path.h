@@ -30,8 +30,9 @@ public:
     /**
      * @brief Generate all way points for the path.
      * @param start The current position of the CPS.
+     * @return Whether the generation was successful.
      */
-    void generate_path (geometry_msgs::Point start);
+    bool generate_path (geometry_msgs::Point start);
 
     /**
      * @brief Get the complete path.
