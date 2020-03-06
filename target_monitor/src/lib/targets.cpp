@@ -106,7 +106,7 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
         target_map[msg.id]->update(state, pose, msg.header.stamp);
 
         // publish event for certain state transitions
-        if ((prev_state == TARGET_ASSIGNED || prev_state == TARGET_TRACKED) && state == TARGET_DONE && msg.swarmio.node != "") // only if incoming event
+        if (prev_state == TARGET_ASSIGNED && state == TARGET_DONE && msg.swarmio.node != "") // only if incoming event
             publish_event("target_done", msg.id);
         else if (prev_state == TARGET_ASSIGNED && state == TARGET_TRACKED)
             publish_event("target_update", msg.id);
