@@ -1,4 +1,4 @@
-loop_rate:        1.5    # The frequency in Hz at which to run the control loops.
+loop_rate:        0.5    # The frequency in Hz at which to run the control loops.
 queue_size:       10     # The size of the message queue used for publishing and subscribing to topics.
 resolution:       1.3    # The grid map underlying the area division will be downsampled to this resolution in meter / cell.
 swarm_timeout:    10.0    # The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.
