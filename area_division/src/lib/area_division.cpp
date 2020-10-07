@@ -41,7 +41,7 @@ void area_division::divide ()
     // perform area division
     success = false;
     while (termThr<=discr && !success) {
-        ROS_DEBUG("Try division with discrepancy %d<=discr.", termThr, discr);
+        ROS_DEBUG("Try division with discrepancy %d<=%d.", termThr, discr);
 
         // initializations
         double downThres = ((double)NoTiles-(double)termThr*(nr-1)) / (double)(NoTiles*nr);
