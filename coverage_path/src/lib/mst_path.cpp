@@ -122,12 +122,16 @@ nav_msgs::Path mst_path::get_path ()
 
 geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, double tolerance)
 {
+    ROS_DEBUG("Check if distance between (%.2f,%.2f) and (%.2f,%.2f) < %.2f", position.x, position.y, get_wp().x, get_wp().y, tolerance);
+
     // close enough to or past current waypoint
     if (dist(position, get_wp()) < tolerance || dist(position, get_wp(1)) < dist(position, get_wp())) {
         // select next waypoint
         ++wp;
         ROS_DEBUG("Select waypoint %d", wp);
     }
+
+    ROS_DEBUG("Return waypoint %d at (%.2f,%.2f)", wp, get_wp().x, get_wp().y);
 
     return get_wp();
 }

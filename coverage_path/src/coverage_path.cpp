@@ -343,6 +343,52 @@ void area_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
 }
 
 /**
+ * @brief Callback function to receive the states of the other CPSs.
+ * @param msg UUIDs and states of the other CPSs.
+ */
+void swarm_state_callback (const cpswarm_msgs::ArrayOfStates::ConstPtr& msg)
+{
+    // update cps uuids
+    for (auto cps : msg->states) {
+        // only consider cpss in the same behavior states
+        if (find(behaviors.begin(), behaviors.end(), cps.state) == behaviors.end())
+            continue;
+
+        // index of cps in map
+        auto idx = swarm.find(cps.swarmio.node);
+
+        // add new cps
+        if (idx == swarm.end()) {
+            swarm.emplace(cps.swarmio.node, Time::now());
+
+            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
+
+            // regenerate coverage path
+            reconfigure = true;
+        }
+
+        // update existing cps
+        else {
+            idx->second = Time::now();
+        }
+    }
+
+    // remove old cps
+    for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
+        if (cps->second + Duration(swarm_timeout) < Time::now()) {
+            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
+            swarm.erase(cps++);
+
+            // regenerate coverage path
+            reconfigure = true;
+        }
+        else {
+            ++cps;
+        }
+    }
+}
+
+/**
  * @brief A ROS node that computes the optimal paths for area coverage with a swarm of CPSs.
  * @param argc Number of command line arguments.
  * @param argv Array of command line arguments.
@@ -367,6 +413,7 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/divide_area", divide_area, false);
     nh.param(this_node::getName() + "/vertical", vertical, false);
     nh.param(this_node::getName() + "/turning_points", turning_points, false);
+    nh.param(this_node::getName() + "/swarm_path", swarm_path, false);
 
     // publishers, subscribers, and service clients
     if (visualize) {
@@ -378,6 +425,11 @@ int main (int argc, char **argv)
         map_subscriber = nh.subscribe("area/assigned", queue_size, area_callback);
     else
         map_subscriber = nh.subscribe("area/map", queue_size, area_callback);
+    if (swarm_path) {
+        nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
+        nh.getParam(this_node::getName() + "/states", behaviors);
+        swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
+    }
     area_getter = nh.serviceClient<cpswarm_msgs::GetPoints>("area/get_area");
     area_getter.waitForExistence();
 
