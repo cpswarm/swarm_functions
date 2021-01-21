@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>coverage_path</name>
+    <version>1.1.0</version>
+    <description>A package that generates an optimal path to cover a given area with a cyber physical system (CPS).</description>
+
+    <!-- One maintainer tag required, multiple allowed, one person per tag -->
+    <maintainer email="sende@lakeside-labs.com">Micha Sende</maintainer>
+
+    <!-- One license tag required, multiple allowed, one license per tag -->
+    <license>Apache License 2.0</license>
+
+    <!-- Url tags are optional, but multiple are allowed, one per tag -->
+    <!-- Optional attribute type can be: website, bugtracker, or repository -->
+    <url type="website">https://wiki.ros.org/coverage_path</url>
+
+    <!-- Author tags are optional, multiple are allowed, one per tag -->
+    <!-- Authors do not have to be maintainers, but could be -->
+    <author email="sende@lakeside-labs.com">Micha Sende</author>
+
+    <!-- The *depend tags are used to specify dependencies -->
+    <buildtool_depend>catkin</buildtool_depend>
+    <depend>roscpp</depend>
+    <depend>tf2</depend>
+    <depend>geometry_msgs</depend>
+    <depend>nav_msgs</depend>
+    <depend>cpswarm_msgs</depend>
+
+    <!-- The export tag contains other, unspecified, tags -->
+    <export>
+        <!-- Other tools can request additional information be placed here -->
+    </export>
+</package>

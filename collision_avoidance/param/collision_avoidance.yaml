@@ -1,0 +1,8 @@
+loop_rate:      1.5   # The frequency in Hz at which to run the control loops.
+queue_size:     1     # The size of the message queue used for publishing and subscribing to topics.
+visualize:      true  # Whether to publish the intermediate goal position and target velocity during avoidance on a topic for visualization.
+repulsion:
+  equi_dist:      2.0  # Desired equilibrium distance between CPSs in meter.
+  repulse_spring: 1.0  # Repulsion spring constant of half-spring per square second.
+  repulse_max:    1.0  # Maximum repulsion between CPSs in meter in order to avoid over excitation.
+  accel_time:     2.0  # Characteristic time needed by the CPS to reach the target velocity in seconds.
