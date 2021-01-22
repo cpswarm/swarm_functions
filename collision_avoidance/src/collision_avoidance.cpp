@@ -2,20 +2,38 @@
 
 /**
  * @brief Callback function to receive the goal position of this CPS.
- * @param msg Current goal position send to the position controller.
+ * @param msg Current goal position sent to the position controller.
  */
-void pos_cb (const geometry_msgs::PoseStamped::ConstPtr& msg)
+void sp_pos_cb (const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
-    ca.set_goal_pos(msg);
+    ca.set_sp_pos(msg);
 }
 
 /**
  * @brief Callback function to receive the target velocity of this CPS.
- * @param msg Current target velocity send to the velocity controller.
+ * @param msg Current target velocity sent to the velocity controller.
  */
-void vel_cb (const geometry_msgs::Twist::ConstPtr& msg)
+void sp_vel_cb (const geometry_msgs::Twist::ConstPtr& msg)
 {
-    ca.set_target_vel(msg);
+    ca.set_sp_vel(msg);
+}
+
+/**
+ * @brief Callback function to receive the current position of this CPS.
+ * @param msg Current position received from the FCU.
+ */
+void pos_cb (const geometry_msgs::PoseStamped::ConstPtr& msg)
+{
+    ca.set_pos(msg);
+}
+
+/**
+ * @brief Callback function to receive the current velocity of this CPS.
+ * @param msg Current velocity received from the FCU.
+ */
+void vel_cb (const geometry_msgs::TwistStamped::ConstPtr& msg)
+{
+    ca.set_vel(msg);
 }
 
 /**
@@ -24,7 +42,7 @@ void vel_cb (const geometry_msgs::Twist::ConstPtr& msg)
  */
 void swarm_cb (const cpswarm_msgs::ArrayOfVectors::ConstPtr& msg)
 {
-    ca.set_swarm_pos(msg);
+    ca.set_swarm(msg);
 }
 
 /**
@@ -52,14 +70,18 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/repulsion/repulse_spring", repulse_spring, 1.0);
     double repulse_max;
     nh.param(this_node::getName() + "/repulsion/repulse_max", repulse_max, 1.0);
+    double avoid_vel;
+    nh.param(this_node::getName() + "/repulsion/avoid_vel", avoid_vel, 1.0);
     double accel_time;
     nh.param(this_node::getName() + "/repulsion/accel_time", accel_time, 1.0);
 
-    ca.init(equi_dist, repulse_spring, repulse_max, accel_time);
+    ca.init(1.0/loop_rate, equi_dist, repulse_spring, repulse_max, avoid_vel, accel_time);
 
     // ros communication
-    Subscriber pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, pos_cb);
-    Subscriber vel_sub = nh.subscribe("vel_controller/target_velocity", queue_size, vel_cb);
+    Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);
+    Subscriber sp_vel_sub = nh.subscribe("vel_controller/target_velocity", queue_size, sp_vel_cb);
+    Subscriber pos_sub = nh.subscribe("pos_provider/pose", queue_size, pos_cb);
+    Subscriber vel_sub = nh.subscribe("vel_provider/velocity", queue_size, vel_cb);
     Subscriber swarm_sub = nh.subscribe("swarm_position_rel", queue_size, swarm_cb);
     Publisher pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/ca_goal_position", queue_size, true);
     Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("vel_controller/ca_target_velocity", queue_size, true);

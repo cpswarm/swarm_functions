@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(coverage_path)
+project(collision_avoidance)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -7,7 +7,7 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp tf2 geometry_msgs nav_msgs cpswarm_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp tf2 geometry_msgs cpswarm_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -118,16 +118,8 @@ include_directories(
 
 ## Declare a C++ library
 add_library(
-  edge
-  src/lib/edge.cpp
-)
-add_library(
-  spanning_tree
-  src/lib/spanning_tree.cpp
-)
-add_library(
-  mst_path
-  src/lib/mst_path.cpp
+  repulsion
+  src/lib/repulsion.cpp
 )
 
 
@@ -157,17 +149,8 @@ add_executable(
 ## Specify libraries to link a library or executable target against
 target_link_libraries(
   ${PROJECT_NAME}
-  spanning_tree
-  mst_path
+  repulsion
   ${catkin_LIBRARIES}
-)
-target_link_libraries(
-  spanning_tree
-  edge
-)
-target_link_libraries(
-  mst_path
-  edge
 )
 
 #############

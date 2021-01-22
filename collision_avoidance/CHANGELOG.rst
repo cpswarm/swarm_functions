@@ -1,8 +1,8 @@
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Changelog for package coverage_path
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Changelog for package collision_avoidance
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.1.0 (2019-10-31)
+1.0.0 (2021-01-31)
 ------------------
-* Initial release of coverage_path
+* Initial release of collision_avoidance
 * Contributors: Micha Sende

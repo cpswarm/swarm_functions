@@ -5,4 +5,5 @@ repulsion:
   equi_dist:      2.0  # Desired equilibrium distance between CPSs in meter.
   repulse_spring: 1.0  # Repulsion spring constant of half-spring per square second.
   repulse_max:    1.0  # Maximum repulsion between CPSs in meter in order to avoid over excitation.
+  avoid_vel:      1.0  # Target velocity during collision avoidance in meter per second.
   accel_time:     2.0  # Characteristic time needed by the CPS to reach the target velocity in seconds.

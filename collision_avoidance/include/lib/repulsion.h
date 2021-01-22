@@ -1,8 +1,10 @@
 #ifndef REPULSION_H
 #define REPULSION_H
 
+#include <tf2/utils.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Twist.h>
+#include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/Vector3.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
 #include <cpswarm_msgs/VectorStamped.h>
@@ -31,8 +33,14 @@ public:
 
     /**
      * @brief Configure the repulsion behavior through parameters.
+     * @param cycle Duration of a control loop cycle.
+     * @param equi_dist Desired equilibrium distance between CPSs.
+     * @param repulse_spring Repulsion spring constant of half-spring.
+     * @param repulse_max Maximum repulsion between CPSs.
+     * @param avoid_vel Target velocity during collision avoidance.
+     * @param accel_time Characteristic time needed by the CPS to reach the target velocity.
      */
-    init (double equi_dist, double repulse_spring, double repulse_max, double accel_time);
+    void init (double cycle, double equi_dist, double repulse_spring, double repulse_max, double avoid_vel, double accel_time);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -56,13 +64,25 @@ public:
      * @brief Set the original goal position for this CPS.
      * @param pos The desired goal position of this CPS in case of no collision avoidance.
      */
-    void set_goal_pos (const geometry_msgs::PoseStamped::ConstPtr& pos);
+    void set_sp_pos (const geometry_msgs::PoseStamped::ConstPtr& pos);
 
     /**
      * @brief Set the original target velocity for this CPS.
      * @param vel The desired target velocity of this CPS in case of no collision avoidance.
      */
-    void set_target_vel (const geometry_msgs::Twist::ConstPtr& vel);
+    void set_sp_vel (const geometry_msgs::Twist::ConstPtr& vel);
+
+    /**
+     * @brief Set the current position of this CPS.
+     * @param pos The current position of this CPS.
+     */
+    void set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos);
+
+    /**
+     * @brief Set the current velocity of this CPS.
+     * @param vel The current velocity of this CPS.
+     */
+    void set_vel (const geometry_msgs::TwistStamped::ConstPtr& vel);
 
     /**
      * @brief Set the relative positions received from other CPSs in the swarm.
@@ -90,9 +110,25 @@ private:
     geometry_msgs::Vector3 repulse ();
 
     /**
+     * Calculate the target velocity towards the original goal during collision avoidance.
+     * @return A linear velocity component into the direction of the goal with limited magnitude.
+     */
+    geometry_msgs::Vector3 target_velocity ();
+
+    /**
      * @brief The type of CPS control.
      */
     control_t setpoint;
+
+    /**
+     * @brief The current position of this CPS.
+     */
+    geometry_msgs::PoseStamped pos;
+
+    /**
+     * @brief The current velocity of this CPS.
+     */
+    geometry_msgs::Twist vel;
 
     /**
      * @brief The originally desired goal position of this CPS in case of no collision avoidance.
@@ -120,6 +156,11 @@ private:
     geometry_msgs::Twist int_vel;
 
     /**
+     * @brief Duration of a control loop cycle.
+     */
+    double cycle;
+
+    /**
      * @brief Desired equilibrium distance between CPSs.
      */
     double equi_dist;
@@ -133,6 +174,11 @@ private:
      * @brief Maximum repulsion between CPSs.
      */
     double repulse_max;
+
+    /**
+     * @brief Target velocity during collision avoidance.
+     */
+    double avoid_vel;
 
     /**
      * @brief Characteristic time needed by the CPS to reach the target velocity.
