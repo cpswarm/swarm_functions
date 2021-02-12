@@ -34,13 +34,13 @@ public:
     /**
      * @brief Configure the repulsion behavior through parameters.
      * @param cycle Duration of a control loop cycle.
-     * @param equi_dist Desired equilibrium distance between CPSs.
-     * @param repulse_spring Repulsion spring constant of half-spring.
-     * @param repulse_max Maximum repulsion between CPSs.
+     * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
+     * @param dist_avoid Distance between CPSs below which collision avoidance is active.
      * @param avoid_vel Target velocity during collision avoidance.
      * @param accel_time Characteristic time needed by the CPS to reach the target velocity.
+     * @param accel_max Maximum desired acceleration of the CPSs.
      */
-    void init (double cycle, double equi_dist, double repulse_spring, double repulse_max, double avoid_vel, double accel_time);
+    void init (double cycle, double dist_critical, double dist_avoid, double avoid_vel, double accel_time, double accel_max);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -161,19 +161,14 @@ private:
     double cycle;
 
     /**
-     * @brief Desired equilibrium distance between CPSs.
+     * @brief Distance between CPSs below which the collision avoidance will work maximally.
      */
-    double equi_dist;
+    double dist_critical;
 
     /**
-     * @brief Repulsion spring constant of half-spring.
+     * @brief Distance between CPSs below which collision avoidance is active.
      */
-    double repulse_spring;
-
-    /**
-     * @brief Maximum repulsion between CPSs.
-     */
-    double repulse_max;
+    double dist_avoid;
 
     /**
      * @brief Target velocity during collision avoidance.
@@ -184,6 +179,11 @@ private:
      * @brief Characteristic time needed by the CPS to reach the target velocity.
      */
     double accel_time;
+
+    /**
+     * @brief Maximum desired acceleration of the CPSs.
+     */
+    double accel_max;
 };
 
 #endif // REPULSION_H

@@ -4,25 +4,26 @@ repulsion::repulsion ()
 {
 }
 
-void repulsion::init (double cycle, double equi_dist, double repulse_spring, double repulse_max, double avoid_vel, double accel_time)
+void repulsion::init (double cycle, double dist_critical, double dist_avoid, double avoid_vel, double accel_time, double accel_max)
 {
     setpoint = CONTROL_UNDEFINED;
     this->cycle = cycle;
-    this->equi_dist = equi_dist;
-    this->repulse_spring = repulse_spring;
-    this->repulse_max = repulse_max;
+    this->dist_critical = dist_critical;
+    this->dist_avoid = dist_avoid;
     this->avoid_vel = avoid_vel;
     this->accel_time = accel_time;
+    this->accel_max = accel_max;
 }
 
 bool repulsion::calc ()
 {
     // repulsion from other cpss
     geometry_msgs::Vector3 a_rep = repulse();
-    
+
     // no avoidance necessary
-    if (a_rep.x == 0 && a_rep.y == 0)
+    if (a_rep.x == 0 && a_rep.y == 0) {
         return false;
+    }
 
     // calculate velocity to reach goal position
     geometry_msgs::Vector3 vel = target_velocity();
@@ -35,6 +36,7 @@ bool repulsion::calc ()
     if (setpoint == CONTROL_POSITION) {
         int_pos.pose.position.x = pos.pose.position.x + int_vel.linear.x * cycle;
         int_pos.pose.position.y = pos.pose.position.y + int_vel.linear.y * cycle;
+        int_pos.pose.position.z = goal_pos.pose.position.z;
     }
 
     return true;
@@ -94,22 +96,41 @@ geometry_msgs::Vector3 repulsion::repulse ()
     a_repulsion.x = 0;
     a_repulsion.y = 0;
 
+    // yaw of this cps
+    tf2::Quaternion orientation;
+    tf2::fromMsg(pos.pose.orientation, orientation);
+    double yaw = tf2::getYaw(orientation);
+
     // compute pair potentials for all neighbors
     for (auto pose : swarm) {
         // repulsion only from close neighbors
-        if (pose.vector.magnitude < equi_dist) {
-            // compute pair potential
-            double pot = min(repulse_max, equi_dist - pose.vector.magnitude) / pose.vector.magnitude;
+        if (pose.vector.magnitude < dist_avoid) {
+            // pair potential
+            double pot;
 
-            // sum up potentials
-            a_repulsion.x += pot * pose.vector.magnitude * cos(pose.vector.direction);
-            a_repulsion.y += pot * pose.vector.magnitude * sin(pose.vector.direction);
+            // maximum repulsion
+            if (pose.vector.magnitude < dist_critical)
+                pot = 1;
+
+            // repulsion following sine function
+            else
+                pot = 0.5 - 0.5 * sin(M_PI / (dist_avoid - dist_critical) * (pose.vector.magnitude - 0.5 * (dist_avoid + dist_critical)));
+
+            // absolute bearing of neighbor
+            double bear = yaw + pose.vector.direction;
+
+            // sum up potentials as vector pointing away from neighbor
+            a_repulsion.x += pot * -cos(bear);
+            a_repulsion.y += pot * -sin(bear);
         }
     }
 
-    // apply spring constant
-    a_repulsion.x *= -repulse_spring;
-    a_repulsion.y *= -repulse_spring;
+    // normalize to maximum acceleration
+    double mag = hypot(a_repulsion.x, a_repulsion.y);
+    if (mag > 0) {
+        a_repulsion.x *= accel_max / mag;
+        a_repulsion.y *= accel_max / mag;
+    }
 
     return a_repulsion;
 }
@@ -120,19 +141,12 @@ geometry_msgs::Vector3 repulsion::target_velocity ()
 
     // direction
     if (setpoint == CONTROL_POSITION) {
-        // yaw of cps
-        tf2::Quaternion orientation;
-        tf2::fromMsg(pos.pose.orientation, orientation);
-        double yaw = tf2::getYaw(orientation);
-
-        // relative bearing of goal
-        double bear = remainder(atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x) - yaw, 2*M_PI);
-        if (bear < 0)
-            bear += 2*M_PI;
+        // bearing of goal
+        double bear = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
 
         // velocity components in goal direction
-        vel.x = -sin(bear); // bearing relative to cps heading
-        vel.y = cos(bear);
+        vel.x = cos(bear);
+        vel.y = sin(bear);
     }
     else if (setpoint == CONTROL_VELOCITY) {
         // normalize

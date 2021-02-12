@@ -62,20 +62,20 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
-    
-    // initialize repulsion
-    double equi_dist;
-    nh.param(this_node::getName() + "/repulsion/equi_dist", equi_dist, 10.0);
-    double repulse_spring;
-    nh.param(this_node::getName() + "/repulsion/repulse_spring", repulse_spring, 1.0);
-    double repulse_max;
-    nh.param(this_node::getName() + "/repulsion/repulse_max", repulse_max, 1.0);
-    double avoid_vel;
-    nh.param(this_node::getName() + "/repulsion/avoid_vel", avoid_vel, 1.0);
-    double accel_time;
-    nh.param(this_node::getName() + "/repulsion/accel_time", accel_time, 1.0);
 
-    ca.init(1.0/loop_rate, equi_dist, repulse_spring, repulse_max, avoid_vel, accel_time);
+    // initialize repulsion
+    double dist_critical;
+    nh.param(this_node::getName() + "/dist_critical", dist_critical, 0.5);
+    double dist_avoid;
+    nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 1.5);
+    double avoid_vel;
+    nh.param(this_node::getName() + "/avoid_vel", avoid_vel, 1.0);
+    double accel_time;
+    nh.param(this_node::getName() + "/accel_time", accel_time, 1.0);
+    double accel_max;
+    nh.param(this_node::getName() + "/accel_max", accel_max, 2.0);
+
+    ca.init(1.0/loop_rate, dist_critical, dist_avoid, avoid_vel, accel_time, accel_max);
 
     // ros communication
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);
@@ -87,31 +87,40 @@ int main (int argc, char **argv)
     Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("vel_controller/ca_target_velocity", queue_size, true);
 
     // init loop rate
-    Rate rate(loop_rate);    
+    Rate rate(loop_rate);
 
     ROS_DEBUG("Collision avoidance ready");
 
     // perform collision avoidance
     while (ok()) {
+        // get updated information
+        spinOnce();
+
         // calculate avoidance position / velocity
         bool avoid = ca.calc();
 
         // perform collision avoidance if necessary
         if (avoid) {
             // using position setpoint
-            if (ca.sp_pos()) 
-                pos_pub.publish(ca.get_pos());
+            if (ca.sp_pos()) {
+                geometry_msgs::PoseStamped pos = ca.get_pos();
+                pos.header.stamp = Time::now();
+                pos_pub.publish(pos);
+            }
 
             // using velocity setpoint
-            else if (ca.sp_vel())
-                vel_pub.publish(ca.get_vel());
+            else if (ca.sp_vel()) {
+                geometry_msgs::Twist vel = ca.get_vel();
+                // vel.header.stamp TODO
+                vel_pub.publish(vel);
+            }
 
-            else
+            else {
                 ROS_ERROR("Unknown setpoint, cannot perform collision avoidance!");
+            }
         }
 
         rate.sleep();
-        spinOnce();
     }
 
     return 0;
