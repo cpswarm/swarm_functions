@@ -4,15 +4,15 @@ repulsion::repulsion ()
 {
 }
 
-void repulsion::init (double cycle, double dist_critical, double dist_avoid, double avoid_vel, double accel_time, double accel_max)
+void repulsion::init (double dist_critical, double dist_avoid, double vel_avoid, double accel_max, double time_vel, double time_accel)
 {
     setpoint = CONTROL_UNDEFINED;
-    this->cycle = cycle;
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
-    this->avoid_vel = avoid_vel;
-    this->accel_time = accel_time;
+    this->vel_avoid = vel_avoid;
     this->accel_max = accel_max;
+    this->time_vel = time_vel;
+    this->time_accel = time_accel;
 }
 
 bool repulsion::calc ()
@@ -29,13 +29,13 @@ bool repulsion::calc ()
     geometry_msgs::Vector3 vel = target_velocity();
 
     // calculate avoidance velocity
-    int_vel.linear.x = vel.x + 1 / accel_time * (vel.x - this->vel.linear.x) * cycle + a_rep.x * cycle;
-    int_vel.linear.y = vel.y + 1 / accel_time * (vel.y - this->vel.linear.y) * cycle + a_rep.y * cycle;
+    int_vel.linear.x = vel.x + a_rep.x * time_accel;
+    int_vel.linear.y = vel.y + a_rep.y * time_accel;
 
     // calculate avoidance position
     if (setpoint == CONTROL_POSITION) {
-        int_pos.pose.position.x = pos.pose.position.x + int_vel.linear.x * cycle;
-        int_pos.pose.position.y = pos.pose.position.y + int_vel.linear.y * cycle;
+        int_pos.pose.position.x = pos.pose.position.x + int_vel.linear.x * time_vel;
+        int_pos.pose.position.y = pos.pose.position.y + int_vel.linear.y * time_vel;
         int_pos.pose.position.z = goal_pos.pose.position.z;
     }
 
@@ -139,7 +139,7 @@ geometry_msgs::Vector3 repulsion::target_velocity ()
 {
     geometry_msgs::Vector3 vel;
 
-    // direction
+    // get direction towards original goal
     if (setpoint == CONTROL_POSITION) {
         // bearing of goal
         double bear = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
@@ -155,16 +155,9 @@ geometry_msgs::Vector3 repulsion::target_velocity ()
         vel.y = target_vel.linear.y / mag;
     }
 
-    // magnitude
-    double magnitude = avoid_vel;
-    // limit velocity for small distances
-    double dist = hypot(goal_pos.pose.position.x - pos.pose.position.x, goal_pos.pose.position.y - pos.pose.position.y);
-    if (dist < M_PI / 2.0) {
-        magnitude *= sin(dist);
-    }
-    // apply to velocity
-    vel.x *= magnitude;
-    vel.y *= magnitude;
+    // apply desired velocity magnitude
+    vel.x *= vel_avoid;
+    vel.y *= vel_avoid;
 
     return vel;
 }

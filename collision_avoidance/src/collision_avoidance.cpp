@@ -65,17 +65,19 @@ int main (int argc, char **argv)
 
     // initialize repulsion
     double dist_critical;
-    nh.param(this_node::getName() + "/dist_critical", dist_critical, 0.5);
+    nh.param(this_node::getName() + "/dist_critical", dist_critical, 1.0);
     double dist_avoid;
-    nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 1.5);
-    double avoid_vel;
-    nh.param(this_node::getName() + "/avoid_vel", avoid_vel, 1.0);
-    double accel_time;
-    nh.param(this_node::getName() + "/accel_time", accel_time, 1.0);
+    nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 3.0);
+    double vel_avoid;
+    nh.param(this_node::getName() + "/vel_avoid", vel_avoid, 1.0);
     double accel_max;
-    nh.param(this_node::getName() + "/accel_max", accel_max, 2.0);
+    nh.param(this_node::getName() + "/accel_max", accel_max, 1.0);
+    double time_vel;
+    nh.param(this_node::getName() + "/time_vel", time_vel, 1.0);
+    double time_accel;
+    nh.param(this_node::getName() + "/time_accel", time_accel, 1.0);
 
-    ca.init(1.0/loop_rate, dist_critical, dist_avoid, avoid_vel, accel_time, accel_max);
+    ca.init(dist_critical, dist_avoid, vel_avoid, accel_max, time_vel, time_accel);
 
     // ros communication
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);

@@ -33,14 +33,14 @@ public:
 
     /**
      * @brief Configure the repulsion behavior through parameters.
-     * @param cycle Duration of a control loop cycle.
      * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
      * @param dist_avoid Distance between CPSs below which collision avoidance is active.
-     * @param avoid_vel Target velocity during collision avoidance.
-     * @param accel_time Characteristic time needed by the CPS to reach the target velocity.
+     * @param vel_avoid Target velocity during collision avoidance.
      * @param accel_max Maximum desired acceleration of the CPSs.
+     * @param time_vel Time constant for converting velocity to position.
+     * @param time_accel Time constant for converting acceleration to velocity.
      */
-    void init (double cycle, double dist_critical, double dist_avoid, double avoid_vel, double accel_time, double accel_max);
+    void init (double dist_critical, double dist_avoid, double vel_avoid, double accel_max, double time_vel, double time_accel);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -156,11 +156,6 @@ private:
     geometry_msgs::Twist int_vel;
 
     /**
-     * @brief Duration of a control loop cycle.
-     */
-    double cycle;
-
-    /**
      * @brief Distance between CPSs below which the collision avoidance will work maximally.
      */
     double dist_critical;
@@ -173,17 +168,22 @@ private:
     /**
      * @brief Target velocity during collision avoidance.
      */
-    double avoid_vel;
-
-    /**
-     * @brief Characteristic time needed by the CPS to reach the target velocity.
-     */
-    double accel_time;
+    double vel_avoid;
 
     /**
      * @brief Maximum desired acceleration of the CPSs.
      */
     double accel_max;
+
+    /**
+     * @brief Time constant for converting velocity to position.
+     */
+    double time_vel;
+
+    /**
+     * @brief Time constant for converting acceleration to velocity.
+     */
+    double time_accel;
 };
 
 #endif // REPULSION_H
