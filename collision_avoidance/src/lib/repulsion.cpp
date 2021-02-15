@@ -4,13 +4,12 @@ repulsion::repulsion ()
 {
 }
 
-void repulsion::init (double dist_critical, double dist_avoid, double vel_avoid, double accel_max, double time_vel, double time_accel)
+void repulsion::init (double dist_critical, double dist_avoid, double vel_avoid, double time_vel, double time_accel)
 {
     setpoint = CONTROL_UNDEFINED;
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
     this->vel_avoid = vel_avoid;
-    this->accel_max = accel_max;
     this->time_vel = time_vel;
     this->time_accel = time_accel;
 }
@@ -31,6 +30,11 @@ bool repulsion::calc ()
     // calculate avoidance velocity
     int_vel.linear.x = vel.x + a_rep.x * time_accel;
     int_vel.linear.y = vel.y + a_rep.y * time_accel;
+
+    // set desired velocity magnitude
+    double mag = hypot(int_vel.linear.x, int_vel.linear.y);
+    int_vel.linear.x *= vel_avoid / mag;
+    int_vel.linear.y *= vel_avoid / mag;
 
     // calculate avoidance position
     if (setpoint == CONTROL_POSITION) {
@@ -125,11 +129,11 @@ geometry_msgs::Vector3 repulsion::repulse ()
         }
     }
 
-    // normalize to maximum acceleration
+    // normalize acceleration
     double mag = hypot(a_repulsion.x, a_repulsion.y);
     if (mag > 0) {
-        a_repulsion.x *= accel_max / mag;
-        a_repulsion.y *= accel_max / mag;
+        a_repulsion.x /= mag;
+        a_repulsion.y /= mag;
     }
 
     return a_repulsion;
@@ -148,16 +152,13 @@ geometry_msgs::Vector3 repulsion::target_velocity ()
         vel.x = cos(bear);
         vel.y = sin(bear);
     }
+
+    // normalize velocity
     else if (setpoint == CONTROL_VELOCITY) {
-        // normalize
         double mag = hypot(target_vel.linear.x, target_vel.linear.y);
         vel.x = target_vel.linear.x / mag;
         vel.y = target_vel.linear.y / mag;
     }
-
-    // apply desired velocity magnitude
-    vel.x *= vel_avoid;
-    vel.y *= vel_avoid;
 
     return vel;
 }

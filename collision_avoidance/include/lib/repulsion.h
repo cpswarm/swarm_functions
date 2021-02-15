@@ -36,11 +36,10 @@ public:
      * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
      * @param dist_avoid Distance between CPSs below which collision avoidance is active.
      * @param vel_avoid Target velocity during collision avoidance.
-     * @param accel_max Maximum desired acceleration of the CPSs.
      * @param time_vel Time constant for converting velocity to position.
      * @param time_accel Time constant for converting acceleration to velocity.
      */
-    void init (double dist_critical, double dist_avoid, double vel_avoid, double accel_max, double time_vel, double time_accel);
+    void init (double dist_critical, double dist_avoid, double vel_avoid, double time_vel, double time_accel);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -169,11 +168,6 @@ private:
      * @brief Target velocity during collision avoidance.
      */
     double vel_avoid;
-
-    /**
-     * @brief Maximum desired acceleration of the CPSs.
-     */
-    double accel_max;
 
     /**
      * @brief Time constant for converting velocity to position.
