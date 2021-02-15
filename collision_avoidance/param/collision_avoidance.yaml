@@ -5,3 +5,5 @@ dist_avoid:    4.0  # Distance between CPSs in meter below which collision avoid
 vel_avoid:     1.0  # Target velocity during collision avoidance in meter per second.
 time_vel:      1.0  # Time constant in second for converting velocity to position.
 time_accel:    1.0  # Time constant in second for converting acceleration to velocity.
+excluded:           # No collision avoidance in these states.
+- Takeoff

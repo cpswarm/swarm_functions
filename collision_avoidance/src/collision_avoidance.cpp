@@ -46,6 +46,28 @@ void swarm_cb (const cpswarm_msgs::ArrayOfVectors::ConstPtr& msg)
 }
 
 /**
+ * @brief Callback function for state updates.
+ * @param msg State received from the CPS state machine.
+ */
+void state_callback (const smach_msgs::SmachContainerStatus::ConstPtr& msg)
+{
+    if (msg->path == "/SM_TOP/SarThreads/SarBehavior") {
+        // enable collision avoidance by default
+        active = true;
+
+        // check if any behavior state is in the excluded list
+        for (auto state : msg->active_states) {
+            if (find(excluded.begin(), excluded.end(), state) != excluded.end()) {
+                // disable collision avoidance
+                active = false;
+                ROS_DEBUG("In state %s, disable collision avoidance", state.c_str());
+                break;
+            }
+        }
+    }
+}
+
+/**
  * @brief A ROS node that avoids collisions with other CPSs in the swarm.
  * @param argc Number of command line arguments.
  * @param argv Array of command line arguments.
@@ -57,11 +79,15 @@ int main (int argc, char **argv)
     init(argc, argv, "collision_avoidance");
     NodeHandle nh;
 
+    // don't perform collision avoidance initially
+    active = false;
+
     // read parameters
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    nh.getParam(this_node::getName() + "/excluded", excluded);
 
     // initialize repulsion
     double dist_critical;
@@ -83,6 +109,7 @@ int main (int argc, char **argv)
     Subscriber pos_sub = nh.subscribe("pos_provider/pose", queue_size, pos_cb);
     Subscriber vel_sub = nh.subscribe("vel_provider/velocity", queue_size, vel_cb);
     Subscriber swarm_sub = nh.subscribe("swarm_position_rel", queue_size, swarm_cb);
+    Subscriber state_sub = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
     Publisher pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/ca_goal_position", queue_size, true);
     Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("vel_controller/ca_target_velocity", queue_size, true);
 
@@ -96,27 +123,30 @@ int main (int argc, char **argv)
         // get updated information
         spinOnce();
 
-        // calculate avoidance position / velocity
-        bool avoid = ca.calc();
+        // only perform collision avoidance in desired behavior states
+        if (active) {
+            // calculate avoidance position / velocity
+            bool avoid = ca.calc();
 
-        // perform collision avoidance if necessary
-        if (avoid) {
-            // using position setpoint
-            if (ca.sp_pos()) {
-                geometry_msgs::PoseStamped pos = ca.get_pos();
-                pos.header.stamp = Time::now();
-                pos_pub.publish(pos);
-            }
+            // perform collision avoidance if necessary
+            if (avoid) {
+                // using position setpoint
+                if (ca.sp_pos()) {
+                    geometry_msgs::PoseStamped pos = ca.get_pos();
+                    pos.header.stamp = Time::now();
+                    pos_pub.publish(pos);
+                }
 
-            // using velocity setpoint
-            else if (ca.sp_vel()) {
-                geometry_msgs::Twist vel = ca.get_vel();
-                // vel.header.stamp TODO
-                vel_pub.publish(vel);
-            }
+                // using velocity setpoint
+                else if (ca.sp_vel()) {
+                    geometry_msgs::Twist vel = ca.get_vel();
+                    // vel.header.stamp TODO
+                    vel_pub.publish(vel);
+                }
 
-            else {
-                ROS_ERROR("Unknown setpoint, cannot perform collision avoidance!");
+                else {
+                    ROS_ERROR("Unknown setpoint, cannot perform collision avoidance!");
+                }
             }
         }
 
