@@ -4,7 +4,7 @@ repulsion::repulsion ()
 {
 }
 
-void repulsion::init (double dist_critical, double dist_avoid, double vel_avoid)
+void repulsion::init (double dist_critical, double dist_avoid)
 {
     setpoint = CONTROL_UNDEFINED;
     this->dist_critical = dist_critical;
@@ -24,7 +24,7 @@ bool repulsion::calc ()
     }
 
     // magnitude of repulsion
-    double repulsion_mag = hypot(vector.x, vector.y);
+    double repulsion_mag = hypot(repulsion.x, repulsion.y);
 
     // direction towards goal position
     geometry_msgs::Vector3 direction = target_direction();
@@ -140,9 +140,9 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors)
     }
 }
 
-geometry_msgs::Vector3 repulsion::target_velocity ()
+geometry_msgs::Vector3 repulsion::target_direction ()
 {
-    geometry_msgs::Vector3 vel;
+    geometry_msgs::Vector3 dir;
 
     // get direction towards original goal
     if (setpoint == CONTROL_POSITION) {
@@ -150,16 +150,16 @@ geometry_msgs::Vector3 repulsion::target_velocity ()
         double bear = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
 
         // velocity components in goal direction
-        vel.x = cos(bear);
-        vel.y = sin(bear);
+        dir.x = cos(bear);
+        dir.y = sin(bear);
     }
 
     // normalize velocity
     else if (setpoint == CONTROL_VELOCITY) {
         double mag = hypot(target_vel.linear.x, target_vel.linear.y);
-        vel.x = target_vel.linear.x / mag;
-        vel.y = target_vel.linear.y / mag;
+        dir.x = target_vel.linear.x / mag;
+        dir.y = target_vel.linear.y / mag;
     }
 
-    return vel;
+    return dir;
 }
