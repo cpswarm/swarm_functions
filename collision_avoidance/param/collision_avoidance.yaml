@@ -2,8 +2,5 @@ loop_rate:     10.0 # The frequency in Hz at which to run the control loops.
 queue_size:    1    # The size of the message queue used for publishing and subscribing to topics.
 dist_critical: 2.0  # Distance between CPSs in meter below which the collision avoidance will work maximally.
 dist_avoid:    4.0  # Distance between CPSs in meter below which collision avoidance is active.
-vel_avoid:     1.0  # Target velocity during collision avoidance in meter per second.
-time_vel:      1.0  # Time constant in second for converting velocity to position.
-time_accel:    1.0  # Time constant in second for converting acceleration to velocity.
 excluded:           # No collision avoidance in these states.
 - Takeoff

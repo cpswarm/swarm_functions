@@ -94,14 +94,8 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/dist_critical", dist_critical, 1.0);
     double dist_avoid;
     nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 3.0);
-    double vel_avoid;
-    nh.param(this_node::getName() + "/vel_avoid", vel_avoid, 1.0);
-    double time_vel;
-    nh.param(this_node::getName() + "/time_vel", time_vel, 1.0);
-    double time_accel;
-    nh.param(this_node::getName() + "/time_accel", time_accel, 1.0);
 
-    ca.init(dist_critical, dist_avoid, vel_avoid, time_vel, time_accel);
+    ca.init(dist_critical, dist_avoid);
 
     // ros communication
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);

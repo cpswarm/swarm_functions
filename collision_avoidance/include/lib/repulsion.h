@@ -21,7 +21,7 @@ typedef enum {
 } control_t;
 
 /**
- * @brief A class that generates a minimum-spanning-tree (MST) graph for a given grid map.
+ * @brief A class that calculates the repulsive forces between CPSs.
  */
 class repulsion
 {
@@ -35,11 +35,8 @@ public:
      * @brief Configure the repulsion behavior through parameters.
      * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
      * @param dist_avoid Distance between CPSs below which collision avoidance is active.
-     * @param vel_avoid Target velocity during collision avoidance.
-     * @param time_vel Time constant for converting velocity to position.
-     * @param time_accel Time constant for converting acceleration to velocity.
      */
-    void init (double dist_critical, double dist_avoid, double vel_avoid, double time_vel, double time_accel);
+    void init (double dist_critical, double dist_avoid);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -103,16 +100,17 @@ public:
 
 private:
     /**
-     * @brief Calculate repulsive force from close by CPSs as pair potentials.
-     * @return The required acceleration to reach the equilibrium distance to all close by neighbors.
+     * @brief Calculate repulsion from close by CPSs as pair potentials.
+     * @param repulsion Returns the repulsion vector.
+     * @param neighbors Returns the number of neighbors that create repulsion.
      */
-    geometry_msgs::Vector3 repulse ();
+    void repulse (geometry_msgs::Vector3& repulsion, int& neighbors);
 
     /**
-     * Calculate the target velocity towards the original goal during collision avoidance.
-     * @return A linear velocity component into the direction of the goal with limited magnitude.
+     * Calculate the direction towards the original goal during collision avoidance.
+     * @return A normalized vector pointing into the direction of the goal.
      */
-    geometry_msgs::Vector3 target_velocity ();
+    geometry_msgs::Vector3 target_direction ();
 
     /**
      * @brief The type of CPS control.
@@ -163,21 +161,6 @@ private:
      * @brief Distance between CPSs below which collision avoidance is active.
      */
     double dist_avoid;
-
-    /**
-     * @brief Target velocity during collision avoidance.
-     */
-    double vel_avoid;
-
-    /**
-     * @brief Time constant for converting velocity to position.
-     */
-    double time_vel;
-
-    /**
-     * @brief Time constant for converting acceleration to velocity.
-     */
-    double time_accel;
 };
 
 #endif // REPULSION_H

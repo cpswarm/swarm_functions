@@ -4,43 +4,50 @@ repulsion::repulsion ()
 {
 }
 
-void repulsion::init (double dist_critical, double dist_avoid, double vel_avoid, double time_vel, double time_accel)
+void repulsion::init (double dist_critical, double dist_avoid, double vel_avoid)
 {
     setpoint = CONTROL_UNDEFINED;
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
-    this->vel_avoid = vel_avoid;
-    this->time_vel = time_vel;
-    this->time_accel = time_accel;
 }
 
 bool repulsion::calc ()
 {
     // repulsion from other cpss
-    geometry_msgs::Vector3 a_rep = repulse();
+    geometry_msgs::Vector3 repulsion;
+    int neighbors;
+    repulse(repulsion, neighbors);
 
     // no avoidance necessary
-    if (a_rep.x == 0 && a_rep.y == 0) {
+    if (neighbors <= 0) {
         return false;
     }
 
-    // calculate velocity to reach goal position
-    geometry_msgs::Vector3 vel = target_velocity();
+    // magnitude of repulsion
+    double repulsion_mag = hypot(vector.x, vector.y);
 
-    // calculate avoidance velocity
-    int_vel.linear.x = vel.x + a_rep.x * time_accel;
-    int_vel.linear.y = vel.y + a_rep.y * time_accel;
+    // direction towards goal position
+    geometry_msgs::Vector3 direction = target_direction();
 
-    // set desired velocity magnitude
-    double mag = hypot(int_vel.linear.x, int_vel.linear.y);
-    int_vel.linear.x *= vel_avoid / mag;
-    int_vel.linear.y *= vel_avoid / mag;
+    // avoidance direction
+    geometry_msgs::Vector3 avoidance;
+    avoidance.x = direction.x + repulsion.x;
+    avoidance.y = direction.y + repulsion.y;
 
-    // calculate avoidance position
+    // avoidance magnitude
+    double avoidance_mag = 1 - repulsion_mag / neighbors;
+
+    // avoidance displacement
     if (setpoint == CONTROL_POSITION) {
-        int_pos.pose.position.x = pos.pose.position.x + int_vel.linear.x * time_vel;
-        int_pos.pose.position.y = pos.pose.position.y + int_vel.linear.y * time_vel;
+        int_pos.pose.position.x = pos.pose.position.x + avoidance.x * avoidance_mag;
+        int_pos.pose.position.y = pos.pose.position.y + avoidance.y * avoidance_mag;
         int_pos.pose.position.z = goal_pos.pose.position.z;
+    }
+
+    // avoidance velocity
+    else if (setpoint == CONTROL_VELOCITY) {
+        int_vel.linear.x = avoidance.x * avoidance_mag;
+        int_vel.linear.y = avoidance.y * avoidance_mag;
     }
 
     return true;
@@ -93,12 +100,12 @@ geometry_msgs::Twist repulsion::get_vel ()
     return int_vel;
 }
 
-geometry_msgs::Vector3 repulsion::repulse ()
+void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors)
 {
-    // init repulsive force acceleration
-    geometry_msgs::Vector3 a_repulsion;
-    a_repulsion.x = 0;
-    a_repulsion.y = 0;
+    // init repulsion
+    repulsion.x = 0;
+    repulsion.y = 0;
+    neighbors = 0;
 
     // yaw of this cps
     tf2::Quaternion orientation;
@@ -109,6 +116,9 @@ geometry_msgs::Vector3 repulsion::repulse ()
     for (auto pose : swarm) {
         // repulsion only from close neighbors
         if (pose.vector.magnitude < dist_avoid) {
+            // count neighbors to repulse from
+            ++neighbors;
+
             // pair potential
             double pot;
 
@@ -124,19 +134,10 @@ geometry_msgs::Vector3 repulsion::repulse ()
             double bear = yaw + pose.vector.direction;
 
             // sum up potentials as vector pointing away from neighbor
-            a_repulsion.x += pot * -cos(bear);
-            a_repulsion.y += pot * -sin(bear);
+            repulsion.x += pot * -cos(bear);
+            repulsion.y += pot * -sin(bear);
         }
     }
-
-    // normalize acceleration
-    double mag = hypot(a_repulsion.x, a_repulsion.y);
-    if (mag > 0) {
-        a_repulsion.x /= mag;
-        a_repulsion.y /= mag;
-    }
-
-    return a_repulsion;
 }
 
 geometry_msgs::Vector3 repulsion::target_velocity ()
