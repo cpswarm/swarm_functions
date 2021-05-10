@@ -26,7 +26,9 @@ targets::targets ()
     target_update_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_update", queue_size);
     target_lost_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_lost", queue_size);
     target_done_pub = nh.advertise<cpswarm_msgs::TargetPositionEvent>("target_done", queue_size, true);
-
+    target_help_pub = nh.advertise<cpswarm_msgs::TargetHelp>("target_help", queue_size);
+    tracked_by_pub = nh.advertise<cpswarm_msgs::TargetTrackedBy>("target_trackers", queue_size);
+    battery_sub = nh.subscribe("swarm_battery", queue_size, &targets::battery_callback, this);
     Subscriber uuid_sub = nh.subscribe("bridge/uuid", queue_size, &targets::uuid_callback, this);
 
     // init uuid
@@ -61,11 +63,35 @@ void targets::simulate ()
 
 void targets::update (geometry_msgs::Pose pose)
 {
-    // check if a target is lost
+    // check existing targets
     for (auto t : target_map) {
-        // update target and inform others in case target is lost
+        // check if target lost
         if (t.second->lost()) {
             publish_event("target_lost", t.first);
+        }
+
+        // check if tracking cpss need help
+        if (t.second->help()) {
+            // find tracking cps with highest battery soc
+            int time_avail = 0;
+            for (auto cps : t.second->get_trackers()) {
+                if (batteries[cps] > time_avail)
+                    time_avail = batteries[cps];
+            }
+
+            // create target help message
+            cpswarm_msgs::TargetHelp target;
+            geometry_msgs::PoseStamped ps;
+            ps.pose = t.second->get_pose();
+            ps.header.frame_id = "local_origin_ned";
+            target.pose = ps;
+            target.header.stamp = Time::now();
+            target.id = t.first;
+            target.time_need = t.second->get_time_need();
+            target.time_avail = time_avail;
+
+            // publish help call
+            target_help_pub.publish(target);
         }
     }
 
@@ -90,11 +116,14 @@ void targets::update (geometry_msgs::Pose pose)
 
 void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
 {
-    // determine target pose
-    geometry_msgs::Pose pose;
-    pose = msg.pose.pose;
+    ROS_DEBUG("Target %d at [%.2f, %.2f]", msg.id, msg.pose.pose.position.x, msg.pose.pose.position.y);
 
-    ROS_DEBUG("Target %d at [%.2f, %.2f]", msg.id, pose.position.x, pose.position.y);
+    // determine uuid of tracking cps
+    string uuid;
+    if (msg.swarmio.node != "")
+        uuid = msg.swarmio.node;
+    else
+        uuid = this->cps;
 
     // existing target
     if (target_map.count(msg.id) > 0) {
@@ -102,13 +131,15 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
         target_state_t prev_state = target_map[msg.id]->get_state();
 
         // update target
-        target_map[msg.id]->update(state, pose, msg.header.stamp);
+        target_map[msg.id]->update(state, msg.pose.pose, msg.header.stamp, uuid);
 
         // publish event for certain state transitions
         if (prev_state == TARGET_ASSIGNED && state == TARGET_DONE && msg.swarmio.node != "") // only if incoming event
             publish_event("target_done", msg.id);
         else if (prev_state == TARGET_ASSIGNED && state == TARGET_TRACKED)
             publish_event("target_update", msg.id);
+        else if (prev_state == TARGET_TRACKED && state == TARGET_TRACKED && target_map[msg.id]->get_state() == TARGET_DONE) // just completed tracking
+            publish_event("target_done", msg.id);
         else if (prev_state == TARGET_TRACKED && state == TARGET_TRACKED)
             publish_event("target_update", msg.id);
         else if (prev_state == TARGET_KNOWN && state == TARGET_TRACKED)
@@ -117,12 +148,21 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
             publish_event("target_found", msg.id);
         else
             ROS_DEBUG("Not publishing event for target");
+
+        // publish number of tracking cpss
+        if (state == TARGET_TRACKED) {
+            cpswarm_msgs::TargetTrackedBy trackers;
+            trackers.header.stamp = Time::now();
+            trackers.id = msg.id;
+            trackers.trackers = target_map[msg.id]->get_num_trackers();
+            tracked_by_pub.publish(trackers);
+        }
     }
 
     // new target
     else {
         // add to target map
-        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, pose, msg.header.stamp)));
+        target_map.emplace(piecewise_construct, forward_as_tuple(msg.id), forward_as_tuple(make_shared<target>(msg.id, state, msg.pose.pose, msg.header.stamp, uuid)));
 
         // publish event if target has been found by this cps
         if (state == TARGET_TRACKED) {
@@ -188,6 +228,15 @@ geometry_msgs::Transform targets::transform (geometry_msgs::Pose p1, geometry_ms
     tf.rotation = tf2::toMsg(rotation);
 
     return tf;
+}
+
+void targets::battery_callback (const cpswarm_msgs::ArrayOfBatteries::ConstPtr& msg)
+{
+    // convert array to map
+    map<string, int> batteries;
+    for (auto battery : msg->states)
+        batteries[battery.swarmio.node] = battery.state.time_work;
+    this->batteries = batteries;
 }
 
 void targets::uuid_callback (const swarmros::String::ConstPtr& msg)

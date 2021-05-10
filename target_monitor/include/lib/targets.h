@@ -8,6 +8,9 @@
 #include <swarmros/String.h>
 #include <cpswarm_msgs/TargetTracking.h>
 #include <cpswarm_msgs/TargetPositionEvent.h>
+#include <cpswarm_msgs/TargetHelp.h>
+#include <cpswarm_msgs/TargetTrackedBy.h>
+#include <cpswarm_msgs/ArrayOfBatteries.h>
 #include "target.h"
 
 /**
@@ -64,6 +67,12 @@ private:
 
     /**
      * @brief Callback function to receive the UUID from the communication library.
+     * @param msg Battery state of all known CPSs.
+     */
+    void battery_callback (const cpswarm_msgs::ArrayOfBatteries::ConstPtr& msg);
+
+    /**
+     * @brief Callback function to receive the UUID from the communication library.
      * @param msg UUID of this node.
      */
     void uuid_callback (const swarmros::String::ConstPtr& msg);
@@ -99,6 +108,21 @@ private:
     Publisher target_done_pub;
 
     /**
+     * @brief Publisher for transmitting information about targets where help is needed for tracking locally to other nodes.
+     */
+    Publisher target_help_pub;
+
+    /**
+     * @brief Publisher for transmitting the number of CPSs tracking a target.
+     */
+    Publisher tracked_by_pub;
+
+    /**
+     * @brief Subscriber for receiving battery state information from other CPSs.
+     */
+    Subscriber battery_sub;
+
+    /**
      * @brief A map holding ID and target object of all known targets.
      */
     unordered_map<unsigned int, shared_ptr<target>> target_map;
@@ -112,6 +136,11 @@ private:
      * @brief The UUID of the CPS that owns this class instance.
      */
     string cps;
+
+    /**
+     * The remaining times that tracking CPSs can still work.
+     */
+    map<string, int> batteries;
 
     /**
      * @brief Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.

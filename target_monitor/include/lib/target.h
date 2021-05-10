@@ -60,9 +60,25 @@ public:
     target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp);
 
     /**
+     * @brief Constructor that initializes some private member variables.
+     * @param id The target ID.
+     * @param state The target state.
+     * @param pose The position of the target.
+     * @param stamp The time stamp of target.
+     * @param cps The CPS that is tracking the target.
+     */
+    target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp, string cps);
+
+    /**
      * @brief Destructor that destroys all objects.
      */
     ~target ();
+
+    /**
+     * @brief Get the number of CPSs currently tracking the target.
+     * @return The number of CPSs.
+     */
+    int get_num_trackers ();
 
     /**
      * @brief Get the position of the target.
@@ -77,6 +93,24 @@ public:
     target_state_t get_state ();
 
     /**
+     * @brief Get the time that the target still needs to be tracked.
+     * @return The time in seconds.
+     */
+    double get_time_need ();
+
+    /**
+     * @brief Get the CPSs that are currently tracking the target.
+     * @return The set of UUIDs of the tracking CPSs.
+     */
+    set<string> get_trackers ();
+
+    /**
+     * @brief Check whether the CPSs tracking the target need help.
+     * @return True, if the minimum number of required tracking CPSs is not yet reached. False otherwise.
+     */
+    bool help ();
+
+    /**
      * @brief Check whether the target tracked by this CPS has been lost. Switch state from TARGET_TRACKED to TARGET_LOST if the tracking timeout has expired.
      * @return Whether the target has been lost.
      */
@@ -89,12 +123,19 @@ public:
     void operator= (const target& t);
 
     /**
+     * @brief Check whether there are too many CPSs tracking the target.
+     * @return True, if the maximum number of allowed tracking CPSs is exceeded. False otherwise.
+     */
+    bool overcrowded ();
+
+    /**
      * @brief Update the information about a target.
      * @param state The state of the target.
      * @param pose The position of the target.
      * @param stamp The time stamp of the update.
+     * @param cps The CPS that sends the update.
      */
-    void update (target_state_t state, geometry_msgs::Pose pose, Time stamp);
+    void update (target_state_t state, geometry_msgs::Pose pose, Time stamp, string cps);
 
 private:
     /**
@@ -126,6 +167,26 @@ private:
      * @brief The time in seconds after which a target transitions into the state TARGET_LOST when no target update has been received.
      */
     Duration timeout;
+
+    /**
+     * @brief The time in seconds which a target has to be tracked until it switches to state done. Negative to disable, i.e., infinite time.
+     */
+    Duration time;
+
+    /**
+     * @brief A set of UUIDs of the CPSs tracking the target.
+     */
+    set<string> tracked_by;
+
+    /**
+     * @brief Minimum number of tracking CPSs that are needed for one target.
+     */
+    int min_trackers;
+
+    /**
+     * @brief Maximum number of tracking CPSs that are allowed for one target.
+     */
+    int max_trackers;
 
     /**
      * @brief The loop rate object for running the behavior control loops at a specific frequency.
