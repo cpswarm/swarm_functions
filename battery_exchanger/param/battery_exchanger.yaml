@@ -1,0 +1,3 @@
+loop_rate:  1.5  # The frequency in Hz at which to run the control loops.
+queue_size: 10   # The size of the message queue used for publishing and subscribing to topics.
+timeout:    20.0 # The time in seconds after which another CPS is considered to have left the swarm.

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="id" default="1" />
+    <arg name="output" default="log" />
+
+    <!-- Swarm state exchanging node -->
+    <node pkg="battery_exchanger" type="battery_exchanger" name="battery_exchanger_$(arg id)" output="$(arg output)" required="true">
+        <rosparam file="$(find battery_exchanger)/param/battery_exchanger.yaml" command="load" />
+    </node>
+
+</launch>
