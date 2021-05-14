@@ -5,4 +5,4 @@ tracking_time:    -1.0  # The time in seconds which a target has to be tracked u
 fov:              0.5   # Range of the target tracking camera in meter. It is used to simulate target detection. Targets within this distance are detected by the CPS.
 min_trackers:     1     # Minimum number of tracking CPSs that are needed for one target.
 max_trackers:     3     # Maximum number of tracking CPSs that are allowed for one target.
-simulation:       true  # Whether the targets are detected virtually by position or actually by the camera tracking topic.
+simulation:       false # Whether the targets are detected virtually by position or actually by the camera tracking topic.
