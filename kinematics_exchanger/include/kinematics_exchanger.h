@@ -89,4 +89,9 @@ int pos_init;
  */
 int vel_init;
 
+/**
+ * @brief Whether to only listen or also send data.
+ */
+bool read_only;
+
 #endif // KINEMATICS_EXCHANGER_H

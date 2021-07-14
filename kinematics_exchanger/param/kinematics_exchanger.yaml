@@ -3,3 +3,4 @@ queue_size:     10    # The size of the message queue used for publishing and su
 timeout:        20.0  # The time in seconds after which another CPS is considered to have left the swarm.
 sample_size:    5     # The number of data samples to average over for reliable results.
 init:           30    # The number of messages to ignore during initialization. This is because the first messages are inaccurate.
+read_only:      false # Whether to only listen or also send data.

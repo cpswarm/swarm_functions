@@ -179,14 +179,20 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/sample_size", sample_size, 5);
     nh.param(this_node::getName() + "/init", pos_init, 30);
     nh.param(this_node::getName() + "/init", vel_init, 30);
+    nh.param(this_node::getName() + "/read_only", read_only, false);
 
     // publishers and subscribers
-    Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-    Subscriber vel_subscriber = nh.subscribe("vel_provider/velocity", queue_size, vel_callback);
+    if (read_only == false) {
+        Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+        Subscriber vel_subscriber = nh.subscribe("vel_provider/velocity", queue_size, vel_callback);
+    }
     Subscriber incoming_position_subscriber = nh.subscribe("bridge/events/position", queue_size, swarm_position_callback);
     Subscriber incoming_velocity_subscriber = nh.subscribe("bridge/events/velocity", queue_size, swarm_velocity_callback);
-    Publisher outgoing_position_publisher = nh.advertise<cpswarm_msgs::Position>("position", queue_size);
-    Publisher outgoing_velocity_publisher = nh.advertise<cpswarm_msgs::Velocity>("velocity", queue_size);
+    Publisher outgoing_position_publisher, outgoing_velocity_publisher;
+    if (read_only == false) {
+        outgoing_position_publisher = nh.advertise<cpswarm_msgs::Position>("position", queue_size);
+        outgoing_velocity_publisher = nh.advertise<cpswarm_msgs::Velocity>("velocity", queue_size);
+    }
     Publisher incoming_position_publisher = nh.advertise<cpswarm_msgs::ArrayOfPositions>("swarm_position", queue_size);
     Publisher incoming_rel_position_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_position_rel", queue_size);
     Publisher incoming_rel_velocity_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_velocity_rel", queue_size);
@@ -195,12 +201,14 @@ int main (int argc, char **argv)
     Rate rate(loop_rate);
 
     // init position and velocity
-    pose_valid = false;
-    vel_valid = false;
-    while (ok() && (pose_valid == false || vel_valid == false)) {
-        ROS_DEBUG_ONCE("Waiting for valid pose and velocity ...");
-        rate.sleep();
-        spinOnce();
+    if (read_only == false) {
+        pose_valid = false;
+        vel_valid = false;
+        while (ok() && (pose_valid == false || vel_valid == false)) {
+            ROS_DEBUG_ONCE("Waiting for valid pose and velocity ...");
+            rate.sleep();
+            spinOnce();
+        }
     }
 
     // init swarm kinematics messages
@@ -310,16 +318,18 @@ int main (int argc, char **argv)
         incoming_rel_velocity_publisher.publish(swarm_velocity_rel);
 
         // publish local kinematics to swarm
-        cpswarm_msgs::Position position;
-        position.header.stamp = Time::now();
-        position.swarmio.name = "position";
-        position.pose = pose;
-        outgoing_position_publisher.publish(position);
-        cpswarm_msgs::Velocity velocity;
-        velocity.header.stamp = Time::now();
-        velocity.swarmio.name = "velocity";
-        velocity.velocity = velo;
-        outgoing_velocity_publisher.publish(velocity);
+        if (read_only == false) {
+            cpswarm_msgs::Position position;
+            position.header.stamp = Time::now();
+            position.swarmio.name = "position";
+            position.pose = pose;
+            outgoing_position_publisher.publish(position);
+            cpswarm_msgs::Velocity velocity;
+            velocity.header.stamp = Time::now();
+            velocity.swarmio.name = "velocity";
+            velocity.velocity = velo;
+            outgoing_velocity_publisher.publish(velocity);
+        }
 
         rate.sleep();
         spinOnce();
