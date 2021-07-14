@@ -59,24 +59,30 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/timeout", timeout, 20.0);
     sm_path = "/SM_TOP";
     nh.param(this_node::getName() + "/sm_path", sm_path, sm_path);
+    nh.param(this_node::getName() + "/read_only", read_only, false);
 
     // init topic flags
     state_valid = false;
 
     // publishers and subscribers
-    Subscriber state_subscriber = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
+    if (read_only == false)
+        Subscriber state_subscriber = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
     Subscriber incoming_state_subscriber = nh.subscribe("bridge/events/state", queue_size, swarm_state_callback);
-    Publisher outgoing_state_publisher = nh.advertise<cpswarm_msgs::StateEvent>("state", queue_size);
+    Publisher outgoing_state_publisher;
+    if (read_only == false)
+        outgoing_state_publisher = nh.advertise<cpswarm_msgs::StateEvent>("state", queue_size);
     Publisher incoming_state_publisher = nh.advertise<cpswarm_msgs::ArrayOfStates>("swarm_state", queue_size);
 
     // init loop rate
     Rate rate(loop_rate);
 
     // init position and velocity
-    while (ok() && state_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for valid state...");
-        rate.sleep();
-        spinOnce();
+    if (read_only == false) {
+        while (ok() && state_valid == false) {
+            ROS_DEBUG_ONCE("Waiting for valid state...");
+            rate.sleep();
+            spinOnce();
+        }
     }
 
     // init swarm state message
@@ -110,11 +116,13 @@ int main (int argc, char **argv)
         incoming_state_publisher.publish(swarm_state_msg);
 
         // publish local state to swarm
-        cpswarm_msgs::StateEvent state_event;
-        state_event.header.stamp = Time::now();
-        state_event.swarmio.name = "state";
-        state_event.state = state;
-        outgoing_state_publisher.publish(state_event);
+        if (read_only == false) {
+            cpswarm_msgs::StateEvent state_event;
+            state_event.header.stamp = Time::now();
+            state_event.swarmio.name = "state";
+            state_event.state = state;
+            outgoing_state_publisher.publish(state_event);
+        }
 
         rate.sleep();
         spinOnce();

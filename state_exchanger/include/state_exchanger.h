@@ -39,4 +39,9 @@ map<string, state_t> swarm_state;
  */
 string sm_path;
 
+/**
+ * @brief Whether to only listen or also send data.
+ */
+bool read_only;
+
 #endif // STATE_EXCHANGER_H
