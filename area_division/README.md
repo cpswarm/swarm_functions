@@ -43,7 +43,7 @@ The `area_division` divides the environment area among multiple CPSs. When this 
 * `state` ([cpswarm_msgs/StateEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/StateEvent.html))
   The behavior state of this CPS.
 * `swarm_state` ([cpswarm_msgs/ArrayOfStates](https://cpswarm.github.io/cpswarm_msgs/html/msg/ArrayOfStates.html))
-  The behaior states of the other CPSs.
+  The behavior states of the other CPSs.
 * `pos_provider/pose` ([geometry_msgs/PoseStamped](https://docs.ros.org/api/geometry_msgs/html/msg/PoseStamped.html))
   The current position of this CPS.
 * `area/map` ([nav_msgs/OccupancyGrid](http://docs.ros.org/api/nav_msgs/html/msg/OccupancyGrid.html))
