@@ -74,7 +74,7 @@ The `area_division` divides the environment area among multiple CPSs. When this 
   The frequency in Hz at which to run the control loops.
 * `~queue_size` (integer, default: `10`)
   The size of the message queue used for publishing and subscribing to topics.
-* `resolution` (real, default: `1.0`
+* `resolution` (real, default: `1.0`)
   The grid map underlying the area division will be downsampled to this resolution in meter / cell.
 * `~swarm_timeout` (real, default: `5.0`)
   The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.
