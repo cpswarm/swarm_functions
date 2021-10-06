@@ -22,9 +22,11 @@
     <buildtool_depend>catkin</buildtool_depend>
     <depend>roscpp</depend>
     <depend>tf2</depend>
+    <depend>actionlib</depend>
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cpswarm_msgs</depend>
+    <depend>lsl_msgs</depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>

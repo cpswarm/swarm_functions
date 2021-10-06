@@ -2,6 +2,7 @@
 #define COVERAGE_PATH_H
 
 #include <ros/ros.h>
+#include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/PointStamped.h>
@@ -13,11 +14,17 @@
 #include <cpswarm_msgs/GetWaypoint.h>
 #include <cpswarm_msgs/GetPoints.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
+#include <lsl_msgs/DoAction.h>
 #include "lib/spanning_tree.h"
 #include "lib/mst_path.h"
 
 using namespace std;
 using namespace ros;
+
+/**
+ * @brief Generic action server.
+ */
+typedef actionlib::SimpleActionServer<lsl_msgs::DoAction> ActionServer;
 
 /**
  * @brief Publisher to visualize the coverage path.
