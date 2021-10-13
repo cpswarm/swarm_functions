@@ -286,21 +286,17 @@ bool generate_path (geometry_msgs::Point start)
  * @param goal An empty action server goal.
  * @param as The action server object.
  */
-bool generate_path(const lsl_msgs::DoGoal::ConstPtr& goal, ActionServer* as)
+bool generate_path(const lsl_msgs::PathGenerationGoal::ConstPtr& goal, GenerationAction* as)
 {
-    ROS_DEBUG("Generating coverage path...");
-
-    // use empty starting point
-    // TODO: adapt path generation if empty point is given
-    geometry_msgs::Point empty;
-
-    bool success = generate_path(empty);
+    bool success = generate_path(goal->start);
 
     if (as->isPreemptRequested()) {
         as->setPreempted();
     }
     else if (success) {
-        as->setSucceeded();
+        lsl_msgs::PathGenerationResult result;
+        result.path = path.get_path();
+        as->setSucceeded(result);
     }
     else {
         as->setAborted();
@@ -479,8 +475,10 @@ int main (int argc, char **argv)
     ServiceServer wp_service = nh.advertiseService("coverage_path/waypoint", get_waypoint);
 
     // provide coverage path actions
-    ActionServer generation_action(nh, "coverage_path/generate", boost::bind(&generate_path, _1, &generation_action), false);
+    GenerationAction generation_action(nh, "coverage_path/generate", boost::bind(&generate_path, _1, &generation_action), false);
     generation_action.start();
+
+    ROS_INFO("Path generation action server available");
 
     spin();
 
