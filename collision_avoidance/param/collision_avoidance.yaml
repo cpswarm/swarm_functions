@@ -1,8 +1,10 @@
-loop_rate:     10.0 # The frequency in Hz at which to run the control loops.
-queue_size:    1    # The size of the message queue used for publishing and subscribing to topics.
-dist_critical: 2.0  # Distance between CPSs in meter below which the collision avoidance will work maximally.
-dist_avoid:    4.0  # Distance between CPSs in meter below which collision avoidance is active.
-excluded:           # No collision avoidance in these states.
+loop_rate:       10.0   # The frequency in Hz at which to run the control loops.
+queue_size:      1      # The size of the message queue used for publishing and subscribing to topics.
+dist_critical:   4.0    # Distance between CPSs in meter below which the collision avoidance will work maximally.
+dist_avoid:      10.0   # Distance between CPSs in meter below which collision avoidance is active.
+visualize:       true   # Whether to visualize the avoidance direction.
+repulsion_shape: linear # The shape of the repulsion function, can be sine, exp, or linear.
+excluded:               # No collision avoidance in these states.
 - Takeoff
 - IdleThreads
 - IdleThreads2
