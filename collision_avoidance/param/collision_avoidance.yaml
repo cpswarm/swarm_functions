@@ -4,3 +4,5 @@ dist_critical: 2.0  # Distance between CPSs in meter below which the collision a
 dist_avoid:    4.0  # Distance between CPSs in meter below which collision avoidance is active.
 excluded:           # No collision avoidance in these states.
 - Takeoff
+- IdleThreads
+- IdleThreads2
