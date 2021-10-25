@@ -182,9 +182,10 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/read_only", read_only, false);
 
     // publishers and subscribers
+    Subscriber pose_subscriber, vel_subscriber;
     if (read_only == false) {
-        Subscriber pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
-        Subscriber vel_subscriber = nh.subscribe("vel_provider/velocity", queue_size, vel_callback);
+        pose_subscriber = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
+        vel_subscriber = nh.subscribe("vel_provider/velocity", queue_size, vel_callback);
     }
     Subscriber incoming_position_subscriber = nh.subscribe("bridge/events/position", queue_size, swarm_position_callback);
     Subscriber incoming_velocity_subscriber = nh.subscribe("bridge/events/velocity", queue_size, swarm_velocity_callback);
@@ -210,6 +211,8 @@ int main (int argc, char **argv)
             spinOnce();
         }
     }
+
+    ROS_DEBUG("Kinematics exchanger ready");
 
     // init swarm kinematics messages
     cpswarm_msgs::ArrayOfPositions swarm_position;
