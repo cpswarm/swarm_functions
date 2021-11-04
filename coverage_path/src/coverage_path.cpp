@@ -286,7 +286,7 @@ bool generate_path (geometry_msgs::Point start)
  * @param goal An empty action server goal.
  * @param as The action server object.
  */
-bool generate_path(const lsl_msgs::PathGenerationGoal::ConstPtr& goal, GenerationAction* as)
+bool generate_path(const cpswarm_msgs::PathGenerationGoal::ConstPtr& goal, GenerationAction* as)
 {
     bool success = generate_path(goal->start);
 
@@ -294,7 +294,7 @@ bool generate_path(const lsl_msgs::PathGenerationGoal::ConstPtr& goal, Generatio
         as->setPreempted();
     }
     else if (success) {
-        lsl_msgs::PathGenerationResult result;
+        cpswarm_msgs::PathGenerationResult result;
         result.path = path.get_path();
         as->setSucceeded(result);
     }

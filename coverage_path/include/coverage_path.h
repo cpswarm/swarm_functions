@@ -14,7 +14,7 @@
 #include <cpswarm_msgs/GetWaypoint.h>
 #include <cpswarm_msgs/GetPoints.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
-#include <lsl_msgs/PathGenerationAction.h>
+#include <cpswarm_msgs/PathGenerationAction.h>
 #include "lib/spanning_tree.h"
 #include "lib/mst_path.h"
 
@@ -24,7 +24,7 @@ using namespace ros;
 /**
  * @brief Action server for path generation.
  */
-typedef actionlib::SimpleActionServer<lsl_msgs::PathGenerationAction> GenerationAction;
+typedef actionlib::SimpleActionServer<cpswarm_msgs::PathGenerationAction> GenerationAction;
 
 /**
  * @brief Publisher to visualize the coverage path.
