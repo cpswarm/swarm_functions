@@ -35,8 +35,9 @@ public:
      * @brief Configure the repulsion behavior through parameters.
      * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
      * @param dist_avoid Distance between CPSs below which collision avoidance is active.
+     * @param repulsion_shape The shape of the repulsion function.
      */
-    void init (double dist_critical, double dist_avoid);
+    void init (double dist_critical, double dist_avoid, string repulsion_shape);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -85,6 +86,12 @@ public:
      * @param swarm An array of distance and bearing of the other CPSs.
      */
     void set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm);
+
+    /**
+     * @brief Get the direction in which to move for collision avoidance.
+     * @return The direction away from the other CPSs.
+     */
+    geometry_msgs::PoseStamped get_dir ();
 
     /**
      * @brief Get the intermediate goal position during collision avoidance.
@@ -143,6 +150,11 @@ private:
     vector<cpswarm_msgs::VectorStamped> swarm;
 
     /**
+     * @brief The direction of avoidance.
+     */
+    geometry_msgs::Vector3 direction;
+
+    /**
      * @brief The intermediate goal position where the CPS shall move to during collision avoidance.
      */
     geometry_msgs::PoseStamped int_pos;
@@ -161,6 +173,11 @@ private:
      * @brief Distance between CPSs below which collision avoidance is active.
      */
     double dist_avoid;
+
+    /**
+     * @brief The shape of the repulsion function.
+     */
+    string repulsion_shape;
 };
 
 #endif // REPULSION_H

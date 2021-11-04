@@ -2,10 +2,12 @@
 <launch>
 
     <arg name="id" default="1" />
+    <arg name="pos_type" default="local" />
     <arg name="output" default="log" />
 
     <!-- Swarm kinematics exchanging node -->
     <node pkg="kinematics_exchanger" type="kinematics_exchanger" name="kinematics_exchanger_$(arg id)" output="$(arg output)" required="true">
+        <param name="pos_type" value="$(arg pos_type)" />
         <rosparam file="$(find kinematics_exchanger)/param/kinematics_exchanger.yaml" command="load" />
     </node>
 

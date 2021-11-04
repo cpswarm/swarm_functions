@@ -15,6 +15,8 @@
 #include <cpswarm_msgs/Velocity.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
 #include <cpswarm_msgs/VectorStamped.h>
+#include <cpswarm_msgs/PoseToGeo.h>
+#include <cpswarm_msgs/GeoToPose.h>
 
 using namespace std;
 using namespace ros;
@@ -38,6 +40,16 @@ typedef struct cartesian_vector_t {
     vector<float> y;
     Time stamp;
 } cartesian_vector_t;
+
+/**
+ * Service client to convert local to global coordinates.
+ */
+ServiceClient pose_to_geo_client;
+
+/**
+ * Service client to convert global to local coordinates.
+ */
+ServiceClient geo_to_pose_client;
 
 /**
  * @brief Current position of the CPS.
@@ -93,5 +105,10 @@ int vel_init;
  * @brief Whether to only listen or also send data.
  */
 bool read_only;
+
+/**
+ * @brief Whether to exchange global coordinates.
+ */
+bool global;
 
 #endif // KINEMATICS_EXCHANGER_H

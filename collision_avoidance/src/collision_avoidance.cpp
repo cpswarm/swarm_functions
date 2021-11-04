@@ -87,6 +87,8 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    bool visualize;
+    nh.param(this_node::getName() + "/visualize", visualize, false);
     nh.getParam(this_node::getName() + "/excluded", excluded);
 
     // initialize repulsion
@@ -94,8 +96,10 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/dist_critical", dist_critical, 1.0);
     double dist_avoid;
     nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 3.0);
+    string repulsion_shape = "linear";
+    nh.param(this_node::getName() + "/repulsion_shape", repulsion_shape, repulsion_shape);
 
-    ca.init(dist_critical, dist_avoid);
+    ca.init(dist_critical, dist_avoid, repulsion_shape);
 
     // ros communication
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);
@@ -106,6 +110,9 @@ int main (int argc, char **argv)
     Subscriber state_sub = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
     Publisher pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/ca_goal_position", queue_size, true);
     Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("vel_controller/ca_target_velocity", queue_size, true);
+    Publisher vis_pub;
+    if (visualize)
+        vis_pub = nh.advertise<geometry_msgs::PoseStamped>("collision_avoidance/direction", queue_size, true);
 
     // init loop rate
     Rate rate(loop_rate);
@@ -140,6 +147,11 @@ int main (int argc, char **argv)
 
                 else {
                     ROS_ERROR("Unknown setpoint, cannot perform collision avoidance!");
+                }
+
+                // visualization
+                if (visualize) {
+                    vis_pub.publish(ca.get_dir());
                 }
             }
         }
