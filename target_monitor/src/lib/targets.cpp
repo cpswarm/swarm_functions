@@ -177,6 +177,7 @@ void targets::publish_event (string event, int id)
     cpswarm_msgs::TargetPositionEvent target;
     geometry_msgs::PoseStamped ps;
     ps.pose = target_map[id]->get_pose();
+    ps.header.stamp = Time::now();
     ps.header.frame_id = "local_origin_ned";
     target.pose = ps;
     target.header.stamp = Time::now();
