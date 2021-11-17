@@ -146,7 +146,7 @@ int main (int argc, char **argv)
                 }
 
                 else {
-                    ROS_ERROR("Unknown setpoint, cannot perform collision avoidance!");
+                    ROS_ERROR_THROTTLE(10, "Unknown setpoint, cannot perform collision avoidance!");
                 }
 
                 // visualization
