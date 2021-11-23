@@ -92,6 +92,10 @@ void swarm_position_callback (cpswarm_msgs::Position msg) {
     // uuid of the sending swarm member
     string uuid = msg.swarmio.node;
 
+    // ignore messages from this cps
+    if (uuid == this_uuid)
+        return;
+
     // add new swarm member
     if (swarm_positions.count(uuid) <= 0) {
         cartesian_vector_t data;
@@ -147,6 +151,10 @@ void swarm_velocity_callback (cpswarm_msgs::Velocity msg) {
     // uuid of the sending swarm member
     string uuid = msg.swarmio.node;
 
+    // ignore messages from this cps
+    if (uuid == this_uuid)
+        return;
+
     // add new swarm member
     if (swarm_velocities.count(uuid) <= 0) {
         polar_vector_t data;
@@ -165,6 +173,15 @@ void swarm_velocity_callback (cpswarm_msgs::Velocity msg) {
         swarm_velocities[uuid].mag.erase(swarm_velocities[uuid].mag.begin());
     while(swarm_velocities[uuid].dir.size() > sample_size)
         swarm_velocities[uuid].dir.erase(swarm_velocities[uuid].dir.begin());
+}
+
+/**
+ * @brief Callback function to receive the UUID of this CPS.
+ * @param msg The UUID.
+ */
+void uuid_callback (const swarmros::String::ConstPtr& msg)
+{
+    this_uuid = msg->value;
 }
 
 /**
@@ -194,6 +211,9 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/init", vel_init, 30);
     nh.param(this_node::getName() + "/read_only", read_only, false);
 
+    // init uuid
+    this_uuid = "";
+
     // subscribers
     Subscriber pose_subscriber, vel_subscriber;
     if (read_only == false) {
@@ -202,6 +222,7 @@ int main (int argc, char **argv)
     }
     Subscriber incoming_position_subscriber = nh.subscribe("bridge/events/position", queue_size, swarm_position_callback);
     Subscriber incoming_velocity_subscriber = nh.subscribe("bridge/events/velocity", queue_size, swarm_velocity_callback);
+    Subscriber uuid_subscriber = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
 
     // publishers
     Publisher outgoing_position_publisher, outgoing_velocity_publisher;
@@ -225,6 +246,13 @@ int main (int argc, char **argv)
 
     // init loop rate
     Rate rate(loop_rate);
+
+    // init uuid
+    while (ok && this_uuid == "") {
+        ROS_DEBUG_ONCE("Waiting for valid UUID ...");
+        rate.sleep();
+        spinOnce();
+    }
 
     // init position and velocity
     if (read_only == false) {

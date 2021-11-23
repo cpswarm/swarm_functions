@@ -11,6 +11,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <cpswarm_msgs/ArrayOfPositions.h>
+#include <swarmros/String.h>
 #include <cpswarm_msgs/Position.h>
 #include <cpswarm_msgs/Velocity.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
@@ -70,6 +71,11 @@ geometry_msgs::Twist velo;
  * @brief Whether a valid velocity has been received.
  */
 bool vel_valid;
+
+/**
+ * @brief UUID of this CPS.
+ */
+string this_uuid;
 
 /**
  * @brief The absolute positions of all known swarm members.

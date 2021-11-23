@@ -24,6 +24,7 @@
     <buildtool_depend>catkin</buildtool_depend>
     <depend>roscpp</depend>
     <depend>geometry_msgs</depend>
+    <depend>swarmros</depend>
     <depend>cpswarm_msgs</depend>
     <depend>tf2</depend>
 
