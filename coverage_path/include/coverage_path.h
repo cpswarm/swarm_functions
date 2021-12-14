@@ -12,7 +12,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetPlan.h>
 #include <cpswarm_msgs/GetWaypoint.h>
-#include <cpswarm_msgs/GetPoints.h>
+#include <cpswarm_msgs/GetMap.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
 #include <cpswarm_msgs/PathGenerationAction.h>
 #include "lib/spanning_tree.h"
@@ -42,17 +42,12 @@ Publisher wp_publisher;
 Publisher mst_publisher;
 
 /**
- * @brief Service client to get the assigned area.
- */
-Subscriber map_subscriber;
-
-/**
  * @brief Subscriber to get information about other CPSs in the swarm.
  */
 Subscriber swarm_sub;
 
 /**
- * @brief Service client to get coordinates of the area to cover.
+ * @brief Service client to get the area to cover.
  */
 ServiceClient area_getter;
 
