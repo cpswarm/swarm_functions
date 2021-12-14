@@ -79,23 +79,6 @@ void division_callback (const cpswarm_msgs::AreaDivisionEvent::ConstPtr& msg)
 }
 
 /**
- * @brief Callback function to receive the grid map.
- * @param msg Global grid map.
- */
-void map_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
-{
-    // store map in class variable
-    global_map = *msg;
-
-    // valid map received
-    map_valid = true;
-
-    // divide area
-    if (state == ACTIVE)
-        to_sync();
-}
-
-/**
  * @brief Callback function for position updates.
  * @param msg Position received from the CPS.
  */
@@ -175,7 +158,6 @@ void init ()
     uuid = "";
     pose_valid = false;
     swarm_valid = false;
-    map_valid = false;
 
     // publishers, subscribers, and service clients
     int queue_size;
@@ -183,17 +165,13 @@ void init ()
     uuid_sub = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
     pose_sub = nh.subscribe("pos_provider/pose", queue_size, pose_callback);
     swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
-    map_sub = nh.subscribe("area/map", queue_size, map_callback); // TODO: use explored/merged map
     division_sub = nh.subscribe("bridge/events/area_division", queue_size, division_callback);
     pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
     swarm_pub = nh.advertise<cpswarm_msgs::AreaDivisionEvent>("area_division", queue_size, true);
     area_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/assigned", queue_size, true);
     if (visualize) {
-        map_rot_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/rotated", queue_size, true);
-        map_ds_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/downsampled", queue_size, true);
+        map_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/unassigned", queue_size, true);
     }
-    rotater_cli = nh.serviceClient<cpswarm_msgs::GetDouble>("area/get_rotation");
-    rotater_cli.waitForExistence();
 
     // init uuid
     while (ok() && uuid == "") {
@@ -216,13 +194,6 @@ void init ()
         spinOnce();
     }
 
-    // init map
-    while (ok() && map_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for valid grid map...");
-        rate->sleep();
-        spinOnce();
-    }
-
     // create area division object
     division = new area_division();
 
@@ -239,14 +210,11 @@ void deinit ()
     uuid_sub.shutdown();
     pose_sub.shutdown();
     swarm_sub.shutdown();
-    map_sub.shutdown();
     division_sub.shutdown();
     pos_pub.shutdown();
     swarm_pub.shutdown();
     area_pub.shutdown();
-    map_rot_pub.shutdown();
-    map_ds_pub.shutdown();
-    rotater_cli.shutdown();
+    map_pub.shutdown();
 
     // destroy optimizer
     delete division;
@@ -296,211 +264,29 @@ geometry_msgs::Point rotate (geometry_msgs::Point point, double angle)
 }
 
 /**
- * @brief Rotate an occupancy grid map so the lower boundary is horizontal.
- * @param map A reference to the occupancy grid map to rotate.
- * @return The angle by which the map has been rotated.
- */
-double rotate (nav_msgs::OccupancyGrid& map)
-{
-    // get angle
-    cpswarm_msgs::GetDouble angle;
-    if (rotater_cli.call(angle) == false) {
-        ROS_DEBUG("Not rotating map!");
-        return 0.0;
-    }
-    double a = angle.response.value;
-
-    ROS_DEBUG("Rotate map by %.2f...", a);
-
-    // rotate origin
-    geometry_msgs::Pose origin_new;
-    origin_new.position.x = map.info.origin.position.x*cos(a) - map.info.origin.position.y*sin(a);
-    origin_new.position.y = map.info.origin.position.x*sin(a) + map.info.origin.position.y*cos(a);
-
-    // create empty rotated map extra large
-    vector<vector<signed char>> rt;
-    for (int i=0; i<2*map.info.height; ++i) {
-        vector<signed char> row(2*map.info.width, 100);
-        rt.push_back(row);
-    }
-
-    // rotate map
-    int i_new, j_new, width_new=0, height_new=0;
-    double x, y, x_new, y_new;
-    for (int i=0; i<map.info.height; ++i) {
-        for (int j=0; j<map.info.width; ++j) {
-            // rotate coordinates
-            x = double(j) * map.info.resolution + map.info.origin.position.x;
-            y = double(i) * map.info.resolution + map.info.origin.position.y;
-            x_new = x*cos(a) - y*sin(a);
-            y_new = x*sin(a) + y*cos(a);
-            j_new = int(round((x_new - origin_new.position.x) / map.info.resolution));
-            i_new = int(round((y_new - origin_new.position.y) / map.info.resolution));
-
-            // skip negative indexes
-            if (i_new >= rt.size()) {
-                continue;
-            }
-            if (j_new >= rt[i_new].size()) {
-                continue;
-            }
-
-            // assign grid cell value
-            rt[i_new][j_new] = map.data[i*map.info.width + j];
-
-            // measure maximum required size
-            if (rt[i_new][j_new] == 0) {
-                if (i_new > height_new)
-                    height_new = i_new;
-                if (j_new > width_new)
-                    width_new = j_new;
-            }
-        }
-    }
-
-    // truncate rotated map
-    rt.resize(height_new);
-    for (int i=0; i<rt.size(); ++i)
-        rt[i].resize(width_new);
-
-    // collapse map to one dimensional vector
-    vector<signed char> rt_col;
-    for (int i=0; i<rt.size(); ++i) {
-        for (int j=0; j<rt[i].size(); ++j) {
-            rt_col.push_back(rt[i][j]);
-        }
-    }
-
-    // assign map data
-    map.data = rt_col;
-
-    // update meta data
-    map.info.map_load_time = Time::now();
-    map.info.width = width_new;
-    map.info.height= height_new;
-    map.info.origin = origin_new;
-
-    return a;
-}
-
-/**
- * @brief Shift a map to be aligned with the grid, i.e., the origin should be an even number.
- * @param map The map to shift.
- */
-void translate (nav_msgs::OccupancyGrid& map)
-{
-    // compute required translation
-    translation.x = round(map.info.origin.position.x) - map.info.origin.position.x;
-    translation.y = round(map.info.origin.position.y) - map.info.origin.position.y;
-    ROS_DEBUG("Translate map by (%.2f,%.2f)...", translation.x, translation.y);
-
-    // translate origin
-    map.info.origin.position.x += translation.x;
-    map.info.origin.position.y += translation.y;
-
-    // update meta data
-    map.info.map_load_time = Time::now();
-}
-
-/**
- * @brief Decrease the resolution of a occupancy grid map.
- * @param map A reference to the occupancy grid map to downsample.
- */
-void downsample (nav_msgs::OccupancyGrid& map)
-{
-    // do not increase resolution
-    if (map.info.resolution >= resolution)
-        return;
-
-    // reduction factor
-    int f = int(round(resolution / map.info.resolution));
-
-    ROS_DEBUG("Downsample map by %d...", f);
-
-    // downsample map data
-    vector<signed char> lr;
-    for (int i=0; i+f<=map.info.height; i+=f) {
-        for (int j=0; j+f<=map.info.width; j+=f) {
-            // count frequency of map data values
-            vector<unsigned int> values(256, 0);
-            for (int m=i; m<i+f; ++m) {
-                for (int n=j; n<j+f; ++n) {
-                    values[map.data[m*map.info.width + n]]++;
-                }
-            }
-
-            // choose value with highest frequency
-            unsigned char value = 0;
-            unsigned int freq = 0;
-            for (int k=0; k<values.size(); ++k) {
-                if (values[k] > freq) {
-                    value = k;
-                    freq = values[k];
-                }
-            }
-
-            // push back most seen value
-            lr.push_back(value);
-        }
-    }
-    map.data = lr;
-
-    // update meta data
-    map.info.map_load_time = Time::now();
-    map.info.resolution = resolution;
-    map.info.width = int(floor(double(map.info.width) / double(f)));
-    map.info.height = int(floor(double(map.info.height) / double(f)));
-
-    // remove rows with obstacles only
-    for (int i=0; i<map.info.height; ++i) {
-        // count number of occupied cells in a row
-        int obst = 0;
-        for (int j=0; j<map.info.width; ++j) {
-            if (map.data[i*map.info.width + j] == 100) {
-                ++obst;
-            }
-        }
-
-        // remove row
-        if (obst == map.info.width) {
-            // delete grid cells
-            map.data.erase(map.data.begin() + i*map.info.width, map.data.begin() + (i+1)*map.info.width);
-
-            // update meta data
-            map.info.map_load_time = Time::now();
-            --map.info.height;
-            map.info.origin.position.y += map.info.resolution;
-
-            // stay in current row
-            --i;
-        }
-    }
-}
-
-/**
  * @brief Divide the area of the grid map equally among multiple CPSs.
  */
 void divide_area ()
 {
-    // initialize map
-    nav_msgs::OccupancyGrid gridmap = global_map;
+    NodeHandle nh;
 
-    // rotate map
-    double angle = rotate(gridmap);
+    // get map
+    cpswarm_msgs::GetMap gm;
+    gm.request.rotate = true; // align bottom edge of map horizontally
+    gm.request.translate = true; // make map origin even
+    gm.request.resolution = resolution; // downsample to given resolution
+    ServiceClient gm_cli = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
+    ROS_DEBUG("Wait for area/get_map service...");
+    gm_cli.waitForExistence();
+    ROS_DEBUG("area/get_map service available");
+    gm_cli.call(gm); // call service by area provider
+    // get result
+    nav_msgs::OccupancyGrid gridmap = gm.response.map;
+    double angle = gm.response.rotation;
+    geometry_msgs::Vector3 translation = gm.response.translation;
 
     if (visualize)
-        map_rot_pub.publish(gridmap);
-
-    // downsample resolution
-    if (gridmap.info.resolution < resolution) {
-        downsample(gridmap);
-    }
-
-    // shift map
-    translate(gridmap);
-
-    if (visualize)
-        map_ds_pub.publish(gridmap);
+        map_pub.publish(gridmap);
 
     // convert swarm pose to grid
     map<string, vector<int>> swarm_grid;

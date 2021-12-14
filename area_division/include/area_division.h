@@ -8,7 +8,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Vector3.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include <nav_msgs/GetMap.h>
+#include <cpswarm_msgs/GetMap.h>
 #include <cpswarm_msgs/AreaDivisionEvent.h>
 #include <cpswarm_msgs/GetDouble.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
@@ -52,11 +52,6 @@ Subscriber pose_sub;
 Subscriber swarm_sub;
 
 /**
- * @brief Subscriber to get grid map.
- */
-Subscriber map_sub;
-
-/**
  * @brief Subscriber to get area division requests from other CPSs.
  */
 Subscriber division_sub;
@@ -72,24 +67,14 @@ Publisher pos_pub;
 Publisher swarm_pub;
 
 /**
- * @brief Publisher to visualize the assigned area grid map.
+ * @brief Publisher to disseminate the divided area grid map.
  */
 Publisher area_pub;
 
 /**
- * @brief Publisher to visualize the rotated map.
+ * @brief Publisher to visualize the rotated, translated, and downsampled map that is used for the division.
  */
-Publisher map_rot_pub;
-
-/**
- * @brief Publisher to visualize the downsampled map.
- */
-Publisher map_ds_pub;
-
-/**
- * @brief Service client to get the angle which the area has to be rotated by.
- */
-ServiceClient rotater_cli;
+Publisher map_pub;
 
 /**
  * @brief ROS rate object for controlling loop rates.
@@ -140,16 +125,6 @@ geometry_msgs::Pose pose;
  * @brief Whether a valid position has been received.
  */
 bool pose_valid;
-
-/**
- * @brief The complete grid map.
- */
-nav_msgs::OccupancyGrid global_map;
-
-/**
- * @brief Whether a valid grid map has been received.
- */
-bool map_valid;
 
 /**
  * @brief The object encapsulating the area division optimization algorithm.
