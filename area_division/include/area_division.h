@@ -72,9 +72,14 @@ Publisher swarm_pub;
 Publisher area_pub;
 
 /**
- * @brief Publisher to visualize the rotated, translated, and downsampled map that is used for the division.
+ * @brief Publisher to visualize the rotated, translated, and downsampled global map that is used for the division.
  */
 Publisher map_pub;
+
+/**
+ * @brief Service to retrieve the divided map.
+ */
+ServiceServer map_srv;
 
 /**
  * @brief ROS rate object for controlling loop rates.
@@ -132,14 +137,25 @@ bool pose_valid;
 area_division* division;
 
 /**
- * @brief The translation by which the area has been shifted.
+ * @brief The gridmap of the global map.
  */
-geometry_msgs::Vector3 translation;
+nav_msgs::OccupancyGrid gridmap;
 
 /**
  * @brief The grid map underlying the area division will be downsampled to this resolution in meter / cell.
  */
 double resolution;
+
+/**
+ * @brief The angle by which the grid map has been rotated, radian, counter-clockwise, starting from the x-axis.
+ *
+ */
+double rotation;
+
+/**
+ * @brief The translation by which the area has been shifted.
+ */
+geometry_msgs::Vector3 translation;
 
 /**
  * @brief The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.

@@ -168,8 +168,8 @@ void init ()
     division_sub = nh.subscribe("bridge/events/area_division", queue_size, division_callback);
     pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/goal_position", queue_size, true);
     swarm_pub = nh.advertise<cpswarm_msgs::AreaDivisionEvent>("area_division", queue_size, true);
-    area_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/assigned", queue_size, true);
     if (visualize) {
+        area_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/assigned", queue_size, true);
         map_pub = nh.advertise<nav_msgs::OccupancyGrid>("area/unassigned", queue_size, true);
     }
 
@@ -215,11 +215,26 @@ void deinit ()
     swarm_pub.shutdown();
     area_pub.shutdown();
     map_pub.shutdown();
+    map_srv.shutdown();
 
     // destroy optimizer
     delete division;
 
     state = IDLE;
+}
+
+/**
+ * @brief Service to get the result of the area division.
+ * @param req Empty request.
+ * @param res The divided part of the grid map, assigned to this CPS together with the amount that the map has been rotated and translated.
+ * @return Whether the request succeeded.
+ */
+bool get_result(cpswarm_msgs::GetMap::Request &req, cpswarm_msgs::GetMap::Response &res)
+{
+    res.map = division->get_grid(gridmap, uuid);
+    res.rotation = rotation;
+    res.translation = translation;
+    return true;
 }
 
 /**
@@ -281,9 +296,9 @@ void divide_area ()
     ROS_DEBUG("area/get_map service available");
     gm_cli.call(gm); // call service by area provider
     // get result
-    nav_msgs::OccupancyGrid gridmap = gm.response.map;
-    double angle = gm.response.rotation;
-    geometry_msgs::Vector3 translation = gm.response.translation;
+    gridmap = gm.response.map;
+    rotation = gm.response.rotation;
+    translation = gm.response.translation;
 
     if (visualize)
         map_pub.publish(gridmap);
@@ -291,7 +306,7 @@ void divide_area ()
     // convert swarm pose to grid
     map<string, vector<int>> swarm_grid;
     for (auto cps : swarm_pose) {
-        geometry_msgs::Point rotated = rotate(cps.second.pose.position, angle);
+        geometry_msgs::Point rotated = rotate(cps.second.pose.position, rotation);
         rotated.x += translation.x;
         rotated.y += translation.y;
         vector<int> pos(2);
@@ -302,7 +317,7 @@ void divide_area ()
     }
 
     // add this robot to swarm grid
-    geometry_msgs::Point rotated = rotate(pose.position, angle);
+    geometry_msgs::Point rotated = rotate(pose.position, rotation);
     rotated.x += translation.x;
     rotated.y += translation.y;
     vector<int> pos(2);
@@ -319,7 +334,11 @@ void divide_area ()
     division->divide();
 
     // publish result
-    area_pub.publish(division->get_grid(gridmap, uuid));
+    if (visualize)
+        area_pub.publish(division->get_grid(gridmap, uuid));
+
+    // advertise service
+    map_srv = nh.advertiseService("area/get_divided_map", get_result);
 
     // wait a bit to avoid directly redividing again
     Time sleep_start = Time::now();
