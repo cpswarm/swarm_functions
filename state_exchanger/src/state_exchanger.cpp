@@ -65,8 +65,9 @@ int main (int argc, char **argv)
     state_valid = false;
 
     // publishers and subscribers
+    Subscriber state_subscriber;
     if (read_only == false)
-        Subscriber state_subscriber = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
+        state_subscriber = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
     Subscriber incoming_state_subscriber = nh.subscribe("bridge/events/state", queue_size, swarm_state_callback);
     Publisher outgoing_state_publisher;
     if (read_only == false)
