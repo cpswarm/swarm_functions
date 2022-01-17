@@ -26,6 +26,13 @@ public:
     bool operator== (const edge &e) const;
 
     /**
+     * @brief Compare this edge to another one.
+     * @param e The other edge to compare.
+     * @return True, if the cost of the first edge is lower than of the second edge. If both edges have the same cost, it differentiates between horizontal or vertical sweeping patterns (defined by first edge). If horizontal/vertical, true if the difference between the vertex indexes of the first edge is greater/lower or equal than of the second edge. If both edges have the same cost and vertex index difference, true if the vertex index of first edge is lower than of the second edge. False otherwise.
+     */
+    bool operator< (const edge &e) const;
+
+    /**
      * @brief The starting vertex of the edge.
      */
     int from;
@@ -55,7 +62,7 @@ struct compare_edge
      * @brief Compare two edge objects. Edges are compared in terms of cost, orientation, and the position.
      * @param a First edge.
      * @param b Second edge.
-     * @return True, if the cost of the first edge is lower than of the second edge. If both edges have the same cost, it differentiates between horizontal or vertical sweeping patterns. If horizontal/vertical, true if the difference between the vertex indexes of the first edge is greater/lower or equal than of the second edge. If both edges have the same cost and vertex index difference, true if the vertex index of first edge is lower than of the second edge. False otherwise.
+     * @return True, if the first edge is less than the second edge. False otherwise.
      */
     bool operator() (const edge& a, const edge& b) const;
 };

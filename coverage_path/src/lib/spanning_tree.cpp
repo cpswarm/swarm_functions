@@ -4,7 +4,7 @@ spanning_tree::spanning_tree()
 {
 }
 
-vector<edge> spanning_tree::get_mst_edges ()
+set<edge> spanning_tree::get_mst_edges ()
 {
     return mst_edges;
 }
@@ -108,7 +108,7 @@ void spanning_tree::construct ()
                 nodes[v] = s;
 
             // add edge to mst
-            mst_edges.push_back(edge);
+            mst_edges.insert(edge);
         }
 
         // remove edge from source tree

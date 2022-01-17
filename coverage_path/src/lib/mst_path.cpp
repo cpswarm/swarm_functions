@@ -213,14 +213,14 @@ void mst_path::initialize_map (geometry_msgs::Point origin, double rotation, dou
     ROS_DEBUG("Area size %.2fx%.2f origin (%.2f,%.2f)", width, height, origin.x, origin.y);
 }
 
-void mst_path::initialize_tree (vector<edge> mst)
+void mst_path::initialize_tree (set<edge> mst)
 {
     // remove edges not required by mst
     int cols = map.info.width;
     int alpha, vmax, vmin;
-    for (int i=0; i<mst.size(); i++) {
-        vmax = max(mst[i].from, mst[i].to);
-        vmin = min(mst[i].from, mst[i].to);
+    for (auto e : mst) {
+        vmax = max(e.from, e.to);
+        vmin = min(e.from, e.to);
 
         if (vmax - vmin == 1) {
             alpha = (4*vmin + 3) - 2 * (vmax % cols);

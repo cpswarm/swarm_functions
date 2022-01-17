@@ -27,9 +27,9 @@ public:
 
     /**
      * @brief Get the edges of the MST.
-     * @return A vector with all edges of the MST.
+     * @return A set with all edges of the MST.
      */
-    vector<edge> get_mst_edges ();
+    set<edge> get_mst_edges ();
 
     /**
      * @brief Get the generated MST for visualization.
@@ -79,7 +79,7 @@ private:
     /**
      * @brief Edges in Minimal-Spanning Tree.
      */
-    vector<edge> mst_edges;
+    set<edge> mst_edges;
 
     /**
      * @brief The grid map that needs to be covered by the MST.

@@ -49,7 +49,7 @@ public:
     geometry_msgs::Point get_waypoint (geometry_msgs::Point position, double tolerance);
 
     /**
-     * @brief Initialize the internal graph structure that represents the area division.
+     * @brief Initialize the internal graph structure that represents the area to cover.
      * @param graph  gridmap The grid map for which the paths are generated.
      * @param vertical Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
@@ -69,7 +69,7 @@ public:
      * @brief Remove edges of the graph that overlap with the tree.
      * @param mst The edges that define the tree.
      */
-    void initialize_tree (vector<edge> mst);
+    void initialize_tree (set<edge> mst);
 
     /**
      * @brief Remove waypoints that are within straight line segments of the path. Only keep turning points of the path.
