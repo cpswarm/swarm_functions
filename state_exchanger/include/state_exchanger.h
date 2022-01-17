@@ -3,7 +3,7 @@
 
 #include <map>
 #include <ros/ros.h>
-#include <smach_msgs/SmachContainerStatus.h>
+#include <flexbe_msgs/BEStatus.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
 #include <cpswarm_msgs/StateEvent.h>
 
@@ -33,11 +33,6 @@ bool state_valid;
  * @brief The state of all known swarm members.
  */
 map<string, state_t> swarm_state;
-
-/**
- * @brief The path of the smach state machine whose state shall be exchanged.
- */
-string sm_path;
 
 /**
  * @brief Whether to only listen or also send data.
