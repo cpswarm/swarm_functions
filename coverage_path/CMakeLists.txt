@@ -215,6 +215,10 @@ if(CATKIN_ENABLE_TESTING)
   if(TARGET test_edge)
     target_link_libraries(test_edge edge)
   endif()
+  catkin_add_gtest(test_spanning_tree test/test_spanning_tree.cpp)
+  if(TARGET test_spanning_tree)
+    target_link_libraries(test_spanning_tree spanning_tree edge ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests
