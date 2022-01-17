@@ -24,6 +24,7 @@ bool generate_path (geometry_msgs::Point start)
 
     // construct minimum spanning tree
     ROS_DEBUG("Construct minimum-spanning-tree...");
+    spanning_tree tree;
     tree.initialize_graph(area, vertical);
     tree.construct();
 
@@ -125,17 +126,6 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
 }
 
 /**
- * @brief Callback function to receive the grid map.
- * @param msg Grid map to be covered by this CPSs.
- */
-void area_callback (const nav_msgs::OccupancyGrid::ConstPtr& msg)
-{
-    area = *msg;
-    map_valid = true;
-    reconfigure = true;
-}
-
-/**
  * @brief Callback function to receive the states of the other CPSs.
  * @param msg UUIDs and states of the other CPSs.
  */
@@ -197,8 +187,6 @@ int main (int argc, char **argv)
     reconfigure = true;
 
     // read parameters
-    double loop_rate;
-    nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.5);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     nh.param(this_node::getName() + "/resolution", resolution, 1.0);
@@ -224,19 +212,6 @@ int main (int argc, char **argv)
         nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
         nh.getParam(this_node::getName() + "/states", behaviors);
         swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
-    }
-
-    // init loop rate
-    Rate rate(loop_rate);
-
-    // initialize flags
-    map_valid = false;
-
-    // init map
-    while (ok() && map_valid == false) {
-        ROS_DEBUG_ONCE("Waiting for grid map...");
-        rate.sleep();
-        spinOnce();
     }
 
     // provide coverage path services

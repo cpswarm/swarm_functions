@@ -52,21 +52,6 @@ Subscriber swarm_sub;
 ServiceClient area_getter;
 
 /**
- * @brief The grid map representing the environment to be covered.
- */
-nav_msgs::OccupancyGrid area;
-
-/**
- * @brief Whether a valid grid map has been received.
- */
-bool map_valid;
-
-/**
- * @brief The minimum-spanning-tree (MST) that defines the coverage path.
- */
-spanning_tree tree;
-
-/**
  * @brief The coverage path.
  */
 mst_path path;
