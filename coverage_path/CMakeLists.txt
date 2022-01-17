@@ -210,12 +210,11 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  #catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  #if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-  #  target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
-  #endif()
+  ## Test libraries
+  catkin_add_gtest(test_edge test/test_edge.cpp)
+  if(TARGET test_edge)
+    target_link_libraries(test_edge edge)
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests
