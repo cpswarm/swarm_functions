@@ -217,13 +217,10 @@ void mst_path::initialize_tree (set<edge> mst)
 {
     // remove edges not required by mst
     int cols = map.info.width;
-    int alpha, vmax, vmin;
+    int alpha;
     for (auto e : mst) {
-        vmax = max(e.from, e.to);
-        vmin = min(e.from, e.to);
-
-        if (vmax - vmin == 1) {
-            alpha = (4*vmin + 3) - 2 * (vmax % cols);
+        if (e.vhigh - e.vlow == 1) {
+            alpha = (4*e.vlow + 3) - 2 * (e.vhigh % cols);
             remove_edge(edge(alpha, alpha + 2*cols, 1));
             remove_edge(edge(alpha + 2*cols, alpha, 1));
             remove_edge(edge(alpha+1, alpha+1 + 2*cols, 1));
@@ -231,7 +228,7 @@ void mst_path::initialize_tree (set<edge> mst)
 
         }
         else{
-            alpha = (4*vmin + 2*cols) - 2 * (vmax % cols);
+            alpha = (4*e.vlow + 2*cols) - 2 * (e.vhigh % cols);
             remove_edge(edge(alpha, alpha+1, 1));
             remove_edge(edge(alpha+1, alpha, 1));
             remove_edge(edge(alpha + 2*cols, alpha+1 + 2*cols, 1));
@@ -303,7 +300,7 @@ void mst_path::remove_edge (edge e)
 {
     if (edges.count(e) > 0) {
         edges.erase(e);
-        nodes[e.from].erase(e.to);
-        nodes[e.to].erase(e.from);
+        nodes[e.vlow].erase(e.vhigh);
+        nodes[e.vhigh].erase(e.vlow);
     }
 }

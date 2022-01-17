@@ -4,19 +4,19 @@
 using namespace std;
 
 /**
- * @brief A class for representing edges.
+ * @brief A class for representing undirected edges.
  */
 class edge
 {
 public:
     /**
      * @brief Constructor that initializes the private member variables.
-     * @param f The starting vertex.
-     * @param t The ending vertex.
+     * @param v1 The first vertex.
+     * @param v2 The second vertex.
      * @param c The cost of the edge.
      * @param v Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      */
-    edge(int f, int t, int c, bool v = false);
+    edge(int v1, int v2, int c, bool v = false);
 
     /**
      * @brief Compare this edge to another one.
@@ -33,14 +33,14 @@ public:
     bool operator< (const edge &e) const;
 
     /**
-     * @brief The starting vertex of the edge.
+     * @brief The lower vertex of the edge.
      */
-    int from;
+    int vlow;
 
     /**
-     * @brief The ending vertex of the edge.
+     * @brief The higher vertex of the edge.
      */
-    int to;
+    int vhigh;
 
     /**
      * @brief The cost of the edge, i.e., length.

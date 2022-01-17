@@ -17,12 +17,12 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
 
     for (auto e : mst_edges) {
         // from
-        pose.position.x = e.from % map.info.width * map.info.resolution + map.info.origin.position.x;
-        pose.position.y = e.from / map.info.width * map.info.resolution + map.info.origin.position.y;
+        pose.position.x = e.vlow % map.info.width * map.info.resolution + map.info.origin.position.x;
+        pose.position.y = e.vlow / map.info.width * map.info.resolution + map.info.origin.position.y;
 
         // orientation
-        double dx = e.to % map.info.width * map.info.resolution + map.info.origin.position.x - pose.position.x;
-        double dy = e.to / map.info.width * map.info.resolution + map.info.origin.position.y - pose.position.y;
+        double dx = e.vhigh % map.info.width * map.info.resolution + map.info.origin.position.x - pose.position.x;
+        double dy = e.vhigh / map.info.width * map.info.resolution + map.info.origin.position.y - pose.position.y;
         tf2::Quaternion direction;
         direction.setRPY(0, 0, atan2(dy, dx));
         pose.orientation = tf2::toMsg(direction);
@@ -99,10 +99,10 @@ void spanning_tree::construct ()
         edge edge = edges.top();
 
         // edge connects different sets
-        if (nodes[edge.from] != nodes[edge.to]) {
+        if (nodes[edge.vlow] != nodes[edge.vhigh]) {
             // combine the two sets
-            unordered_set<int> s(nodes[edge.from].begin(), nodes[edge.from].end());
-            for (auto v : nodes[edge.to])
+            unordered_set<int> s(nodes[edge.vlow].begin(), nodes[edge.vlow].end());
+            for (auto v : nodes[edge.vhigh])
                 s.insert(v);
             for (auto v : s)
                 nodes[v] = s;
