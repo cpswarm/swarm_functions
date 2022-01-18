@@ -223,6 +223,13 @@ if(CATKIN_ENABLE_TESTING)
   if(TARGET test_mst_path)
     target_link_libraries(test_mst_path mst_path spanning_tree edge ${catkin_LIBRARIES})
   endif()
+
+  ## Test ROS interface (integration with area provider)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_coverage_path test/test_coverage_path.test test/test_coverage_path.cpp)
+  if(TARGET test_coverage_path)
+    target_link_libraries(test_coverage_path mst_path spanning_tree ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests

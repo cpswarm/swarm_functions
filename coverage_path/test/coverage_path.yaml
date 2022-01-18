@@ -1,0 +1,5 @@
+resolution:     1.0   # The grid map underlying the path planning will be downsampled to this resolution in meter / cell.
+divide_area:    false # Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map. If true, downsampling is not available.
+vertical:       true  # Whether the sweeping pattern is vertical or horizontal.
+turning_points: true  # Whether there are only waypoints at turning points of the path or also waypoints regularly spaced on straight line segments of the path.
+swarm_path:     false # Whether to regenerate the path when new CPSs join or leave the swarm.
