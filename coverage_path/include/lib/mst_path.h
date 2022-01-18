@@ -44,7 +44,7 @@ public:
      * @brief Get the current waypoint and possibly select next waypoint, if close enough.
      * @param position The current position of the CPS.
      * @param tolerance The distance to the current waypoint below which the next waypoint is selected.
-     * @return A waypoint for the CPS to navigate to.
+     * @return A waypoint for the CPS to navigate to. An empty point if the waypoint is outside of the path.
      */
     geometry_msgs::Point get_waypoint (geometry_msgs::Point position, double tolerance);
 

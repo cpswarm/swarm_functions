@@ -13,6 +13,10 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     geometry_msgs::Point wp;
     wp.x = (start.x - origin.x) * cos(rotation) - (start.y - origin.y) * sin(rotation);
     wp.y = (start.x - origin.x) * sin(rotation) + (start.y - origin.y) * cos(rotation);
+    if (wp.x / map.info.resolution > map.info.width || wp.y / map.info.resolution > map.info.height) {
+        ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", wp.x, wp.y);
+        return false;
+    }
     path.push_back(wp);
     int current = 2 * round(wp.y / map.info.resolution) * 2*map.info.width + 2 * round(wp.x / map.info.resolution);
 
@@ -26,11 +30,11 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     int offset;
 
     // possible movements
-    vector<int> movement;
-    movement.push_back(2*map.info.width);
-    movement.push_back(-1);
-    movement.push_back(-2*map.info.width);
-    movement.push_back(1);
+    vector<int> movement;                  // priority:
+    movement.push_back(2*map.info.width);  // up
+    movement.push_back(-1);                // left
+    movement.push_back(-2*map.info.width); // down
+    movement.push_back(1);                 // right
 
     // valid movement
     bool found = false;
