@@ -14,30 +14,42 @@ bool edge::operator== (const edge &e) const
 bool edge::operator< (const edge &e) const
 {
     if (cost == e.cost) {
-        // third, edges on the top/right
+        // third, lower edges
         if (vhigh - vlow == e.vhigh - e.vlow)
             return vlow < e.vlow;
 
-        // second, horizontal/vertical edges
-        else {
-            if (vertical)
-                return vhigh - vlow <= e.vhigh - e.vlow;
-            else
-                return vhigh - vlow > e.vhigh - e.vlow;
-        }
+        // second, shorter edges
+        else
+            return vhigh - vlow < e.vhigh - e.vlow;
     }
 
-    // first, edges with lowest cost
+    // first, edges with lower cost
     else
         return cost < e.cost;
 }
 
 bool compare_edge::operator() (const edge& a, const edge& b) const
 {
-    return a < b;
+    if (a.cost == b.cost) {
+        // third, lower edges
+        if (a.vhigh - a.vlow == b.vhigh - b.vlow)
+            return a.vlow > b.vlow;
+
+        // second, horizontal/vertical edges
+        else {
+            if (a.vertical || b.vertical)
+                return a.vhigh - a.vlow < b.vhigh - b.vlow;
+            else
+                return a.vhigh - a.vlow > b.vhigh - b.vlow;
+        }
+    }
+
+    // first, edges with lower cost
+    else
+        return a.cost > b.cost;
 }
 
 size_t hash_edge::operator() (const edge& e) const
 {
-    return hash<string>()(to_string(e.cost) + to_string(e.vlow) + to_string(e.vhigh));
+    return hash<string>()(to_string(e.vlow) + to_string(e.vhigh) + to_string(e.cost));
 }

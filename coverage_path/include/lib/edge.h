@@ -28,7 +28,7 @@ public:
     /**
      * @brief Compare this edge to another one.
      * @param e The other edge to compare.
-     * @return True, if the cost of the first edge is lower than of the second edge. If both edges have the same cost, it differentiates between horizontal or vertical sweeping patterns (defined by first edge). If horizontal/vertical, true if the difference between the vertex indexes of the first edge is greater/lower or equal than of the second edge. If both edges have the same cost and vertex index difference, true if the vertex index of first edge is lower than of the second edge. False otherwise.
+     * @return True, if the cost of the first edge is lower than of the second edge. If both edges have the same cost, true if the difference between the vertex indexes of the first edge is lower than of the second edge. If both edges have the same cost and vertex index difference, true if the vertex indexes of the first edge are lower than of the second edge. False otherwise.
      */
     bool operator< (const edge &e) const;
 
@@ -43,7 +43,7 @@ public:
     int vhigh;
 
     /**
-     * @brief The cost of the edge, i.e., length.
+     * @brief The cost of the edge, e.g., length.
      */
     double cost;
 
@@ -54,7 +54,7 @@ public:
 };
 
 /**
- * @brief A struct that provides the comparison of edge objects. It allows sorting of edges for priority queues. The sorting follows three rules: First, edges are sorted by ascending cost. Edges with the same cost are sorted preferring horizontal/vertical edges. Edges with same cost and orientation are sorted ascending by vertical/horizontal position.
+ * @brief A struct that provides the comparison of edge objects. It allows sorting of edges for priority queues. The sorting follows three rules: First, edges are sorted by ascending cost. Edges with the same cost are sorted preferring horizontal/vertical edges. Edges with same cost and orientation are sorted ascending by index position, i.e., first bottom to top, then left to right.
  */
 struct compare_edge
 {
@@ -62,7 +62,7 @@ struct compare_edge
      * @brief Compare two edge objects. Edges are compared in terms of cost, orientation, and the position.
      * @param a First edge.
      * @param b Second edge.
-     * @return True, if the first edge is less than the second edge. False otherwise.
+     * @return True, if the first edge is greater than the second edge. False otherwise.
      */
     bool operator() (const edge& a, const edge& b) const;
 };

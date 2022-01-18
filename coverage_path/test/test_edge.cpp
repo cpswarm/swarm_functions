@@ -32,6 +32,29 @@ TEST (UnitTestEdge, testMembers)
 
     // test equality
     EXPECT_TRUE(e1 == e2);
+
+    // test less than
+
+    // test equal edges
+    EXPECT_FALSE(e1 < e2);
+
+    // test different costs
+    e1.cost = 3;
+    EXPECT_FALSE(e1 < e2);
+    e2.cost = 4;
+    EXPECT_TRUE(e1 < e2);
+
+    // test different edge lengths
+    e1.cost = 2;
+    e2.cost = 2;
+    e1.vhigh = 2;
+    EXPECT_FALSE(e1 < e2);
+    e2.vhigh = 3;
+    EXPECT_TRUE(e1 < e2);
+
+    // test different first index
+    e2.vlow = 1;
+    EXPECT_TRUE(e1 < e2);
 }
 
 /**
@@ -41,11 +64,6 @@ TEST (UnitTestEdge, testComparison)
 {
     // comparison object
     compare_edge comp;
-    // True, if the cost of the first edge is lower than of the second edge.
-    // If both edges have the same cost, it differentiates between horizontal or vertical sweeping patterns.
-    //   If horizontal/vertical, true if the difference between the vertex indexes of the first edge is greater/lower or equal than of the second edge.
-    //   If both edges have the same cost and vertex index difference, true if the vertex index of first edge is lower than of the second edge.
-    // False otherwise.
 
     // test equal edges
     edge e1(0, 1, 2);
@@ -54,9 +72,9 @@ TEST (UnitTestEdge, testComparison)
 
     // test different costs
     e1.cost = 3;
-    EXPECT_FALSE(comp(e1, e2));
-    e2.cost = 4;
     EXPECT_TRUE(comp(e1, e2));
+    e2.cost = 4;
+    EXPECT_FALSE(comp(e1, e2));
 
     // test different edge lengths (horizontal)
     e1.cost = 2;
@@ -76,7 +94,7 @@ TEST (UnitTestEdge, testComparison)
 
     // test different first index
     e2.vlow = 1;
-    EXPECT_TRUE(comp(e1, e2));
+    EXPECT_FALSE(comp(e1, e2));
 }
 
 /**
@@ -94,7 +112,7 @@ TEST (UnitTestEdge, testHashing)
     edge e1(0, 1, 2);
 
     // test if hashed correctly
-    EXPECT_TRUE(e_hash(e1) == str_hash("201"));
+    EXPECT_TRUE(e_hash(e1) == str_hash("012.000000"));
 }
 
 /**
