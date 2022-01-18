@@ -56,7 +56,7 @@ private:
      * @param to The ending vertex.
      * @param cost The cost of the edge.
      */
-    void add_edge (int from, int to, int cost);
+    void add_edge (int from, int to, double cost);
 
     /**
      * @brief Check whether two vertices are in different sets.

@@ -16,7 +16,7 @@ public:
      * @param c The cost of the edge.
      * @param v Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      */
-    edge(int v1, int v2, int c, bool v = false);
+    edge(int v1, int v2, double c, bool v = false);
 
     /**
      * @brief Compare this edge to another one.
@@ -45,7 +45,7 @@ public:
     /**
      * @brief The cost of the edge, i.e., length.
      */
-    int cost;
+    double cost;
 
     /**
      * @brief Whether the sweeping pattern is vertical or horizontal.

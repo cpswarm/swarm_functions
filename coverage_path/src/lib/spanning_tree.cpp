@@ -73,16 +73,16 @@ void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vert
                 // check moore neighborhood for connected vertices
                 if (!connect4) {
                     if (i>0 && j>0 && map.data[(i-1)*cols+j-1] == 0) {
-                        add_edge(i*cols+j, (i-1)*cols+j-1, 1);
+                        add_edge(i*cols+j, (i-1)*cols+j-1, sqrt(2));
                     }
                     if (i<rows-1 && j<cols-1 && map.data[(i+1)*cols+j+1] == 0) {
-                        add_edge(i*cols+j, (i+1)*cols+j+1, 1);
+                        add_edge(i*cols+j, (i+1)*cols+j+1, sqrt(2));
                     }
                     if (i<rows-1 && j>0 && map.data[(i+1)*cols+j-1] == 0) {
-                        add_edge(i*cols+j, (i+1)*cols+j-1, 1);
+                        add_edge(i*cols+j, (i+1)*cols+j-1, sqrt(2));
                     }
                     if (i>0 && j<cols-1 && map.data[(i-1)*cols+j+1] == 0) {
-                        add_edge(i*cols+j, (i-1)*cols+j+1, 1);
+                        add_edge(i*cols+j, (i-1)*cols+j+1, sqrt(2));
                     }
                 }
             }
@@ -116,7 +116,7 @@ void spanning_tree::construct ()
     }
 }
 
-void spanning_tree::add_edge (int from, int to, int cost)
+void spanning_tree::add_edge (int from, int to, double cost)
 {
     // add edge to priority queue
     edges.push(edge(from, to, cost, vertical));

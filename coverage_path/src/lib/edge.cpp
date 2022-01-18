@@ -1,6 +1,6 @@
 #include "lib/spanning_tree.h"
 
-edge::edge (int v1, int v2, int c, bool v) : cost(c), vertical(v)
+edge::edge (int v1, int v2, double c, bool v) : cost(c), vertical(v)
 {
     vlow = min(v1, v2);
     vhigh = max(v1, v2);

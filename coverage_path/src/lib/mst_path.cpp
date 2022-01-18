@@ -181,16 +181,16 @@ void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical,
                 // check moore neighborhood for connected vertices
                 if (!connect4) {
                     if (i>0 && j>0 && inflated[(i-1)*2*cols+j-1]) {
-                        add_edge(i*2*cols+j, (i-1)*2*cols+j-1, 1);
+                        add_edge(i*2*cols+j, (i-1)*2*cols+j-1, sqrt(2));
                     }
                     if (i<2*rows-1 && j<2*cols-1 && inflated[(i+1)*2*cols+j+1]) {
-                        add_edge(i*2*cols+j, (i+1)*2*cols+j+1, 1);
+                        add_edge(i*2*cols+j, (i+1)*2*cols+j+1, sqrt(2));
                     }
                     if (i<2*rows-1 && j>0 && inflated[(i+1)*2*cols+j-1]) {
-                        add_edge(i*2*cols+j, (i+1)*2*cols+j-1, 1);
+                        add_edge(i*2*cols+j, (i+1)*2*cols+j-1, sqrt(2));
                     }
                     if (i>0 && j<2*cols-1 && inflated[(i-1)*2*cols+j+1]) {
-                        add_edge(i*2*cols+j, (i-1)*2*cols+j+1, 1);
+                        add_edge(i*2*cols+j, (i-1)*2*cols+j+1, sqrt(2));
                     }
                 }
             }
@@ -263,7 +263,7 @@ bool mst_path::valid ()
     return 0 <= wp && wp < path.size();
 }
 
-void mst_path::add_edge (int from, int to, int cost)
+void mst_path::add_edge (int from, int to, double cost)
 {
     // add edge to priority queue
     edge e(from,to,cost,vertical);

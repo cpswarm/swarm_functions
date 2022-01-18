@@ -89,7 +89,7 @@ private:
      * @param to The ending vertex.
      * @param cost The cost of the edge.
      */
-    void add_edge(int from, int to, int cost);
+    void add_edge(int from, int to, double cost);
 
     /**
      * @brief Calculate the distance between two points.
