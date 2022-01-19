@@ -48,13 +48,14 @@ TEST (UnitTestMstPath, testWaypoints)
 
     // test waypoints
     geometry_msgs::Point pos = start;
-    geometry_msgs::Point wp = path.get_waypoint(pos, 0);
+    geometry_msgs::Point wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
+    pos.x += 0.25;
+    pos.y += 0.25;
     EXPECT_FLOAT_EQ(wp.x, pos.x);
     EXPECT_FLOAT_EQ(wp.y, pos.y);
     EXPECT_FLOAT_EQ(wp.z, pos.z);
-    pos.x -= 0.25; // not quite sure why signs don't match
-    pos.y += 0.25;
+    pos.x -= 0.5;
     wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
     EXPECT_FLOAT_EQ(wp.x, pos.x);
@@ -129,13 +130,8 @@ TEST (UnitTestMstPath, testWaypoints)
     EXPECT_FLOAT_EQ(wp.x, pos.x);
     EXPECT_FLOAT_EQ(wp.y, pos.y);
     EXPECT_FLOAT_EQ(wp.z, pos.z);
-    pos.x = -13.25; // not sure why this exact value
-    wp = path.get_waypoint(pos, 0.00001);
-    ASSERT_TRUE(path.valid());
-    EXPECT_FLOAT_EQ(wp.x, pos.x);
-    EXPECT_FLOAT_EQ(wp.y, pos.y);
-    EXPECT_FLOAT_EQ(wp.z, pos.z);
-    pos = start;
+    pos.x = start.x + 0.25;
+    pos.y = start.y + 0.25;
     wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
     EXPECT_FLOAT_EQ(wp.x, pos.x);
@@ -155,7 +151,7 @@ TEST (UnitTestMstPath, testEquality)
 
     // create an empty gridmap for testing
     nav_msgs::OccupancyGrid grid;
-    grid.info.resolution = 0.1;
+    grid.info.resolution = 1;
     grid.info.width = 10;
     grid.info.height = 15;
     grid.info.origin.position.x = -15;
@@ -186,6 +182,8 @@ TEST (UnitTestMstPath, testEquality)
 
     // test if waypoints match path
     geometry_msgs::Point wp = start;
+    wp.x += 0.25;
+    wp.y += 0.25;
     for (auto p : nav_path.poses) {
         // valid current waypoint
         ASSERT_TRUE(path.valid());

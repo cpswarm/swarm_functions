@@ -107,6 +107,13 @@ private:
     geometry_msgs::Point get_wp (int offset=0);
 
     /**
+     * @brief Convert an grid map index to a real world position.
+     * @param index The index of the grid cell in the map.
+     * @return The coordinates of the grid cell in meters.
+     */
+    geometry_msgs::Point idx2wp (int index);
+
+    /**
      * @brief Remove an edge from the tree graph.
      * @param e The edge to remove.
      */

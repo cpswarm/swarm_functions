@@ -83,7 +83,7 @@ bool generate_path(const cpswarm_msgs::PathGenerationGoal::ConstPtr& goal, Gener
  */
 bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res)
 {
-    // compute new path if area map has changed
+    // compute new path if swarm has changed
     if (reconfigure) {
         if (generate_path(req.start.pose.position) == false)
             return false;
@@ -103,7 +103,7 @@ bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res
  */
 bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWaypoint::Response &res)
 {
-    // compute new path if area map has changed
+    // compute new path if swarm has changed
     if (reconfigure) {
         if (generate_path(req.position) == false)
             return false;

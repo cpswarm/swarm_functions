@@ -10,15 +10,17 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     this->wp = 0;
 
     // starting vertex
-    geometry_msgs::Point wp;
-    wp.x = (start.x - origin.x) * cos(rotation) - (start.y - origin.y) * sin(rotation);
-    wp.y = (start.x - origin.x) * sin(rotation) + (start.y - origin.y) * cos(rotation);
-    if (wp.x / map.info.resolution > map.info.width || wp.y / map.info.resolution > map.info.height) {
-        ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", wp.x, wp.y);
+    // rotate and translate
+    geometry_msgs::Point start_rt;
+    start_rt.x = (start.x - origin.x) * cos(rotation) - (start.y - origin.y) * sin(rotation);
+    start_rt.y = (start.x - origin.x) * sin(rotation) + (start.y - origin.y) * cos(rotation);
+    if (start_rt.x / map.info.resolution > map.info.width || start_rt.y / map.info.resolution > map.info.height) {
+        ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", start_rt.x, start_rt.y);
         return false;
     }
-    path.push_back(wp);
-    int current = 2 * round(wp.y / map.info.resolution) * 2*map.info.width + 2 * round(wp.x / map.info.resolution);
+    // select closest vertex
+    int current = 2 * round(start_rt.y / map.info.resolution) * 2*map.info.width + 2 * round(start_rt.x / map.info.resolution);
+    path.push_back(idx2wp(current));
 
     // visited vertices
     unordered_set<int> removed;
@@ -81,23 +83,12 @@ bool mst_path::generate_path (geometry_msgs::Point start)
         nodes[current].erase(previous);
         nodes[previous].erase(current);
 
-        // convert index to relative waypoint position on map
-        wp.x = (current % (2*map.info.width)) / 2.0 * map.info.resolution;
-        wp.y = (current / (2*map.info.width)) / 2.0 * map.info.resolution;
-
-        // shift waypoint to center path on map
-        double width_path = (round(width / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
-        double height_path = (round(height / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
-        wp.x += (width - width_path) / 2.0;
-        wp.y += (height - height_path) / 2.0;
-
         // add vertex to path
-        path.push_back(wp);
+        path.push_back(idx2wp(current));
     } while (found);
 
     // final waypoint
-    wp = path.front();
-    path.push_back(wp);
+    path.push_back(path.front());
 
     return true;
 }
@@ -296,6 +287,23 @@ geometry_msgs::Point mst_path::get_wp (int offset)
         waypoint.x += origin.x;
         waypoint.y += origin.y;
     }
+
+    return waypoint;
+}
+
+geometry_msgs::Point mst_path::idx2wp (int index)
+{
+    geometry_msgs::Point waypoint;
+
+    // convert index to relative waypoint position on map
+    waypoint.x = (index % (2*map.info.width)) / 2.0 * map.info.resolution;
+    waypoint.y = (index / (2*map.info.width)) / 2.0 * map.info.resolution;
+
+    // shift waypoint to center path on map
+    double width_path = (round(width / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
+    double height_path = (round(height / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
+    waypoint.x += (width - width_path) / 2.0;
+    waypoint.y += (height - height_path) / 2.0;
 
     return waypoint;
 }
