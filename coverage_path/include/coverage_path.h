@@ -47,11 +47,6 @@ Publisher mst_publisher;
 Subscriber swarm_sub;
 
 /**
- * @brief Service client to get the area to cover.
- */
-ServiceClient area_getter;
-
-/**
  * @brief The coverage path.
  */
 mst_path path;

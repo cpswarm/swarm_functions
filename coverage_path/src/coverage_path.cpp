@@ -5,8 +5,10 @@
  * @param start The starting position of the path.
  * @return Whether the path has been generated successfully.
  */
-bool generate_path (geometry_msgs::Point start)
+bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Point>* roi = nullptr)
 {
+    NodeHandle nh;
+
     ROS_DEBUG("Starting at (%.2f,%.2f)", start.x, start.y);
 
     // get area to cover
@@ -14,6 +16,19 @@ bool generate_path (geometry_msgs::Point start)
     get_map.request.rotate = true;
     get_map.request.translate = true;
     get_map.request.resolution = resolution;
+    ServiceClient area_getter;
+    // get a roi
+    if (roi != nullptr && roi->size() > 2) {
+        get_map.request.coords = *roi;
+        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("rois/get_map");
+    }
+    // get area divided among swarm
+    else if (divide_area)
+        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_divided_map");
+    // get complete area
+    else
+        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
+    area_getter.waitForExistence();
     if (area_getter.call(get_map) == false) {
         ROS_ERROR("Failed to get area coordinates!");
         return false;
@@ -56,9 +71,9 @@ bool generate_path (geometry_msgs::Point start)
  * @param goal An empty action server goal.
  * @param as The action server object.
  */
-bool generate_path(const cpswarm_msgs::PathGenerationGoal::ConstPtr& goal, GenerationAction* as)
+bool generate_path_callback (const cpswarm_msgs::PathGenerationGoal::ConstPtr& goal, GenerationAction* as)
 {
-    bool success = generate_path(goal->start);
+    bool success = generate_path(goal->start, &(goal->area));
 
     if (as->isPreemptRequested()) {
         as->setPreempted();
@@ -195,29 +210,26 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/vertical", vertical, false);
     nh.param(this_node::getName() + "/turning_points", turning_points, false);
 
-    // publishers, subscribers, and service clients
+    // publishers for introspection
     if (visualize) {
         path_publisher = nh.advertise<nav_msgs::Path>("coverage_path/path", queue_size, true);
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
         mst_publisher = nh.advertise<geometry_msgs::PoseArray>("coverage_path/mst", queue_size, true);
     }
+
+    // subscribers for swarm info
     if (divide_area) {
-        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_divided_map");
         nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
         nh.getParam(this_node::getName() + "/states", behaviors);
         swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
     }
-    else{
-        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
-    }
-    area_getter.waitForExistence();
 
     // provide coverage path services
     ServiceServer path_service = nh.advertiseService("coverage_path/path", get_path);
     ServiceServer wp_service = nh.advertiseService("coverage_path/waypoint", get_waypoint);
 
     // provide coverage path actions
-    GenerationAction generation_action(nh, "coverage_path/generate", boost::bind(&generate_path, _1, &generation_action), false);
+    GenerationAction generation_action(nh, "coverage_path/generate", boost::bind(&generate_path_callback, _1, &generation_action), false);
     generation_action.start();
 
     ROS_INFO("Path generation action server available");
