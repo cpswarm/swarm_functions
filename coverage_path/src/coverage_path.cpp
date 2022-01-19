@@ -194,7 +194,6 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/divide_area", divide_area, false);
     nh.param(this_node::getName() + "/vertical", vertical, false);
     nh.param(this_node::getName() + "/turning_points", turning_points, false);
-    nh.param(this_node::getName() + "/swarm_path", swarm_path, false);
 
     // publishers, subscribers, and service clients
     if (visualize) {
@@ -202,17 +201,16 @@ int main (int argc, char **argv)
         wp_publisher = nh.advertise<geometry_msgs::PointStamped>("coverage_path/waypoint", queue_size, true);
         mst_publisher = nh.advertise<geometry_msgs::PoseArray>("coverage_path/mst", queue_size, true);
     }
-    if (divide_area)
+    if (divide_area) {
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_divided_map");
-    else{
-        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
-    }
-    area_getter.waitForExistence();
-    if (swarm_path) {
         nh.param(this_node::getName() + "/swarm_timeout", swarm_timeout, 5.0);
         nh.getParam(this_node::getName() + "/states", behaviors);
         swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
     }
+    else{
+        area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
+    }
+    area_getter.waitForExistence();
 
     // provide coverage path services
     ServiceServer path_service = nh.advertiseService("coverage_path/path", get_path);

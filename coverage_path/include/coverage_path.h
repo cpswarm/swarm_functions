@@ -72,7 +72,7 @@ double resolution;
 bool visualize;
 
 /**
- * @brief Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map.
+ * @brief Whether to divide the area among the CPSs in the swarm before generating the path. Joining or leaving swarm members will trigger regeneration of the path.
  */
 bool divide_area;
 
@@ -85,11 +85,6 @@ bool vertical;
  * @brief Whether there are only waypoints at turning points of the path or also waypoints regularly spaced on straight line segments of the path.
  */
 bool turning_points;
-
-/**
- * @brief Whether to regnerate the path when new CPSs join or leave the swarm.
- */
-bool swarm_path;
 
 /**
  * @brief The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.
