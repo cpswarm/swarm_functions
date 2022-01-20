@@ -132,7 +132,7 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
     if (visualize) {
         geometry_msgs::PointStamped wp;
         wp.header.stamp = Time::now();
-        wp.header.frame_id = "local_origin_ned";
+        wp.header.frame_id = "map";
         wp.point = res.point;
         wp_publisher.publish(wp);
     }

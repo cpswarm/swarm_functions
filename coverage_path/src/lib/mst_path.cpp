@@ -113,7 +113,7 @@ nav_msgs::Path mst_path::get_path ()
     }
     nav_path.poses = poses;
     nav_path.header.stamp = Time::now();
-    nav_path.header.frame_id = "local_origin_ned";
+    nav_path.header.frame_id = "map";
     return nav_path;
 }
 

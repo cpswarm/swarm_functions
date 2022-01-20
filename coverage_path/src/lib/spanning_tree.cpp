@@ -32,7 +32,7 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
 
     path.poses = poses;
     path.header.stamp = Time::now();
-    path.header.frame_id = "local_origin_ned";
+    path.header.frame_id = "map";
     return path;
 }
 
