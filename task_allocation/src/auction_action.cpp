@@ -96,7 +96,7 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
     if (winner.compare("") != 0) {
         cpswarm_msgs::TaskAllocatedEvent allocation;
         allocation.header.stamp = Time::now();
-        allocation.header.frame_id = "local_origin_ned";
+        allocation.header.frame_id = "map";
         allocation.swarmio.name = "cps_selected";
         allocation.task_id = task_id;
         allocation.cps_id = winner;

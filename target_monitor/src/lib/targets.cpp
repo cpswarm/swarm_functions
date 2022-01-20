@@ -83,7 +83,7 @@ void targets::update (geometry_msgs::Pose pose)
             cpswarm_msgs::TargetHelp target;
             geometry_msgs::PoseStamped ps;
             ps.pose = t.second->get_pose();
-            ps.header.frame_id = "local_origin_ned";
+            ps.header.frame_id = "map";
             target.pose = ps;
             target.header.stamp = Time::now();
             target.id = t.first;
@@ -178,7 +178,7 @@ void targets::publish_event (string event, int id)
     geometry_msgs::PoseStamped ps;
     ps.pose = target_map[id]->get_pose();
     ps.header.stamp = Time::now();
-    ps.header.frame_id = "local_origin_ned";
+    ps.header.frame_id = "map";
     target.pose = ps;
     target.header.stamp = Time::now();
     target.swarmio.name = event;

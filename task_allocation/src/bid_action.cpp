@@ -91,7 +91,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     // create bid message
     cpswarm_msgs::TaskAllocationEvent task_allocation;
     task_allocation.header.stamp = Time::now();
-    task_allocation.header.frame_id = "local_origin_ned";
+    task_allocation.header.frame_id = "map";
     task_allocation.swarmio.name = "cps_selection";
     task_allocation.swarmio.node = goal->auctioneer;
     task_allocation.id = task_id;

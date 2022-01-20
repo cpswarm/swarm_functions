@@ -248,7 +248,7 @@ void sync ()
         event.header.stamp = Time::now();
         event.swarmio.name = "area_division";
         geometry_msgs::PoseStamped ps;
-        ps.header.frame_id = "local_origin_ned";
+        ps.header.frame_id = "map";
         ps.pose = pose;
         event.pose = ps;
         swarm_pub.publish(event);
