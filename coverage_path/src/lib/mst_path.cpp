@@ -12,8 +12,8 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     // rotate and translate
     geometry_msgs::Point start_rt;
-    start_rt.x = (start.x - origin.x) * cos(rotation) - (start.y - origin.y) * sin(rotation);
-    start_rt.y = (start.x - origin.x) * sin(rotation) + (start.y - origin.y) * cos(rotation);
+    start_rt.x = start.x * cos(rotation) - start.y * sin(rotation) - origin.x;
+    start_rt.y = start.x * sin(rotation) + start.y * cos(rotation) - origin.y;
     if (start_rt.x / map.info.resolution > map.info.width || start_rt.y / map.info.resolution > map.info.height) {
         ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", start_rt.x, start_rt.y);
         return false;
@@ -21,6 +21,8 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // select closest vertex
     int current = 2 * round(start_rt.y / map.info.resolution) * 2*map.info.width + 2 * round(start_rt.x / map.info.resolution);
     path.push_back(idx2wp(current));
+
+    ROS_DEBUG("First waypoint %d (%.2f,%.2f)", current, path.back().x, path.back().y);
 
     // visited vertices
     unordered_set<int> removed;
@@ -99,13 +101,13 @@ nav_msgs::Path mst_path::get_path ()
     vector<geometry_msgs::PoseStamped> poses;
     geometry_msgs::PoseStamped pose;
     for (auto p : path) {
+        // relative to original map
+        p.x += origin.x;
+        p.y += origin.y;
+
         // rotate
         pose.pose.position.x = p.x * cos(-rotation) - p.y * sin(-rotation);
         pose.pose.position.y = p.x * sin(-rotation) + p.y * cos(-rotation);
-
-        // relative to original map
-        pose.pose.position.x += origin.x;
-        pose.pose.position.y += origin.y;
 
         poses.push_back(pose);
     }
@@ -279,13 +281,16 @@ geometry_msgs::Point mst_path::get_wp (int offset)
     geometry_msgs::Point waypoint;
 
     if (0 <= wp+offset && wp+offset < path.size()) {
-        // rotate
-        waypoint.x = path[wp+offset].x * cos(-rotation) - path[wp+offset].y * sin(-rotation);
-        waypoint.y = path[wp+offset].x * sin(-rotation) + path[wp+offset].y * cos(-rotation);
+        // current waypoint
+        geometry_msgs::Point p = path[wp+offset];
 
         // relative to original map
-        waypoint.x += origin.x;
-        waypoint.y += origin.y;
+        p.x += origin.x;
+        p.y += origin.y;
+
+        // rotate
+        waypoint.x = p.x * cos(-rotation) - p.y * sin(-rotation);
+        waypoint.y = p.x * sin(-rotation) + p.y * cos(-rotation);
     }
 
     return waypoint;
