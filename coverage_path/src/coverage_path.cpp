@@ -3,6 +3,7 @@
 /**
  * @brief Generate an optimal coverage path for a given area.
  * @param start The starting position of the path.
+ * @param roi Pointer to a ROI to cover. Optional, if not given mission area is covered.
  * @return Whether the path has been generated successfully.
  */
 bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Point>* roi = nullptr)
@@ -21,10 +22,13 @@ bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Poin
     if (roi != nullptr && roi->size() > 2) {
         get_map.request.coords = *roi;
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("rois/get_map");
+        swarm_sub.shutdown(); // rois are not divided, stop listening to swarm changes
     }
     // get area divided among swarm
-    else if (divide_area)
+    else if (divide_area) {
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_divided_map");
+        swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback); // using divided map, start listening to swarm changes
+    }
     // get complete area
     else
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
@@ -91,26 +95,6 @@ bool generate_path_callback (const cpswarm_msgs::PathGenerationGoal::ConstPtr& g
 }
 
 /**
- * @brief Callback function to get the coverage path.
- * @param req Path planning request that is ignored.
- * @param res The coverage path.
- * @return Whether the request succeeded.
- */
-bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res)
-{
-    // compute new path if swarm has changed
-    if (reconfigure) {
-        if (generate_path(req.start.pose.position) == false)
-            return false;
-    }
-
-    // return coverage path
-    res.plan = path.get_path();
-
-    return true;
-}
-
-/**
  * @brief Callback function to get the current waypoint of the path.
  * @param req Empty get waypoint request.
  * @param res The current waypoint.
@@ -118,7 +102,7 @@ bool get_path (nav_msgs::GetPlan::Request &req, nav_msgs::GetPlan::Response &res
  */
 bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWaypoint::Response &res)
 {
-    // compute new path if swarm has changed
+    // compute new path if it doesn't exist yet or swarm composition has changed
     if (reconfigure) {
         if (generate_path(req.position) == false)
             return false;
@@ -224,11 +208,10 @@ int main (int argc, char **argv)
         swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback);
     }
 
-    // provide coverage path services
-    ServiceServer path_service = nh.advertiseService("coverage_path/path", get_path);
+    // provide waypoint service
     ServiceServer wp_service = nh.advertiseService("coverage_path/waypoint", get_waypoint);
 
-    // provide coverage path actions
+    // provide coverage path action
     GenerationAction generation_action(nh, "coverage_path/generate", boost::bind(&generate_path_callback, _1, &generation_action), false);
     generation_action.start();
 
