@@ -120,6 +120,13 @@ private:
     void remove_edge (edge e);
 
     /**
+     * @brief Round a position on the map to the nearest grid cell.
+     * @param pos A continuous position on the grid map, measured in grid cells from the bottom/left of the map.
+     * @return The position of the nearest grid cell.
+     */
+    double round2idx (double pos);
+
+    /**
      * @brief The boustrophedon path.
      */
     deque<geometry_msgs::Point> path;
