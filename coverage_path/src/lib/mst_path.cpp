@@ -12,14 +12,22 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     // rotate and translate
     geometry_msgs::Point start_rt;
-    start_rt.x = round2idx((start.x * cos(rotation) - start.y * sin(rotation) - origin.x) / map.info.resolution);
-    start_rt.y = round2idx((start.x * sin(rotation) + start.y * cos(rotation) - origin.y) / map.info.resolution);
-    if (start_rt.x < 0 || map.info.width <= start_rt.x || start_rt.y < 0 || map.info.height <= start_rt.y) {
+    start_rt.x = (start.x * cos(rotation) - start.y * sin(rotation) - origin.x) / map.info.resolution;
+    start_rt.y = (start.x * sin(rotation) + start.y * cos(rotation) - origin.y) / map.info.resolution;
+    // starting bound on map boundary, shift a bit inside to allow
+    if (start_rt.x == map.info.width) {
+        start_rt.x -= map.info.resolution / 10;
+    }
+    if (start_rt.y == map.info.height) {
+        start_rt.y -= map.info.resolution / 10;
+    }
+    // starting point outside map
+    if (start_rt.x < 0 || map.info.width < start_rt.x || start_rt.y < 0 || map.info.height < start_rt.y) {
         ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", start.x, start.y);
         return false;
     }
     // select closest vertex
-    int current = round(2 * start_rt.y * 2*map.info.width + 2 * start_rt.x);
+    int current = round(2 * round2idx(start_rt.y) * 2*map.info.width + 2 * round2idx(start_rt.x));
     path.push_back(idx2wp(current));
 
     ROS_DEBUG("First waypoint %d (%.2f,%.2f)", current, path.back().x, path.back().y);
