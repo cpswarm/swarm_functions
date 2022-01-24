@@ -38,15 +38,20 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // previous vertex
     int previous;
 
-    // last movement
-    int offset;
-
     // possible movements
-    vector<int> movement;                  // priority:
-    movement.push_back(2*map.info.width);  // up
-    movement.push_back(-1);                // left
-    movement.push_back(-2*map.info.width); // down
-    movement.push_back(1);                 // right
+    vector<int> movement;                      // priority:
+    if (vertical) {
+        movement.push_back(-2*map.info.width); // down
+        movement.push_back(-1);                // left
+        movement.push_back(2*map.info.width);  // up
+        movement.push_back(1);                 // right
+    }
+    else {
+        movement.push_back(-1);                // left
+        movement.push_back(-2*map.info.width); // down
+        movement.push_back(1);                 // right
+        movement.push_back(2*map.info.width);  // up
+    }
 
     // valid movement
     bool found = false;
@@ -71,16 +76,13 @@ bool mst_path::generate_path (geometry_msgs::Point start)
         // remember visited vertices
         removed.insert(current);
 
-        // last movement
-        offset = distance(movement.begin(), find(movement.begin(), movement.end(), previous-current));
-
         // look for valid step
         found = false;
         previous = current;
         for (int idx=0; idx<movement.size(); idx++){
-            if (nodes[previous].count(previous + movement[(idx+offset) % movement.size()]) > 0 &&
-                removed.count(previous + movement[(idx+offset) % movement.size()]) <= 0) {
-                current = previous + movement[(idx+offset) % movement.size()];
+            if (nodes[previous].count(previous + movement[idx]) > 0 &&
+                removed.count(previous + movement[idx]) <= 0) {
+                current = previous + movement[idx];
                 found = true;
                 break;
             }
