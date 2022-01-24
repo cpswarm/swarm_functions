@@ -1,6 +1,52 @@
 #include "coverage_path.h"
 
 /**
+ * @brief Callback function to receive the states of the other CPSs.
+ * @param msg UUIDs and states of the other CPSs.
+ */
+void swarm_state_callback (const cpswarm_msgs::ArrayOfStates::ConstPtr& msg)
+{
+    // update cps uuids
+    for (auto cps : msg->states) {
+        // only consider cpss in the same behavior states
+        if (find(behaviors.begin(), behaviors.end(), cps.state) == behaviors.end())
+            continue;
+
+        // index of cps in map
+        auto idx = swarm.find(cps.swarmio.node);
+
+        // add new cps
+        if (idx == swarm.end()) {
+            swarm.emplace(cps.swarmio.node, Time::now());
+
+            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
+
+            // regenerate coverage path
+            reconfigure = true;
+        }
+
+        // update existing cps
+        else {
+            idx->second = Time::now();
+        }
+    }
+
+    // remove old cps
+    for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
+        if (cps->second + Duration(swarm_timeout) < Time::now()) {
+            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
+            swarm.erase(cps++);
+
+            // regenerate coverage path
+            reconfigure = true;
+        }
+        else {
+            ++cps;
+        }
+    }
+}
+
+/**
  * @brief Generate an optimal coverage path for a given area.
  * @param start The starting position of the path.
  * @param roi Pointer to a ROI to cover. Optional, if not given mission area is covered.
@@ -27,6 +73,8 @@ bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Poin
     // get area divided among swarm
     else if (divide_area) {
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_divided_map");
+        int queue_size;
+        nh.param(this_node::getName() + "/queue_size", queue_size, 1);
         swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback); // using divided map, start listening to swarm changes
     }
     // get complete area
@@ -122,52 +170,6 @@ bool get_waypoint (cpswarm_msgs::GetWaypoint::Request &req, cpswarm_msgs::GetWay
     }
 
     return true;
-}
-
-/**
- * @brief Callback function to receive the states of the other CPSs.
- * @param msg UUIDs and states of the other CPSs.
- */
-void swarm_state_callback (const cpswarm_msgs::ArrayOfStates::ConstPtr& msg)
-{
-    // update cps uuids
-    for (auto cps : msg->states) {
-        // only consider cpss in the same behavior states
-        if (find(behaviors.begin(), behaviors.end(), cps.state) == behaviors.end())
-            continue;
-
-        // index of cps in map
-        auto idx = swarm.find(cps.swarmio.node);
-
-        // add new cps
-        if (idx == swarm.end()) {
-            swarm.emplace(cps.swarmio.node, Time::now());
-
-            ROS_DEBUG("New CPS %s", cps.swarmio.node.c_str());
-
-            // regenerate coverage path
-            reconfigure = true;
-        }
-
-        // update existing cps
-        else {
-            idx->second = Time::now();
-        }
-    }
-
-    // remove old cps
-    for (auto cps=swarm.cbegin(); cps!=swarm.cend();) {
-        if (cps->second + Duration(swarm_timeout) < Time::now()) {
-            ROS_DEBUG("Remove CPS %s", cps->first.c_str());
-            swarm.erase(cps++);
-
-            // regenerate coverage path
-            reconfigure = true;
-        }
-        else {
-            ++cps;
-        }
-    }
 }
 
 /**
