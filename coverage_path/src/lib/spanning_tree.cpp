@@ -27,6 +27,10 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
         direction.setRPY(0, 0, atan2(dy, dx));
         pose.orientation = tf2::toMsg(direction);
 
+        // offset for visualization
+        pose.position.x += 0.5 * map.info.resolution;
+        pose.position.y += 0.5 * map.info.resolution;
+
         poses.push_back(pose);
     }
 

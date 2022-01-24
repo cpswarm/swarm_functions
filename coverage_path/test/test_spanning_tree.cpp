@@ -85,8 +85,8 @@ TEST (UnitTestSpanningTree, testGetTree)
     for (int i=0; i<15; ++i) {
         // horizontal edges
         for (int j=0; j<9; ++j) {
-            p.position.x = j * grid.info.resolution + grid.info.origin.position.x;
-            p.position.y = i * grid.info.resolution + grid.info.origin.position.y;
+            p.position.x = j * grid.info.resolution + grid.info.origin.position.x + 0.5 * grid.info.resolution;
+            p.position.y = i * grid.info.resolution + grid.info.origin.position.y + 0.5 * grid.info.resolution;
             tf2::Quaternion direction;
             direction.setRPY(0, 0, 0);
             p.orientation = tf2::toMsg(direction);
@@ -96,8 +96,8 @@ TEST (UnitTestSpanningTree, testGetTree)
 
         // vertical edges
         if (i < 14) {
-            p.position.x = grid.info.origin.position.x;
-            p.position.y = i * grid.info.resolution + grid.info.origin.position.y;
+            p.position.x = grid.info.origin.position.x + 0.5 * grid.info.resolution;
+            p.position.y = i * grid.info.resolution + grid.info.origin.position.y + 0.5 * grid.info.resolution;
             tf2::Quaternion direction;
             direction.setRPY(0, 0, M_PI/2.0);
             p.orientation = tf2::toMsg(direction);
