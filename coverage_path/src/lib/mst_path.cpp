@@ -12,8 +12,8 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     // rotate and translate
     geometry_msgs::Point start_rt;
-    start_rt.x = (start.x * cos(rotation) - start.y * sin(rotation) - origin.x) / map.info.resolution;
-    start_rt.y = (start.x * sin(rotation) + start.y * cos(rotation) - origin.y) / map.info.resolution;
+    start_rt.x = start.x * cos(rotation) - start.y * sin(rotation) - origin.x;
+    start_rt.y = start.x * sin(rotation) + start.y * cos(rotation) - origin.y;
     // starting bound on map boundary, shift a bit inside to allow
     if (start_rt.x == map.info.width) {
         start_rt.x -= map.info.resolution / 10;
@@ -151,8 +151,8 @@ void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical,
 
     // initialize path
     map = gridmap;
-    int rows = gridmap.info.height;
-    int cols = gridmap.info.width;
+    int rows = gridmap.info.height / gridmap.info.resolution;
+    int cols = gridmap.info.width / gridmap.info.resolution;
     nodes.clear();
     nodes.resize(2*rows*2*cols);
     edges.clear();
@@ -334,16 +334,9 @@ void mst_path::remove_edge (edge e)
 
 double mst_path::round2idx (double pos)
 {
-    // normalize
-    double norm = pos / map.info.resolution;
+    pos *= 2 / map.info.resolution;
+    pos = floor(pos);
+    pos /= 2;
 
-    // divide into integer and fractional part
-    double inte;
-    double frac = modf(norm, &inte);
-
-    // round to nearest waypoint index
-    if (frac < 0.5)
-        return inte * map.info.resolution;
-    else
-        return (inte + 0.5) * map.info.resolution;
+    return pos;
 }
