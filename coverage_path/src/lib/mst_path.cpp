@@ -12,15 +12,13 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     // rotate and translate
     geometry_msgs::Point start_rt;
-    start_rt.x = start.x * cos(rotation) - start.y * sin(rotation) - origin.x;
-    start_rt.y = start.x * sin(rotation) + start.y * cos(rotation) - origin.y;
+    start_rt.x = (start.x * cos(rotation) - start.y * sin(rotation) - origin.x) / map.info.resolution;
+    start_rt.y = (start.x * sin(rotation) + start.y * cos(rotation) - origin.y) / map.info.resolution;
     // starting bound on map boundary, shift a bit inside to allow
-    if (start_rt.x == map.info.width) {
-        start_rt.x -= map.info.resolution / 10;
-    }
-    if (start_rt.y == map.info.height) {
-        start_rt.y -= map.info.resolution / 10;
-    }
+    if (start_rt.x == map.info.width)
+        start_rt.x -= 0.1;
+    if (start_rt.y == map.info.height)
+        start_rt.y -= 0.1;
     // starting point outside map
     if (start_rt.x < 0 || map.info.width < start_rt.x || start_rt.y < 0 || map.info.height < start_rt.y) {
         ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", start.x, start.y);
@@ -151,8 +149,8 @@ void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical,
 
     // initialize path
     map = gridmap;
-    int rows = gridmap.info.height / gridmap.info.resolution;
-    int cols = gridmap.info.width / gridmap.info.resolution;
+    int rows = gridmap.info.height;
+    int cols = gridmap.info.width;
     nodes.clear();
     nodes.resize(2*rows*2*cols);
     edges.clear();
@@ -315,10 +313,8 @@ geometry_msgs::Point mst_path::idx2wp (int index)
     waypoint.y = (index / (2*map.info.width)) / 2.0 * map.info.resolution;
 
     // shift waypoint to center path on map
-    double width_path = (round(width / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
-    double height_path = (round(height / map.info.resolution) * 2 - 1) / 2.0 * map.info.resolution;
-    waypoint.x += (width - width_path) / 2.0;
-    waypoint.y += (height - height_path) / 2.0;
+    waypoint.x += map.info.resolution / 4;
+    waypoint.y += map.info.resolution / 4;
 
     return waypoint;
 }
@@ -334,7 +330,7 @@ void mst_path::remove_edge (edge e)
 
 double mst_path::round2idx (double pos)
 {
-    pos *= 2 / map.info.resolution;
+    pos *= 2;
     pos = floor(pos);
     pos /= 2;
 
