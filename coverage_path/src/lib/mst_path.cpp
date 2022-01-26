@@ -65,7 +65,7 @@ bool mst_path::generate_path (geometry_msgs::Point start)
 
     // no valid first step found
     if (!found) {
-        ROS_ERROR("No path found!");
+        ROS_ERROR("No path found! There is probably an obstacle at the desired start. Try increasing resolution.");
         return false;
     }
 
