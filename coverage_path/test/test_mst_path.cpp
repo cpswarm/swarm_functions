@@ -47,7 +47,7 @@ geometry_msgs::Point rotate (geometry_msgs::Point point, double angle)
 }
 
 /**
- * @brief Test waypoints of path, reduced.
+ * @brief Test get_waypoint function.
  */
 TEST (UnitTestMstPath, testWaypoints)
 {
@@ -73,8 +73,7 @@ TEST (UnitTestMstPath, testWaypoints)
     tree.construct();
 
     // initialize path
-    path.initialize_graph(grid);
-    path.initialize_map(grid.info.origin.position, 0, grid.info.width, grid.info.height);
+    path.initialize_map(grid, 0);
     path.initialize_tree(tree.get_mst_edges());
 
     // generate path
@@ -181,7 +180,7 @@ TEST (UnitTestMstPath, testWaypoints)
 }
 
 /**
- * @brief Test waypoints of rotated path, reduced.
+ * @brief Test rotation.
  */
 TEST (UnitTestMstPath, testRotation)
 {
@@ -207,15 +206,14 @@ TEST (UnitTestMstPath, testRotation)
     tree.construct();
 
     // initialize path
-    path.initialize_graph(grid);
-    path.initialize_map(grid.info.origin.position, 0.1234, grid.info.width, grid.info.height);
+    path.initialize_map(grid, 0.1234);
     path.initialize_tree(tree.get_mst_edges());
 
     // generate path
     ros::Time::init();
     geometry_msgs::Point start;
-    start.x = -10;
-    start.y = -5;
+    start.x = -10.5;
+    start.y = -4.5;
     ASSERT_TRUE(path.generate_path(start));
     path.reduce();
 
@@ -240,7 +238,7 @@ TEST (UnitTestMstPath, testRotation)
     // go left
     wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
-    pos_rt.x -= 5.5;
+    pos_rt.x -= 4.5;
     pos = rotate(translate(pos_rt, origin), -0.1234);
     EXPECT_FLOAT_EQ(wp.x, pos.x);
     EXPECT_FLOAT_EQ(wp.y, pos.y);
@@ -361,11 +359,308 @@ TEST (UnitTestMstPath, testRotation)
     EXPECT_FLOAT_EQ(wp.z, pos.z);
     wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
-    pos_rt.x -= 3.5;
+    pos_rt.x -= 4.5;
     pos = rotate(translate(pos_rt, origin), -0.1234);
     EXPECT_FLOAT_EQ(wp.x, pos.x);
     EXPECT_FLOAT_EQ(wp.y, pos.y);
     EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_FALSE(path.valid());
+}
+
+/**
+ * @brief Test obstacles
+ */
+TEST (UnitTestMstPath, testObstacles)
+{
+    // create class
+    mst_path path;
+
+    // create an empty gridmap for testing
+    nav_msgs::OccupancyGrid grid;
+    grid.info.resolution = 1;
+    grid.info.width = 20;
+    grid.info.height = 20;
+    grid.info.origin.position.x = -10;
+    grid.info.origin.position.y = -10;
+    for (int i=0; i<20; ++i) {
+        for (int j=0; j<20; ++j) {
+            grid.data.push_back(0);
+        }
+    }
+
+    // add obstacles
+    grid.data[9*20 + 9] = 100;
+    grid.data[9*20 + 9] = 100;
+    grid.data[10*20 + 10] = 100;
+    grid.data[10*20 + 10] = 100;
+
+    // create mst
+    spanning_tree tree;
+    tree.initialize_graph(grid);
+    tree.construct();
+
+    // initialize path
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+
+    // generate path
+    ros::Time::init();
+    geometry_msgs::Point start;
+    start.x = -10;
+    start.y = -10;
+    ASSERT_TRUE(path.generate_path(start));
+    path.reduce();
+
+    // test waypoints
+
+    // start
+    geometry_msgs::Point pos = start;
+    geometry_msgs::Point wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x += 0.25;
+    pos.y += 0.25;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // go right
+    pos.x += 19.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // meander half-way up
+    for (int i=0; i<8; ++i) {
+        pos.y += 0.5;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        pos.x -= 19;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        pos.y += 0.5;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        pos.x += 19;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+    }
+
+    // go around obstacle
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 9;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x += 9;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 8;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x += 8;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 8.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    pos.y -= 1;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 1;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.y -= 1;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 9.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x += 8;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 8;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x += 9;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 9;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x += 19;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // meander all the way up
+    for (int i=0; i<8; ++i) {
+        pos.y += 0.5;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        pos.x -= 19;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        pos.y += 0.5;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        pos.x += 19;
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+    }
+
+    // go left
+    pos.y += 0.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    pos.x -= 19.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // go down
+    pos.y -= 19.5;
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
     wp = path.get_waypoint(pos, 0.00001);
     ASSERT_FALSE(path.valid());
 }
@@ -397,8 +692,7 @@ TEST (UnitTestMstPath, testEquality)
     tree.construct();
 
     // initialize path
-    path.initialize_graph(grid);
-    path.initialize_map(grid.info.origin.position, 0, grid.info.width, grid.info.height);
+    path.initialize_map(grid, 0);
     path.initialize_tree(tree.get_mst_edges());
 
     // generate path
@@ -428,6 +722,534 @@ TEST (UnitTestMstPath, testEquality)
 
     // waypoint not valid anymore
     EXPECT_FALSE(path.valid());
+}
+
+/**
+ * @brief Test different starting points for horizontal path.
+ */
+TEST (UnitTestMstPath, testStartHorizontal)
+{
+    // create class
+    mst_path path;
+
+    // create an empty gridmap for testing
+    nav_msgs::OccupancyGrid grid;
+    grid.info.resolution = 1;
+    grid.info.width = 20;
+    grid.info.height = 20;
+    grid.info.origin.position.x = -10;
+    grid.info.origin.position.y = -10;
+    for (int i=0; i<20; ++i) {
+        for (int j=0; j<20; ++j) {
+            grid.data.push_back(0);
+        }
+    }
+
+    // create mst
+    spanning_tree tree;
+    tree.initialize_graph(grid);
+    tree.construct();
+
+    // other initialization
+    ros::Time::init();
+    geometry_msgs::Point start;
+    vector<geometry_msgs::PoseStamped> nav_path;
+
+    // test center
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    // test inside
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 5; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -5; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = -5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = 5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 5; start.y = 5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -5; start.y = 5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 5; start.y = -5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -5; start.y = -5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    // test sides
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -10; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 10; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = -10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = 10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    // test corners
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -10; start.y = -10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 10; start.y = 10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 10; start.y = -10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -10; start.y = 10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+}
+
+/**
+ * @brief Test different starting points for vertical path.
+ */
+TEST (UnitTestMstPath, testStartVertical)
+{
+    // create class
+    mst_path path;
+
+    // create an empty gridmap for testing
+    nav_msgs::OccupancyGrid grid;
+    grid.info.resolution = 1;
+    grid.info.width = 20;
+    grid.info.height = 20;
+    grid.info.origin.position.x = -10;
+    grid.info.origin.position.y = -10;
+    for (int i=0; i<20; ++i) {
+        for (int j=0; j<20; ++j) {
+            grid.data.push_back(0);
+        }
+    }
+
+    // create mst
+    spanning_tree tree;
+    tree.initialize_graph(grid, true);
+    tree.construct();
+
+    // other initialization
+    ros::Time::init();
+    geometry_msgs::Point start;
+    vector<geometry_msgs::PoseStamped> nav_path;
+
+    // test center
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    // test inside
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 5; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -5; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = -5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = 5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 5; start.y = 5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -5; start.y = 5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 5; start.y = -5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -5; start.y = -5;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    // test sides
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -10; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 10; start.y = 0;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = -10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 0; start.y = 10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    // test corners
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -10; start.y = -10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 10; start.y = 10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = 10; start.y = -10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+
+    path.initialize_map(grid, 0, true);
+    path.initialize_tree(tree.get_mst_edges());
+    start.x = -10; start.y = 10;
+    EXPECT_TRUE(path.generate_path(start));
+    nav_path = path.get_path().poses;
+    EXPECT_EQ(nav_path.size(), 1601);
+}
+
+/**
+ * @brief Test high resolution.
+ */
+TEST (UnitTestMstPath, testHighRes)
+{
+    // create class
+    mst_path path;
+
+    // create an empty gridmap for testing
+    nav_msgs::OccupancyGrid grid;
+    grid.info.resolution = 0.1;
+    grid.info.width = 100;
+    grid.info.height = 50;
+    grid.info.origin.position.x = 0;
+    grid.info.origin.position.y = 0;
+    for (int i=0; i<50; ++i) {
+        for (int j=0; j<100; ++j) {
+            grid.data.push_back(0);
+        }
+    }
+
+    // create mst
+    spanning_tree tree;
+    tree.initialize_graph(grid);
+    tree.construct();
+
+    // initialize path
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+
+    // generate path
+    ros::Time::init();
+    geometry_msgs::Point start;
+    start.x = 0;
+    start.y = 5;
+    ASSERT_TRUE(path.generate_path(start));
+    path.reduce();
+
+    // test waypoints
+
+    // start point
+    geometry_msgs::Point pos = start;
+    geometry_msgs::Point wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x += 0.025;
+    pos.y -= 0.025;
+    EXPECT_NEAR(wp.x, pos.x, 0.00001);
+    EXPECT_NEAR(wp.y, pos.y, 0.00001);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // go down and right
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.y -= 4.95;
+    EXPECT_NEAR(wp.x, pos.x, 0.00001);
+    EXPECT_NEAR(wp.y, pos.y, 0.00001);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x += 9.95;
+    EXPECT_NEAR(wp.x, pos.x, 0.00001);
+    EXPECT_NEAR(wp.y, pos.y, 0.00001);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // meander up
+    for (int i=0; i<49; ++i) {
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.y += 0.05;
+        EXPECT_NEAR(wp.x, pos.x, 0.00001);
+        EXPECT_NEAR(wp.y, pos.y, 0.00001);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.x -= 9.9;
+        EXPECT_NEAR(wp.x, pos.x, 0.00001);
+        EXPECT_NEAR(wp.y, pos.y, 0.00001);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.y += 0.05;
+        EXPECT_NEAR(wp.x, pos.x, 0.00001);
+        EXPECT_NEAR(wp.y, pos.y, 0.00001);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.x += 9.9;
+        EXPECT_NEAR(wp.x, pos.x, 0.00001);
+        EXPECT_NEAR(wp.y, pos.y, 0.00001);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+    }
+
+    // return to start
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.y += 0.05;
+    EXPECT_NEAR(wp.x, pos.x, 0.00001);
+    EXPECT_NEAR(wp.y, pos.y, 0.00001);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x -= 9.95;
+    EXPECT_NEAR(wp.x, pos.x, 0.00001);
+    EXPECT_NEAR(wp.y, pos.y, 0.00001);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_FALSE(path.valid());
+}
+
+/**
+ * @brief Test low resolution.
+ */
+TEST (UnitTestMstPath, testLowRes)
+{
+    // create class
+    mst_path path;
+
+    // create an empty gridmap for testing
+    nav_msgs::OccupancyGrid grid;
+    grid.info.resolution = 10;
+    grid.info.width = 10;
+    grid.info.height = 5;
+    grid.info.origin.position.x = 0;
+    grid.info.origin.position.y = 0;
+    for (int i=0; i<5; ++i) {
+        for (int j=0; j<10; ++j) {
+            grid.data.push_back(0);
+        }
+    }
+
+    // create mst
+    spanning_tree tree;
+    tree.initialize_graph(grid);
+    tree.construct();
+
+    // initialize path
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+
+    // generate path
+    ros::Time::init();
+    geometry_msgs::Point start;
+    start.x = 100;
+    start.y = 50;
+    ASSERT_TRUE(path.generate_path(start));
+    path.reduce();
+
+    // test waypoints
+
+    // start point
+    geometry_msgs::Point pos = start;
+    geometry_msgs::Point wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x -= 2.5;
+    pos.y -= 2.5;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // go left, down, right
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x -= 95;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.y -= 45;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x += 95;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // meander up
+    for (int i=0; i<4; ++i) {
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.y += 5;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.x -= 90;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.y += 5;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.x += 90;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+    }
+
+    // return to start
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.y += 5;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_FALSE(path.valid());
 }
 
 /**
