@@ -62,7 +62,7 @@ bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Poin
     cpswarm_msgs::GetMap get_map;
     get_map.request.rotate = true;
     get_map.request.translate = true;
-    get_map.request.resolution = resolution;
+    get_map.request.resolution = resolution * 2; // two paths in each cell
     ServiceClient area_getter;
     // get a roi
     if (roi != nullptr && roi->size() > 2) {

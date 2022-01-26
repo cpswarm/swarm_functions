@@ -57,7 +57,7 @@ mst_path path;
 map<string, Time> swarm;
 
 /**
- * @brief The grid map underlying the path planning will be downsampled to this resolution in meter / cell.
+ * @brief The spacing between two adjacent coverage path legs in meter.
  */
 double resolution;
 

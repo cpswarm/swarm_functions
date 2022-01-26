@@ -1,6 +1,6 @@
 loop_rate:      1.5   # The frequency in Hz at which to run the control loops.
 queue_size:     1     # The size of the message queue used for publishing and subscribing to topics.
-resolution:     1.5   # The grid map underlying the path planning will be downsampled to this resolution in meter / cell.
+resolution:     1.0   # The spacing between two adjacent coverage path legs in meter.
 visualize:      true  # Whether to publish the coverage path on a topic for visualization.
 divide_area:    false # Whether to divide the area among the CPSs in the swarm before generating the path. Joining or leaving swarm members will trigger regeneration of the path.
 vertical:       true  # Whether the sweeping pattern is vertical or horizontal.
