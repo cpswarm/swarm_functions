@@ -101,8 +101,7 @@ bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Poin
 
     // generate path
     ROS_DEBUG("Generate coverage path...");
-    path.initialize_graph(area);
-    path.initialize_map(area.info.origin.position, get_map.response.rotation, area.info.width, area.info.height);
+    path.initialize_map(area, get_map.response.rotation, vertical);
     path.initialize_tree(tree.get_mst_edges());
     if (path.generate_path(start) == false)
         return false;

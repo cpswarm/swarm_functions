@@ -87,16 +87,6 @@ private:
     nav_msgs::OccupancyGrid map;
 
     /**
-     * @brief The rotation of the output tree.
-     */
-    double rotation;
-
-    /**
-     * @brief The translation of the output tree.
-     */
-    geometry_msgs::Vector3 translation;
-
-    /**
      * @brief Whether the sweeping pattern is vertical or horizontal.
      */
     bool vertical;

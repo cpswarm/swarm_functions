@@ -12,8 +12,8 @@ bool mst_path::generate_path (geometry_msgs::Point start)
     // starting vertex
     // rotate and translate
     geometry_msgs::Point start_rt;
-    start_rt.x = (start.x * cos(rotation) - start.y * sin(rotation) - origin.x) / map.info.resolution;
-    start_rt.y = (start.x * sin(rotation) + start.y * cos(rotation) - origin.y) / map.info.resolution;
+    start_rt.x = (start.x * cos(rotation) - start.y * sin(rotation) - map.info.origin.position.x) / map.info.resolution;
+    start_rt.y = (start.x * sin(rotation) + start.y * cos(rotation) - map.info.origin.position.y) / map.info.resolution;
     // starting bound on map boundary, shift a bit inside to allow
     if (start_rt.x == map.info.width)
         start_rt.x -= 0.1;
@@ -110,8 +110,8 @@ nav_msgs::Path mst_path::get_path ()
     geometry_msgs::PoseStamped pose;
     for (auto p : path) {
         // relative to original map
-        p.x += origin.x;
-        p.y += origin.y;
+        p.x += map.info.origin.position.x;
+        p.y += map.info.origin.position.y;
 
         // rotate
         pose.pose.position.x = p.x * cos(-rotation) - p.y * sin(-rotation);
@@ -141,9 +141,13 @@ geometry_msgs::Point mst_path::get_waypoint (geometry_msgs::Point position, doub
     return get_wp();
 }
 
-void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical, bool connect4)
+void mst_path::initialize_map (nav_msgs::OccupancyGrid gridmap, double rotation, bool vertical, bool connect4)
 {
     ROS_DEBUG("Gridmap size %dx%d origin (%.2f,%.2f)", gridmap.info.width, gridmap.info.height, gridmap.info.origin.position.x, gridmap.info.origin.position.y);
+
+    // rotation of map
+    this->rotation = rotation;
+
     // orientation of path edges
     this->vertical = vertical;
 
@@ -201,21 +205,6 @@ void mst_path::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical,
             }
         }
     }
-}
-
-void mst_path::initialize_map (geometry_msgs::Point origin, double rotation, double width, double height)
-{
-    // bottom left of area
-    this->origin = origin;
-
-    // rotation of map
-    this->rotation = rotation;
-
-    // dimensions of area
-    this->width = width;
-    this->height = height;
-
-    ROS_DEBUG("Area size %.2fx%.2f origin (%.2f,%.2f)", width, height, origin.x, origin.y);
 }
 
 void mst_path::initialize_tree (set<edge> mst)
@@ -293,8 +282,8 @@ geometry_msgs::Point mst_path::get_wp (int offset)
         geometry_msgs::Point p = path[wp+offset];
 
         // relative to original map
-        p.x += origin.x;
-        p.y += origin.y;
+        p.x += map.info.origin.position.x;
+        p.y += map.info.origin.position.y;
 
         // rotate
         waypoint.x = p.x * cos(-rotation) - p.y * sin(-rotation);

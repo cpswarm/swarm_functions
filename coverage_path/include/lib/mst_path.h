@@ -51,19 +51,11 @@ public:
     /**
      * @brief Initialize the internal graph structure that represents the area to cover.
      * @param graph  gridmap The grid map for which the paths are generated.
+     * @param rotation The angle by which the map has been rotated.
      * @param vertical Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      * @param connect4 Whether only the von Neumann neighborhood is considered. Default true.
      */
-    void initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vertical = false, bool connect4 = true);
-
-    /**
-     * @brief Initialize properties of the area to be covered.
-     * @param origin Coordinate of the bottom left point of the area.
-     * @param rotation The angle by which the map has been rotated.
-     * @param width The width of the area.
-     * @param height The height of the area.
-     */
-    void initialize_map (geometry_msgs::Point origin, double rotation, double width, double height);
+    void initialize_map (nav_msgs::OccupancyGrid gridmap, double rotation, bool vertical = false, bool connect4 = true);
 
     /**
      * @brief Remove edges of the graph that overlap with the tree.
@@ -152,24 +144,9 @@ private:
     int wp;
 
     /**
-     * @brief Coordinate of the bottom left bounding point of the area.
-     */
-    geometry_msgs::Point origin;
-
-    /**
      * @brief The rotation of the map.
      */
     double rotation;
-
-    /**
-     * @brief Width of the area to cover.
-     */
-    double width;
-
-    /**
-     * @brief Height of the area to cover.
-     */
-    double height;
 
     /**
      * @brief Whether the sweeping pattern is vertical or horizontal.
