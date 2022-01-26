@@ -1253,6 +1253,115 @@ TEST (UnitTestMstPath, testLowRes)
 }
 
 /**
+ * @brief Test weird resolution.
+ */
+TEST (UnitTestMstPath, testWeirdRes)
+{
+    // create class
+    mst_path path;
+
+    // create an empty gridmap for testing
+    nav_msgs::OccupancyGrid grid;
+    grid.info.resolution = 1.5;
+    grid.info.width = 7;
+    grid.info.height = 4;
+    grid.info.origin.position.x = 0;
+    grid.info.origin.position.y = 0;
+    for (int i=0; i<4; ++i) {
+        for (int j=0; j<7; ++j) {
+            grid.data.push_back(0);
+        }
+    }
+
+    // create mst
+    spanning_tree tree;
+    tree.initialize_graph(grid);
+    tree.construct();
+
+    // initialize path
+    path.initialize_map(grid, 0);
+    path.initialize_tree(tree.get_mst_edges());
+
+    // generate path
+    ros::Time::init();
+    geometry_msgs::Point start;
+    start.x = 10.5;
+    start.y = 6;
+    ASSERT_TRUE(path.generate_path(start));
+    path.reduce();
+
+    // test waypoints
+
+    // start point
+    geometry_msgs::Point pos = start;
+    geometry_msgs::Point wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x = 10.125;
+    pos.y = 5.625;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // go left, down, right
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x -= 9.75;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.y -= 5.25;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.x += 9.75;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+
+    // meander up
+    for (int i=0; i<3; ++i) {
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.y += 0.75;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.x -= 9;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.y += 0.75;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+        wp = path.get_waypoint(pos, 0.00001);
+        ASSERT_TRUE(path.valid());
+        pos.x += 9;
+        EXPECT_FLOAT_EQ(wp.x, pos.x);
+        EXPECT_FLOAT_EQ(wp.y, pos.y);
+        EXPECT_FLOAT_EQ(wp.z, pos.z);
+    }
+
+    // return to start
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_TRUE(path.valid());
+    pos.y += 0.75;
+    EXPECT_FLOAT_EQ(wp.x, pos.x);
+    EXPECT_FLOAT_EQ(wp.y, pos.y);
+    EXPECT_FLOAT_EQ(wp.z, pos.z);
+    wp = path.get_waypoint(pos, 0.00001);
+    ASSERT_FALSE(path.valid());
+}
+
+/**
  * @brief Main function that runs all tests that were declared with TEST().
  */
 int main(int argc, char **argv){
