@@ -258,7 +258,7 @@ int main (int argc, char **argv)
     if (read_only == false) {
         pose_valid = false;
         vel_valid = false;
-        while (ok() && (pose_valid == false || vel_valid == false)) {
+        while (ok() && (pose_valid == false && vel_valid == false)) {
             ROS_DEBUG_ONCE("Waiting for valid pose and velocity ...");
             rate.sleep();
             spinOnce();
