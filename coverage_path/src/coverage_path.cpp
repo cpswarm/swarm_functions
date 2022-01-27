@@ -193,7 +193,7 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/visualize", visualize, false);
     nh.param(this_node::getName() + "/divide_area", divide_area, false);
     nh.param(this_node::getName() + "/vertical", vertical, false);
-    nh.param(this_node::getName() + "/turning_points", turning_points, false);
+    nh.param(this_node::getName() + "/turning_points", turning_points, true);
 
     // publishers for introspection
     if (visualize) {

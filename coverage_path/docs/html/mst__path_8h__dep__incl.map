@@ -1,5 +1,7 @@
 <map id="mst_path.h" name="mst_path.h">
-<area shape="rect" id="node2" href="$coverage__path_8h.html" title="coverage_path.h" alt="" coords="12,80,131,107"/>
-<area shape="rect" id="node4" href="$mst__path_8cpp.html" title="mst_path.cpp" alt="" coords="155,80,257,107"/>
-<area shape="rect" id="node3" href="$coverage__path_8cpp.html" title="coverage_path.cpp" alt="" coords="5,155,137,181"/>
+<area shape="rect" id="node1" title=" " alt="" coords="176,5,271,32"/>
+<area shape="rect" id="node2" href="$coverage__path_8h.html" title=" " alt="" coords="13,80,143,107"/>
+<area shape="rect" id="node4" href="$mst__path_8cpp.html" title=" " alt="" coords="168,80,279,107"/>
+<area shape="rect" id="node5" href="$test__mst__path_8cpp.html" title=" " alt="" coords="303,80,445,107"/>
+<area shape="rect" id="node3" href="$coverage__path_8cpp.html" title=" " alt="" coords="5,155,151,181"/>
 </map>
