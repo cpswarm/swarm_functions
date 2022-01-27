@@ -24,10 +24,45 @@ bool mst_path::generate_path (geometry_msgs::Point start)
         ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", start.x, start.y);
         return false;
     }
-    // select closest vertex
-    int current = round(2 * round2idx(start_rt.y) * 2*map.info.width + 2 * round2idx(start_rt.x));
+    // convert start point to cell index
+    int start_idx = round(2 * round2idx(start_rt.y) * 2*map.info.width + 2 * round2idx(start_rt.x));
+    // make sure cell is not occupied
+    unordered_set<int> checked;
+    queue<int> to_check;
+    int current;
+    // check current cell
+    checked.insert(start_idx);
+    to_check.push(start_idx);
+    // breadth-first search for empty cell
+    while (to_check.empty() == false) {
+        // check next cell
+        current = to_check.front();
+        to_check.pop();
+        if (nodes[current].size() > 0)
+            break;
+        // add neighboring cells to queue
+        if (current%(2*map.info.width) > 1 && checked.count(current-1) <= 0) { // left
+            to_check.push(current-1);
+            checked.insert(current-1);
+        }
+        if (current%(2*map.info.width) < 2*map.info.width-1 && checked.count(current+1) <= 0) { // right
+            to_check.push(current+1);
+            checked.insert(current+1);
+        }
+        if (current/(2*map.info.width) > 0 && checked.count(current-2*map.info.width) <= 0) { // down
+            to_check.push(current-2*map.info.width);
+            checked.insert(current-2*map.info.width);
+        }
+        if (current/(2*map.info.width) < 2*map.info.height-1 && checked.count(current+2*map.info.width) <= 0) { // up
+            to_check.push(current+2*map.info.width);
+            checked.insert(current+2*map.info.width);
+        }
+    }
+    // convert vertex to point
     path.push_back(idx2wp(current));
 
+    if (current != start_idx)
+        ROS_WARN("Changed starting point of coverage path from (%.2f,%.2f) to (%.2f,%.2f)", idx2wp(start_idx).x, idx2wp(start_idx).y, path.back().x, path.back().y);
     ROS_DEBUG("First waypoint %d (%.2f,%.2f)", current, path.back().x, path.back().y);
 
     // visited vertices
@@ -65,7 +100,7 @@ bool mst_path::generate_path (geometry_msgs::Point start)
 
     // no valid first step found
     if (!found) {
-        ROS_ERROR("No path found! There is probably an obstacle at the desired start. Try increasing resolution.");
+        ROS_ERROR("Could not generate coverage path, invalid starting point!");
         return false;
     }
 

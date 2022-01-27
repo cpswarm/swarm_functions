@@ -2,6 +2,7 @@
 #define MST_PATH_H
 
 #include <deque>
+#include <queue>
 #include <valarray>
 #include <unordered_set>
 #include <ros/ros.h>

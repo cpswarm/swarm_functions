@@ -1260,7 +1260,7 @@ TEST (UnitTestMstPath, testWeirdRes)
     // create class
     mst_path path;
 
-    // create an empty gridmap for testing
+    // create an gridmap for testing (10x5 downsampled from 1 to 1.5)
     nav_msgs::OccupancyGrid grid;
     grid.info.resolution = 1.5;
     grid.info.width = 7;
@@ -1269,7 +1269,10 @@ TEST (UnitTestMstPath, testWeirdRes)
     grid.info.origin.position.y = 0;
     for (int i=0; i<4; ++i) {
         for (int j=0; j<7; ++j) {
-            grid.data.push_back(0);
+            if (i < 3)
+                grid.data.push_back(0);
+            else
+                grid.data.push_back(100);
         }
     }
 
@@ -1297,7 +1300,7 @@ TEST (UnitTestMstPath, testWeirdRes)
     geometry_msgs::Point wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
     pos.x = 10.125;
-    pos.y = 5.625;
+    pos.y = 4.125;
     EXPECT_FLOAT_EQ(wp.x, pos.x);
     EXPECT_FLOAT_EQ(wp.y, pos.y);
     EXPECT_FLOAT_EQ(wp.z, pos.z);
@@ -1311,7 +1314,7 @@ TEST (UnitTestMstPath, testWeirdRes)
     EXPECT_FLOAT_EQ(wp.z, pos.z);
     wp = path.get_waypoint(pos, 0.00001);
     ASSERT_TRUE(path.valid());
-    pos.y -= 5.25;
+    pos.y -= 3.75;
     EXPECT_FLOAT_EQ(wp.x, pos.x);
     EXPECT_FLOAT_EQ(wp.y, pos.y);
     EXPECT_FLOAT_EQ(wp.z, pos.z);
@@ -1323,7 +1326,7 @@ TEST (UnitTestMstPath, testWeirdRes)
     EXPECT_FLOAT_EQ(wp.z, pos.z);
 
     // meander up
-    for (int i=0; i<3; ++i) {
+    for (int i=0; i<2; ++i) {
         wp = path.get_waypoint(pos, 0.00001);
         ASSERT_TRUE(path.valid());
         pos.y += 0.75;
