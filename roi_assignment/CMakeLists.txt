@@ -203,11 +203,11 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  # ## Test libraries
-  # catkin_add_gtest(test_assignment_result test/test_assignment_result.cpp)
-  # if(TARGET test_assignment_result)
-  #   target_link_libraries(test_assignment_result assignment_result)
-  # endif()
+  ## Test libraries
+  catkin_add_gtest(test_auction_roi test/test_auction_roi.cpp)
+  if(TARGET test_auction_roi)
+    target_link_libraries(test_auction_roi auction_roi)
+  endif()
   # catkin_add_gtest(test_roi_assignment_simple test/test_roi_assignment_simple.cpp)
   # if(TARGET test_roi_assignment_simple)
   #   target_link_libraries(test_roi_assignment_simple roi_assignment roi_assignment_simple assignment_result ${catkin_LIBRARIES})
