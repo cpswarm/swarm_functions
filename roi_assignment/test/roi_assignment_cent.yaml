@@ -1,0 +1,2 @@
+states:               # Only CPSs in these states are considered in the assignment process.
+- 89818899            # idle

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Increase verbosity level -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find roi_assignment)/test/rosconsole.config" />
+
+    <!-- ROI services -->
+    <node pkg="area_provider" type="roi_services" name="roi_services" output="screen" required="true">
+        <param name="pos_type" value="local" />
+        <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
+        <rosparam file="$(find roi_assignment)/test/roi_services.yaml" command="load" />
+    </node>
+
+    <!-- Area division action server -->
+    <node pkg="roi_division_cent" type="roi_division_cent" name="roi_division_cent" output="screen" required="true">
+        <rosparam file="$(find roi_division_cent)/param/roi_division_cent.yaml" command="load" />
+    </node>
+
+    <!-- ROI assignment action server -->
+    <node pkg="roi_assignment" type="roi_assignment" name="roi_assignment" output="screen" required="true">
+        <rosparam file="$(find roi_assignment)/param/roi_assignment.yaml" command="load" />
+        <rosparam file="$(find roi_assignment)/test/roi_assignment.yaml" command="load" />
+    </node>
+
+    <!-- Node unit test roi assignment -->
+    <test pkg="roi_assignment" type="test_roi_assignment" test-name="test_roi_assignment" required="true" />
+
+</launch>
