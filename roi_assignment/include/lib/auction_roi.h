@@ -71,6 +71,11 @@ private:
      * @brief The set of CPSs assigned to this ROI.
      */
     set<string> cpss;
+
+    /**
+     * @brief The distance of the CPS to this ROI.
+     */
+    double distance;
 };
 
 #endif // AUCTION_ROI_H
