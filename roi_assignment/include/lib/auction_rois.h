@@ -24,7 +24,7 @@ public:
      * @param cps The CPS that has been assigned.
      * @throws runtime_error if ROI is unknown.
      */
-    void add (int roi, string cps);
+    void add (string roi, string cps);
 
     /**
      * @brief Get the bid of this CPS for a ROI.
@@ -32,7 +32,7 @@ public:
      * @throws runtime_error if ROI is unknown.
      * @return The inverse of the ROI cost.
      */
-    double bid (int roi);
+    double bid (string roi);
 
     /**
      * @brief Get the coordinates defining a ROI.
@@ -40,7 +40,7 @@ public:
      * @throws runtime_error if ROI is unknown.
      * @return A vector of points.
      */
-    vector<geometry_msgs::Point> get_coords (int roi);
+    vector<geometry_msgs::Point> get_coords (string roi);
 
     /**
      * @brief Initialize the class.
@@ -59,7 +59,7 @@ private:
     /**
      * @brief The mapping between ROI IDs and ROI objects.
      */
-    map<int,auction_roi> roi_map;
+    map<string,auction_roi> roi_map;
 };
 
 #endif // AUCTION_ROIS_H

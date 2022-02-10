@@ -43,7 +43,7 @@ bool pose_received;
 /**
  * @brief The ID of the task that is auctioned.
  */
-int task_id;
+string task_id;
 
 /**
  * @brief Callback function to receive the position of this CPS.
@@ -86,7 +86,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     double distance = hypot(goal->task_pose.pose.position.x - pose.position.x, goal->task_pose.pose.position.y - pose.position.y);
     task_id = goal->task_id;
 
-    ROS_INFO("TASK_BID - Compute bid for task %d, value: %.2f", task_id, 1.0/distance);
+    ROS_INFO("TASK_BID - Compute bid for task %s, value: %.2f", task_id.c_str(), 1.0/distance);
 
     // create bid message
     cpswarm_msgs::TaskAllocationEvent task_allocation;
@@ -102,7 +102,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
     double loop_rate;
     nh.param(this_node::getName() + "/loop_rate", loop_rate, 5.0);
     Rate rate(loop_rate);
-    while (ok() && !as->isPreemptRequested() && allocation.task_id < 0) {
+    while (ok() && !as->isPreemptRequested() && allocation.task_id == "") {
         ROS_DEBUG_ONCE("TASK_BID - Waiting for auction to end");
         publisher.publish(task_allocation);
         spinOnce();
@@ -131,7 +131,7 @@ void bid_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Server
 
     // reset global variables
     task_id = -1;
-    allocation.task_id = -1;
+    allocation.task_id = "";
 }
 
 /**
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
     uuid = "";
     pose_received = false;
     task_id = -1;
-    allocation.task_id = -1;
+    allocation.task_id = "";
 
     // read parameters
     double loop_rate;

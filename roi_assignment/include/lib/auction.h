@@ -23,7 +23,7 @@ struct auction
      * @param auctioneer The UUID of the auctioning CPS.
      * @param initial_bid The starting bid of the auction.
      */
-    auction (int roi, string auctioneer, double initial_bid) : roi(roi), auctioneer(auctioneer), bid(initial_bid) {}
+    auction (string roi, string auctioneer, double initial_bid) : roi(roi), auctioneer(auctioneer), bid(initial_bid) {}
 
     /**
      * @brief Constructor that initializes the member variables.
@@ -33,12 +33,12 @@ struct auction
      * @param start The starting time of the auction.
      * @param end The closing time of the auction.
      */
-    auction (int roi, string auctioneer, double initial_bid, Time start, Time end) : roi(roi), auctioneer(auctioneer), bid(initial_bid), start(start), end(end) {}
+    auction (string roi, string auctioneer, double initial_bid, Time start, Time end) : roi(roi), auctioneer(auctioneer), bid(initial_bid), start(start), end(end) {}
 
     /**
      * @brief The ID of the ROI at auction.
      */
-    int roi;
+    string roi;
 
     /**
      * @param auctioneer The UUID of the auctioning CPS.

@@ -49,13 +49,13 @@ public:
      * @brief Get the ID of this ROI.
      * @return A hash value that (more or less) uniquely represents this ROI.
      */
-    int get_id ();
+    string get_id ();
 
 private:
     /**
      * @brief The ID for referencing this ROI. It is a hash value that (more or less) uniquely represents this ROI.
      */
-    int id;
+    string id;
 
     /**
      * @brief The cost associated to this ROI by this CPS. It is the product of the distance and the number of CPS assigned to this ROI.

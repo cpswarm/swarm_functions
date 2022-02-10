@@ -124,7 +124,7 @@ void broadcast_result ()
  * @param auctioneer The UUID of the CPS acting as auctioneer.
  * @param bid_value The value of the bid placed by this CPS.
  */
-void send_bid (int roi, string auctioneer, double bid_value)
+void send_bid (string roi, string auctioneer, double bid_value)
 {
     // create bid message
     cpswarm_msgs::TaskAllocationEvent bid;
@@ -285,12 +285,12 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
                     broadcast_auction();
                 }
                 catch (const exception e) {
-                    ROS_ERROR("ROI assignment error: Failed to broadcast auction for ROI %d: %s", selected.get_id(), e.what());
+                    ROS_ERROR("ROI assignment error: Failed to broadcast auction for ROI %s: %s", selected.get_id().c_str(), e.what());
                     continue;
                 }
             }
             catch (const exception e) {
-                ROS_ERROR("ROI assignment error: Failed to start auction for ROI %d: %s", selected.get_id(), e.what());
+                ROS_ERROR("ROI assignment error: Failed to start auction for ROI %s: %s", selected.get_id().c_str(), e.what());
             }
 
             // wait for bids
@@ -304,7 +304,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
                 broadcast_result();
             }
             catch (const exception e) {
-                ROS_ERROR("ROI assignment error: Failed to broadcast assignment for ROI %d: %s", selected.get_id(), e.what());
+                ROS_ERROR("ROI assignment error: Failed to broadcast assignment for ROI %s: %s", selected.get_id().c_str(), e.what());
             }
 
             // assignment interrupted

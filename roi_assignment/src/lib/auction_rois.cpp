@@ -4,26 +4,26 @@ auction_rois::auction_rois ()
 {
 }
 
-void auction_rois::add (int roi, string cps)
+void auction_rois::add (string roi, string cps)
 {
     if (roi_map.count(roi) < 1)
-        throw runtime_error("Unknown ROI " + to_string(roi));
+        throw runtime_error("Unknown ROI " + roi);
 
     roi_map[roi].add(cps);
 }
 
-double auction_rois::bid (int roi)
+double auction_rois::bid (string roi)
 {
     if (roi_map.count(roi) < 1)
-        throw runtime_error("Unknown ROI " + to_string(roi));
+        throw runtime_error("Unknown ROI " + roi);
 
     return 1.0 / roi_map[roi].get_cost();
 }
 
-vector<geometry_msgs::Point> auction_rois::get_coords (int roi)
+vector<geometry_msgs::Point> auction_rois::get_coords (string roi)
 {
     if (roi_map.count(roi) < 1)
-        throw runtime_error("Unknown ROI " + to_string(roi));
+        throw runtime_error("Unknown ROI " + roi);
 
     return roi_map[roi].get_coords();
 }

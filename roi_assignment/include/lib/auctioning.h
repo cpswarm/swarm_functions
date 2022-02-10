@@ -30,7 +30,7 @@ public:
      * @brief Get the ROI that this CPS has placed the highest bid for.
      * @return The ROI ID.
      */
-    int get_roi ();
+    string get_roi ();
 
     /**
      * @brief Get the auction that is currently running.
@@ -46,7 +46,7 @@ public:
      * @param timeout The duration of the auction.
      * @throws runtime_error if there is already an auction running.
      */
-    void initiate (int roi, double bid, Duration timeout);
+    void initiate (string roi, double bid, Duration timeout);
 
     /**
      * @brief Check whether there is currently an auction running.
@@ -61,7 +61,7 @@ public:
      * @param bid The value of the bid.
      * @throws runtime_error if the auction is not running.
      */
-    void participant (int roi, string cps, double bid);
+    void participant (string roi, string cps, double bid);
 
     /**
      * @brief Store the auction held by another CPS.
@@ -69,7 +69,7 @@ public:
      * @param auctioneer The UUID of the CPS holding the auction.
      * @param bid The starting bid of the auction.
      */
-    void participate (int roi, string auctioneer, double bid);
+    void participate (string roi, string auctioneer, double bid);
 
     /**
      * @brief Store the result of an auction held by another CPS.
@@ -78,7 +78,7 @@ public:
      * @param winner The UUID of the CPS that won the auction.
      * @throws runtime_error if no auction was opened by the auctioneer, if the auctioneer was auctioning another ROI, or a result has already been received.
      */
-    void set_result (int roi, string auctioneer, string winner);
+    void set_result (string roi, string auctioneer, string winner);
 
     /**
      * @brief Check whether this CPS has won an auction.
