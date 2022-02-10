@@ -14,7 +14,7 @@ auction_roi::auction_roi (double distance, vector<geometry_msgs::Point> coords) 
     // generate id
     id = "";
     for (auto c : coords_set)
-        id += to_string(c.first) + to_string(c.second);
+        id += to_string(c.first) + "," + to_string(c.second) + " ";
 
     // calculate cost
     cost = distance;
