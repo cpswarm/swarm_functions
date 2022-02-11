@@ -158,7 +158,7 @@ void auction_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
             ROS_DEBUG("Place bid %.2f in auction for ROI %s initiated by %s", bid, msg->id.c_str(), msg->swarmio.node.c_str());
         }
     }
-    catch (exception e) {
+    catch (const exception& e) {
         ROS_ERROR("ROI assignment error: Could not participate in auction: %s", e.what());
     }
 }
@@ -174,7 +174,7 @@ void bid_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 
         ROS_DEBUG("Received bid %.2f in auction for ROI %s from %s", msg->bid, msg->id.c_str(), msg->swarmio.node.c_str());
     }
-    catch (exception e) {
+    catch (const exception& e) {
         ROS_WARN("ROI assignment warning: Invalid bid received: %s", e.what());
     }
 }
@@ -191,7 +191,7 @@ void result_cb (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg)
 
         ROS_DEBUG("ROI %s assigned to %s", msg->task_id.c_str(), msg->cps_id.c_str());
     }
-    catch (exception e) {
+    catch (const exception& e) {
         ROS_ERROR("ROI assignment error: Invalid assignment result received: %s", e.what());
     }
 }
