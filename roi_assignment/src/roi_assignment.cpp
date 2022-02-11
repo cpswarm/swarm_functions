@@ -230,7 +230,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     try {
         retrieve_rois();
     }
-    catch (const exception e) {
+    catch (const exception& e) {
         ROS_FATAL("ROI assignment failure: Failed to get ROIs: %s", e.what());
         assignment_server->setAborted();
         return;
@@ -270,7 +270,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
             try {
                 selected = rois.select();
             }
-            catch (const exception e) {
+            catch (const exception& e) {
                 ROS_FATAL("ROI assignment failure: Could not select a ROI: %s", e.what());
                 assignment_server->setAborted();
                 return;
@@ -284,12 +284,12 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
                 try {
                     broadcast_auction();
                 }
-                catch (const exception e) {
+                catch (const exception& e) {
                     ROS_ERROR("ROI assignment error: Failed to broadcast auction for ROI %s: %s", selected.get_id().c_str(), e.what());
                     continue;
                 }
             }
-            catch (const exception e) {
+            catch (const exception& e) {
                 ROS_ERROR("ROI assignment error: Failed to start auction for ROI %s: %s", selected.get_id().c_str(), e.what());
             }
 
@@ -303,7 +303,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
             try {
                 broadcast_result();
             }
-            catch (const exception e) {
+            catch (const exception& e) {
                 ROS_ERROR("ROI assignment error: Failed to broadcast assignment for ROI %s: %s", selected.get_id().c_str(), e.what());
             }
 
@@ -322,7 +322,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
         result.roi = rois.get_coords(auct->get_roi());
         assignment_server->setSucceeded(result);
     }
-    catch (const exception e) {
+    catch (const exception& e) {
         ROS_FATAL("ROI assignment failure: Failed to get result: %s", e.what());
         assignment_server->setAborted();
     }
