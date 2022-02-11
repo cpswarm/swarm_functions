@@ -243,7 +243,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     // ros communication
     Subscriber auction_sub = nh.subscribe("rois/assignment/auction", queue_size, auction_cb); // listen to auction openings
     Subscriber result_sub = nh.subscribe("rois/assignment/result", queue_size, result_cb); // listen to auction closings
-    bid_pub = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("rois/assignment/bid", queue_size, true); // disseminate auction bids, latched
+    bid_pub = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("rois/assignment/bid", queue_size, true); // disseminate auction bids, latched
 
     // wait for other auctions
     Duration random(rng->uniformReal(timeout, 2*timeout));
