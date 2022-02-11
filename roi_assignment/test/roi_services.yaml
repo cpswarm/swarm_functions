@@ -1,5 +1,6 @@
 resolution: 1.0   # Resolution of the grid map representing the area in meter / cell.
                   # The directory containing the files with the ROI coordinates
-roi_dir: ../../central_functions/roi_assignment/test/
+roi_dir: ../../swarm_functions/roi_assignment/test/
 duplicates: false # Whether to allow duplicate ROIs, i.e., ROIs with identical coordinates.
 publish:    false # Whether to publish any newly imported ROI as event.
+visualize:  false # Whether to publish the map of any newly imported ROI.

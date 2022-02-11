@@ -11,11 +11,6 @@
         <rosparam file="$(find roi_assignment)/test/roi_services.yaml" command="load" />
     </node>
 
-    <!-- Area division action server -->
-    <node pkg="roi_division_cent" type="roi_division_cent" name="roi_division_cent" output="screen" required="true">
-        <rosparam file="$(find roi_division_cent)/param/roi_division_cent.yaml" command="load" />
-    </node>
-
     <!-- ROI assignment action server -->
     <node pkg="roi_assignment" type="roi_assignment" name="roi_assignment" output="screen" required="true">
         <rosparam file="$(find roi_assignment)/param/roi_assignment.yaml" command="load" />

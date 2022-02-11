@@ -1,0 +1,1 @@
+timeout:        1.0  # The time in seconds to listen for incoming bids from other CPSs after the auction has been opened, i.e., auction duration.

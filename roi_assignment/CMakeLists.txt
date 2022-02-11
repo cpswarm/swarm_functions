@@ -221,12 +221,12 @@ if(CATKIN_ENABLE_TESTING)
     target_link_libraries(test_auctioning auctioning ${catkin_LIBRARIES})
   endif()
 
-  # ## Test ROS interface (integration with area provider and area division packages)
-  # find_package(rostest REQUIRED)
-  # add_rostest_gtest(test_roi_assignment test/test_roi_assignment.test test/test_roi_assignment.cpp)
-  # if(TARGET test_roi_assignment)
-  #   target_link_libraries(test_roi_assignment ${catkin_LIBRARIES})
-  # endif()
+  ## Test ROS interface (integration with area provider)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_roi_assignment test/test_roi_assignment.test test/test_roi_assignment.cpp)
+  if(TARGET test_roi_assignment)
+    target_link_libraries(test_roi_assignment ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests
