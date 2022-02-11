@@ -144,6 +144,10 @@ void send_bid (string roi, string auctioneer, double bid_value)
  */
 void auction_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 {
+    // ignore my own messages
+    if (msg->swarmio.node == "")
+        return;
+
     try {
         // calculate bid
         double bid = rois.bid(msg->id);
@@ -169,6 +173,10 @@ void auction_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
  */
 void bid_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 {
+    // ignore my own messages
+    if (msg->swarmio.node == "")
+        return;
+
     try {
         auct->participant(msg->id, msg->swarmio.node, msg->bid);
 
@@ -185,6 +193,10 @@ void bid_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
  */
 void result_cb (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg)
 {
+    // ignore my own messages
+    if (msg->swarmio.node == "")
+        return;
+
     try {
         auct->set_result(msg->task_id, msg->swarmio.node, msg->cps_id);
         rois.add(msg->task_id, msg->cps_id);
