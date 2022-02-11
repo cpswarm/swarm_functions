@@ -350,7 +350,7 @@ int main (int argc, char **argv)
     // get position
     ROS_DEBUG("Wait for valid position...");
     Subscriber pos_sub = nh.subscribe("position_provider/pose", queue_size, pos_cb);
-    while (ok() && position.header.stamp.isValid() == false) {
+    while (ok() && position.header.stamp.isZero()) {
         spinOnce();
         rate.sleep();
     }
