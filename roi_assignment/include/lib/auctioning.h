@@ -27,7 +27,7 @@ public:
     auction get_result ();
 
     /**
-     * @brief Get the ROI that this CPS has placed the highest bid for.
+     * @brief Get the ROI that this CPS has placed the highest bid for. Running or closed auctions.
      * @return The ROI ID.
      */
     string get_roi ();

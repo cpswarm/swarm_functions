@@ -45,11 +45,13 @@ auction auctioning::get_running ()
 
 void auctioning::initiate (string roi, double bid, Duration timeout)
 {
-    auction auction(roi, self, bid, Time::now(), Time::now()+timeout);
-
     // already running an auction
     if (is_running())
         throw runtime_error("Already running an auction for ROI " + auctions[self].roi);
+
+    // create auction
+    auction auction(roi, self, bid, Time::now(), Time::now()+timeout);
+    auction.winner = self; // and make this cps the winner by default
 
     auctions[self] = auction;
 }
@@ -110,7 +112,7 @@ void auctioning::set_result (string roi, string auctioneer, string winner)
 bool auctioning::won ()
 {
     for (auto a : auctions) {
-        if (a.second.winner == self) {
+        if (a.second.winner == self && a.second.end < Time::now()) {
             return true;
         }
     }
