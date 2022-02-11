@@ -154,6 +154,8 @@ void auction_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 
             // send bid
             send_bid(msg->id, msg->swarmio.node, bid);
+
+            ROS_DEBUG("Place bid %.2f in auction for ROI %s initiated by %s", bid, msg->id.c_str(), msg->swarmio.node.c_str());
         }
     }
     catch (exception e) {
@@ -169,6 +171,8 @@ void bid_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 {
     try {
         auct->participant(msg->id, msg->swarmio.node, msg->bid);
+
+        ROS_DEBUG("Received bid %.2f in auction for ROI %s from %s", msg->bid, msg->id.c_str(), msg->swarmio.node.c_str());
     }
     catch (exception e) {
         ROS_WARN("ROI assignment warning: Invalid bid received: %s", e.what());
@@ -184,6 +188,8 @@ void result_cb (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg)
     try {
         auct->set_result(msg->task_id, msg->swarmio.node, msg->cps_id);
         rois.add(msg->task_id, msg->cps_id);
+
+        ROS_DEBUG("ROI %s assigned to %s", msg->task_id.c_str(), msg->cps_id.c_str());
     }
     catch (exception e) {
         ROS_ERROR("ROI assignment error: Invalid assignment result received: %s", e.what());
@@ -280,6 +286,8 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
             try {
                 auct->initiate(selected.get_id(), selected.get_cost(), Duration(timeout));
 
+                ROS_DEBUG("Start auction for ROI %s with bid %.2f", selected.get_id().c_str(), auct->get_running().bid);
+
                 // inform swarm about auction
                 try {
                     broadcast_auction();
@@ -302,6 +310,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
             // close auction
             try {
                 broadcast_result();
+                ROS_DEBUG("Auction for ROI %s won by %s", auct->get_result().roi.c_str(), auct->get_result().winner.c_str());
             }
             catch (const exception& e) {
                 ROS_ERROR("ROI assignment error: Failed to broadcast assignment for ROI %s: %s", selected.get_id().c_str(), e.what());
@@ -321,6 +330,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
         cpswarm_msgs::RoiAssignmentResult result;
         result.roi = rois.get_coords(auct->get_roi());
         assignment_server->setSucceeded(result);
+        ROS_DEBUG("Successfully acquired ROI %s ", auct->get_roi().c_str());
     }
     catch (const exception& e) {
         ROS_FATAL("ROI assignment failure: Failed to get result: %s", e.what());
