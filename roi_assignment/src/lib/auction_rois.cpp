@@ -17,6 +17,10 @@ double auction_rois::bid (string roi)
     if (roi_map.count(roi) < 1)
         throw runtime_error("Unknown ROI " + roi);
 
+    // no cost roi
+    if (roi_map[roi].get_cost() <= 0)
+        return numeric_limits<double>::max();
+
     return 1.0 / roi_map[roi].get_cost();
 }
 
