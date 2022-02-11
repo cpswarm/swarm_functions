@@ -20,14 +20,14 @@ public:
     auctioning (string self);
 
     /**
-     * @brief Get the result of the latest auction.
+     * @brief Get the result of the latest auction held by this CPS.
      * @throws runtime_error if no auction was running previously or if an auction is currently running.
      * @return An auction object with the results.
      */
     auction get_result ();
 
     /**
-     * @brief Get the ROI that this CPS has placed the highest bid for. Running or closed auctions.
+     * @brief Get the ROI that this CPS has placed the highest bid for. Running or closed auctions. Auctions held by this CPS or other CPSs.
      * @return The ROI ID.
      */
     string get_roi ();
@@ -67,7 +67,7 @@ public:
      * @brief Store the auction held by another CPS.
      * @param roi The ID of the ROI that is auctioned.
      * @param auctioneer The UUID of the CPS holding the auction.
-     * @param bid The starting bid of the auction.
+     * @param bid The bid placed by this CPS.
      */
     void participate (string roi, string auctioneer, double bid);
 

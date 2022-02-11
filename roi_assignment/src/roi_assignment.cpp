@@ -183,7 +183,7 @@ void result_cb (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg)
 {
     try {
         auct->set_result(msg->task_id, msg->swarmio.node, msg->cps_id);
-        rois.add(msg->task_id, msg->swarmio.node);
+        rois.add(msg->task_id, msg->cps_id);
     }
     catch (exception e) {
         ROS_ERROR("ROI assignment error: Invalid assignment result received: %s", e.what());
