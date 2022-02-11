@@ -121,7 +121,9 @@ TEST (UnitTestAuctionRois, testCost)
         EXPECT_STREQ(e.what(), "Unknown ROI asdf");
     }
 
+    //
     // add another roi with higher cost
+    //
     coord.x = 1.234;
     coord.y = 5.678;
     coords.push_back(coord);
