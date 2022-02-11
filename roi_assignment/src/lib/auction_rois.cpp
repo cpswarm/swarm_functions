@@ -50,7 +50,7 @@ auction_roi auction_rois::select ()
 
     // get roi with lowest cost
     for (auto r : roi_map) {
-        if (cheapest.get_cost() == 0 || r.second.get_cost() < cheapest.get_cost()) {
+        if (cheapest.get_id() == "" || r.second.get_cost() < cheapest.get_cost()) {
             cheapest = r.second;
         }
     }
