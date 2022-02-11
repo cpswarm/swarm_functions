@@ -224,13 +224,11 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     NodeHandle nh;
 
     // read parameters
-    double loop_rate;
-    nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.0);
-    Rate rate(loop_rate);
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
     double timeout;
     nh.param(this_node::getName() + "/timeout", timeout, 5.0);
+    Rate rate(timeout * 10);
 
     // retrieve rois
     try {
@@ -250,9 +248,10 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     // wait for other auctions
     Duration random(rng->uniformReal(timeout, 2*timeout));
     Duration wait;
+    ROS_DEBUG("Wait for %.2f seconds for other auctions...", random.toSec());
     while (ok() && random>wait) {
         rate.sleep();
-        wait += rate.cycleTime();
+        wait += rate.expectedCycleTime();
         spinOnce();
     }
 
