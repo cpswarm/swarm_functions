@@ -301,7 +301,7 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
 
             // start auction
             try {
-                auct->initiate(selected.get_id(), selected.get_cost(), Duration(timeout));
+                auct->initiate(selected.get_id(), rois.bid(selected.get_id()), Duration(timeout));
 
                 ROS_DEBUG("Start auction for ROI %s with bid %.2f", selected.get_id().c_str(), auct->get_running().bid);
 
