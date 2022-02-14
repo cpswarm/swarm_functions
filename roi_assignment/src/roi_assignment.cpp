@@ -326,7 +326,13 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
 
             // close auction
             try {
+                // inform others
                 broadcast_result();
+
+                // if this cps didn't win, increase cost for roi
+                if (auct->get_result().winner != uuid)
+                    rois.add(auct->get_result().roi, auct->get_result().winner);
+
                 ROS_DEBUG("Auction for ROI %s won by %s", auct->get_result().roi.c_str(), auct->get_result().winner.c_str());
             }
             catch (const exception& e) {
