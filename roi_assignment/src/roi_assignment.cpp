@@ -235,9 +235,6 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
 {
     NodeHandle nh;
 
-    // create auctioning object
-    auct = new auctioning(uuid);
-
     // read parameters
     int queue_size;
     nh.param(this_node::getName() + "/queue_size", queue_size, 1);
@@ -252,7 +249,6 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     catch (const exception& e) {
         ROS_FATAL("ROI assignment failure: Failed to get ROIs: %s", e.what());
         assignment_server->setAborted();
-        delete auct;
         return;
     }
 
@@ -275,7 +271,6 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     if (assignment_server->isPreemptRequested()) {
         assignment_server->setPreempted();
         ROS_ERROR("ROI assignment preempted");
-        delete auct;
         return;
     }
 
@@ -295,7 +290,6 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
             catch (const exception& e) {
                 ROS_FATAL("ROI assignment failure: Could not select a ROI: %s", e.what());
                 assignment_server->setAborted();
-                delete auct;
                 return;
             }
 
@@ -343,7 +337,6 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
             if (assignment_server->isPreemptRequested()) {
                 assignment_server->setPreempted();
                 ROS_ERROR("ROI assignment preempted");
-                delete auct;
                 return;
             }
         }
@@ -360,9 +353,6 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
         ROS_FATAL("ROI assignment failure: Failed to get result: %s", e.what());
         assignment_server->setAborted();
     }
-
-    // clean up
-    delete auct;
 }
 
 /**
@@ -402,6 +392,9 @@ int main (int argc, char **argv)
     }
     ROS_DEBUG("Valid UUID received: %s", uuid.c_str());
 
+    // create auctioning object
+    auct = new auctioning(uuid);
+
     // init random number generator
     int seed;
     nh.param<int>("/rng_seed", seed, 0);
@@ -422,6 +415,7 @@ int main (int argc, char **argv)
 
     // clean up
     delete rng;
+    delete auct;
 
     return 0;
 }
