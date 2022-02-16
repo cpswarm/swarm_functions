@@ -43,10 +43,10 @@ void auction_rois::init (vector<pair<double,vector<geometry_msgs::Point>>> coord
 
 auction_roi auction_rois::select ()
 {
-    auction_roi cheapest;
-
     if (roi_map.size() == 0)
         throw runtime_error("No ROIs available");
+
+    auction_roi cheapest;
 
     // get roi with lowest cost
     for (auto r : roi_map) {

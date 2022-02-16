@@ -10,13 +10,6 @@ TEST (UnitTestAuctioning, testIdle)
     auctioning auction("me");
 
     // test the getters
-    try {
-        auction.get_result();
-        ADD_FAILURE();
-    }
-    catch (const exception& e) {
-        EXPECT_STREQ(e.what(), "No auction was running");
-    }
     EXPECT_EQ(auction.get_roi(), "");
     try {
         auction.get_running();
@@ -48,13 +41,6 @@ TEST (UnitTestAuctioning, testAuctioneerOnly)
     }
 
     // test the getters
-    try {
-        auction.get_result();
-        ADD_FAILURE();
-    }
-    catch (const exception& e) {
-        EXPECT_EQ(string(e.what()).substr(0, 35), "Auction for ROI a roi still running");
-    }
     EXPECT_EQ(auction.get_roi(), "a roi");
     EXPECT_EQ(auction.get_running().roi, "a roi");
     EXPECT_TRUE(auction.is_running());
@@ -64,8 +50,6 @@ TEST (UnitTestAuctioning, testAuctioneerOnly)
     Duration(1).sleep();
 
     // test the getters
-    EXPECT_EQ(auction.get_result().roi, "a roi");
-    EXPECT_EQ(auction.get_result().winner, "me");
     EXPECT_EQ(auction.get_roi(), "a roi");
     try {
         auction.get_running();
@@ -88,13 +72,6 @@ TEST (UnitTestAuctioning, testAuctioneer)
     auction.initiate("a roi", 1.234, Duration(1));
 
     // test the getters
-    try {
-        auction.get_result();
-        ADD_FAILURE();
-    }
-    catch (const exception& e) {
-        EXPECT_EQ(string(e.what()).substr(0, 35), "Auction for ROI a roi still running");
-    }
     EXPECT_EQ(auction.get_roi(), "a roi");
     EXPECT_EQ(auction.get_running().roi, "a roi");
     EXPECT_TRUE(auction.is_running());
@@ -107,8 +84,6 @@ TEST (UnitTestAuctioning, testAuctioneer)
     Duration(1).sleep();
 
     // test the getters
-    EXPECT_EQ(auction.get_result().roi, "a roi");
-    EXPECT_EQ(auction.get_result().winner, "me");
     EXPECT_EQ(auction.get_roi(), "a roi");
     try {
         auction.get_running();
@@ -127,13 +102,6 @@ TEST (UnitTestAuctioning, testAuctioneer)
     auction.initiate("another roi", 1.234, Duration(1));
 
     // test the getters
-    try {
-        auction.get_result();
-        ADD_FAILURE();
-    }
-    catch (const exception& e) {
-        EXPECT_EQ(string(e.what()).substr(0, 41), "Auction for ROI another roi still running");
-    }
     EXPECT_EQ(auction.get_roi(), "another roi");
     EXPECT_EQ(auction.get_running().roi, "another roi");
     EXPECT_TRUE(auction.is_running());
@@ -148,8 +116,6 @@ TEST (UnitTestAuctioning, testAuctioneer)
     Duration(1).sleep();
 
     // test the getters
-    EXPECT_EQ(auction.get_result().roi, "another roi");
-    EXPECT_EQ(auction.get_result().winner, "other");
     EXPECT_EQ(auction.get_roi(), "");
     try {
         auction.get_running();
@@ -195,13 +161,6 @@ TEST (UnitTestAuctioning, testParticipation)
     auction.set_result("a roi", "other", "me");
 
     // test the getters
-    try {
-        auction.get_result();
-        ADD_FAILURE();
-    }
-    catch (const exception& e) {
-        EXPECT_STREQ(e.what(), "No auction was running");
-    }
     EXPECT_EQ(auction.get_roi(), "a roi");
     try {
         auction.get_running();

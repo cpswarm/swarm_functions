@@ -9,25 +9,22 @@ TEST (UnitTestAuction, testConstruction)
     // test empty roi
     auction auction_empty;
     EXPECT_EQ(auction_empty.roi, "");
-    EXPECT_EQ(auction_empty.auctioneer, "");
     EXPECT_DOUBLE_EQ(auction_empty.bid, 0);
     EXPECT_EQ(auction_empty.winner, "");
     EXPECT_DOUBLE_EQ(auction_empty.start.toSec(), 0);
     EXPECT_DOUBLE_EQ(auction_empty.end.toSec(), 0);
 
     // test with some initialization
-    auction auction_some("asdf", "jklö", 1.234);
+    auction auction_some("asdf", 1.234);
     EXPECT_EQ(auction_some.roi, "asdf");
-    EXPECT_EQ(auction_some.auctioneer, "jklö");
     EXPECT_DOUBLE_EQ(auction_some.bid, 1.234);
     EXPECT_EQ(auction_some.winner, "");
     EXPECT_DOUBLE_EQ(auction_some.start.toSec(), 0);
     EXPECT_DOUBLE_EQ(auction_some.end.toSec(), 0);
 
     // test with most members initialized
-    auction auction_most("qwer", "tzui", 0.123456789, Time(0.1234), Time(5.6789));
+    auction auction_most("qwer", 0.123456789, Time(0.1234), Time(5.6789));
     EXPECT_EQ(auction_most.roi, "qwer");
-    EXPECT_EQ(auction_most.auctioneer, "tzui");
     EXPECT_DOUBLE_EQ(auction_most.bid, 0.123456789);
     EXPECT_EQ(auction_most.winner, "");
     EXPECT_DOUBLE_EQ(auction_most.start.toSec(), 0.1234);

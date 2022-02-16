@@ -20,17 +20,11 @@ public:
     auctioning (string self);
 
     /**
-     * @brief Get the result of the latest auction held by this CPS.
-     * @throws runtime_error if no auction was running previously or if an auction is currently running.
-     * @return An auction object with the results.
+     * @brief Get the ROI that this CPS is assigned to.
+     * @throws runtime_error if no auction is running or this CPS did not win.
+     * @return An ROI ID.
      */
-    auction get_result ();
-
-    /**
-     * @brief Get the ROI that this CPS has placed the highest bid for. Running or closed auctions. Auctions held by this CPS or other CPSs.
-     * @return The ROI ID.
-     */
-    string get_roi ();
+    string get_assigned ();
 
     /**
      * @brief Get the auction that is currently running.
@@ -59,38 +53,21 @@ public:
      * @param roi The ID of the ROI that is auctioned.
      * @param cps The UUID of the CPS placing the bid.
      * @param bid The value of the bid.
-     * @throws runtime_error if the auction is not running.
+     * @throws runtime_error if the auction is not running (anymore).
      */
     void participant (string roi, string cps, double bid);
 
     /**
-     * @brief Store the auction held by another CPS.
-     * @param roi The ID of the ROI that is auctioned.
-     * @param auctioneer The UUID of the CPS holding the auction.
-     * @param bid The bid placed by this CPS.
-     */
-    void participate (string roi, string auctioneer, double bid);
-
-    /**
-     * @brief Store the result of an auction held by another CPS.
-     * @param roi The ID of the ROI that is auctioned.
-     * @param auctioneer The UUID of the CPS holding the auction.
-     * @param winner The UUID of the CPS that won the auction.
-     * @throws runtime_error if no auction was opened by the auctioneer, if the auctioneer was auctioning another ROI, or a result has already been received.
-     */
-    void set_result (string roi, string auctioneer, string winner);
-
-    /**
-     * @brief Check whether this CPS has won an auction.
-     * @return True, if there is at least one auction where this CPS has placed the highest bid. False otherwise.
+     * @brief Check whether this CPS has won the auction.
+     * @return True, if the auction is closed and this CPS has placed the highest bid. False otherwise.
      */
     bool won ();
 
 private:
     /**
-     * @brief The mapping between CPS UUID and auction.
+     * @brief The auction currently held by this CPS.
      */
-    map<string,auction> auctions;
+    auction current;
 
     /**
      * @brief The UUID if this CPS.

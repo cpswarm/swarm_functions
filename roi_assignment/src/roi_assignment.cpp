@@ -62,31 +62,6 @@ vector<pair<double,vector<geometry_msgs::Point>>> expand (std_msgs::MultiArrayLa
 }
 
 /**
- * @brief Obtain the ROI coordinates from the area provider.
- * @throws runtime_error if the ROIs could not be retrieved.
- */
-void retrieve_rois ()
-{
-    NodeHandle nh;
-
-    // service client
-    ServiceClient get_rois_client = nh.serviceClient<cpswarm_msgs::GetMultiPoints>("rois/get_all");
-    ROS_DEBUG("Waiting for ROI service...");
-    get_rois_client.waitForExistence();
-    ROS_DEBUG("ROI service available");
-
-    // get all rois
-    cpswarm_msgs::GetMultiPoints gmp;
-    if (get_rois_client.call(gmp)) {
-        // initialize roi data
-        rois.init(expand(gmp.response.layout, gmp.response.points));
-    }
-    // rois could not be retrieved
-    else
-        throw runtime_error("Failed to call service 'rois/get_all'");
-}
-
-/**
  * @brief Inform the other CPSs about the beginning of an auction.
  */
 void broadcast_auction ()
@@ -103,19 +78,19 @@ void broadcast_auction ()
 }
 
 /**
- * @brief Inform the other CPSs about the ending of an auction.
+ * @brief Inform the other CPSs about the ROI that this CPS selected.
  */
-void broadcast_result ()
+void broadcast_assignment ()
 {
-    // create result message
-    cpswarm_msgs::TaskAllocatedEvent result;
-    result.header.stamp = Time::now();
-    result.swarmio.name = "roi_assignment_result";
-    result.task_id = auct->get_result().roi;
-    result.cps_id = auct->get_result().winner;
+    // create assignment message
+    cpswarm_msgs::TaskAllocatedEvent assignment;
+    assignment.header.stamp = Time::now();
+    assignment.swarmio.name = "roi_assignment_result";
+    assignment.task_id = auct->get_assigned();
+    assignment.cps_id = uuid;
 
-    // publish result
-    result_pub.publish(result);
+    // publish assignment
+    result_pub.publish(assignment);
 }
 
 /**
@@ -152,11 +127,8 @@ void auction_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
         // calculate bid
         double bid = rois.bid(msg->id);
 
-        // only particpate if my bid is higher
+        // only send bid if it is higher
         if (bid > msg->bid) {
-            auct->participate(msg->id, msg->swarmio.node, bid);
-
-            // send bid
             send_bid(msg->id, msg->swarmio.node, bid);
 
             ROS_DEBUG("Place bid %.2f in auction for ROI %s initiated by %s", bid, msg->id.c_str(), msg->swarmio.node.c_str());
@@ -173,6 +145,8 @@ void auction_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
  */
 void bid_cb (const cpswarm_msgs::TaskAllocationEvent::ConstPtr& msg)
 {
+    ROS_ERROR("Received bid %.2f in auction for ROI %s from %s", msg->bid, msg->id.c_str(), msg->swarmio.node.c_str());
+
     // ignore my own messages
     if (msg->swarmio.node == "")
         return;
@@ -198,8 +172,9 @@ void result_cb (const cpswarm_msgs::TaskAllocatedEvent::ConstPtr& msg)
         return;
 
     try {
-        auct->set_result(msg->task_id, msg->swarmio.node, msg->cps_id);
-        rois.add(msg->task_id, msg->cps_id);
+        // store result of assignment (cpss don't necessarily choose a roi when they win an auction)
+        if (msg->swarmio.node == msg->cps_id) // only results assigned by cpss to themselves mean they will go to the roi
+            rois.add(msg->task_id, msg->cps_id);
 
         ROS_DEBUG("ROI %s assigned to %s", msg->task_id.c_str(), msg->cps_id.c_str());
     }
@@ -242,114 +217,77 @@ void roi_assignment (const cpswarm_msgs::RoiAssignmentGoal::ConstPtr& goal, Assi
     nh.param(this_node::getName() + "/timeout", timeout, 5.0);
     Rate rate(timeout * 10);
 
-    // retrieve rois
-    try {
-        retrieve_rois();
-    }
-    catch (const exception& e) {
-        ROS_FATAL("ROI assignment failure: Failed to get ROIs: %s", e.what());
-        assignment_server->setAborted();
-        return;
-    }
+    // TODO: updated rois without overwriting previous assignment results
 
     // ros communication
-    Subscriber auction_sub = nh.subscribe("rois/assignment/auction", queue_size, auction_cb); // listen to auction openings
-    Subscriber result_sub = nh.subscribe("rois/assignment/result", queue_size, result_cb); // listen to auction closings
-    bid_pub = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("rois/assignment/bid", queue_size, true); // disseminate auction bids, latched
+    auction_pub = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("rois/assignment/auction", queue_size); // disseminate auctions
+    result_pub = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("rois/assignment/result", queue_size); // disseminate auction result
+    Subscriber bid_sub = nh.subscribe("rois/assignment/bid", queue_size, bid_cb); // listen to bids
 
-    // wait for other auctions
-    Duration random(rng->uniformReal(timeout, 2*timeout));
-    Duration wait;
-    ROS_DEBUG("Wait for %.2f seconds for other auctions...", random.toSec());
-    while (ok() && random>wait) {
-        rate.sleep();
-        wait += rate.expectedCycleTime();
-        spinOnce();
-    }
+    // try acquiring a roi until succeeded
+    do {
+        // select a roi
+        auction_roi selected;
+        try {
+            selected = rois.select(); // TODO: select next cheapest each iteration
+        }
+        catch (const exception& e) {
+            ROS_FATAL("ROI assignment failure: Could not select a ROI: %s", e.what());
+            assignment_server->setAborted();
+            return;
+        }
 
-    // assignment interrupted
-    if (assignment_server->isPreemptRequested()) {
-        assignment_server->setPreempted();
-        ROS_ERROR("ROI assignment preempted");
-        return;
-    }
+        // start auction
+        try {
+            auct->initiate(selected.get_id(), rois.bid(selected.get_id()), Duration(timeout));
 
-    if (auct->won() == false) {
-        // ros communication
-        auction_pub = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("rois/assignment/auction", queue_size, true); // disseminate auctions, latched
-        result_pub = nh.advertise<cpswarm_msgs::TaskAllocatedEvent>("rois/assignment/result", queue_size, true); // disseminate auction result, latched
-        Subscriber bid_sub = nh.subscribe("rois/assignment/bid", queue_size, bid_cb); // listen to bids
+            ROS_DEBUG("Start auction for ROI %s with bid %.2f", selected.get_id().c_str(), auct->get_running().bid);
 
-        // try acquiring a roi until succeeded
-        while (auct->won() == false) {
-            // select a roi
-            auction_roi selected;
+            // inform swarm about auction
             try {
-                selected = rois.select();
+                broadcast_auction();
             }
             catch (const exception& e) {
-                ROS_FATAL("ROI assignment failure: Could not select a ROI: %s", e.what());
-                assignment_server->setAborted();
-                return;
-            }
-
-            // start auction
-            try {
-                auct->initiate(selected.get_id(), rois.bid(selected.get_id()), Duration(timeout));
-
-                ROS_DEBUG("Start auction for ROI %s with bid %.2f", selected.get_id().c_str(), auct->get_running().bid);
-
-                // inform swarm about auction
-                try {
-                    broadcast_auction();
-                }
-                catch (const exception& e) {
-                    ROS_ERROR("ROI assignment error: Failed to broadcast auction for ROI %s: %s", selected.get_id().c_str(), e.what());
-                    continue;
-                }
-            }
-            catch (const exception& e) {
-                ROS_ERROR("ROI assignment error: Failed to start auction for ROI %s: %s", selected.get_id().c_str(), e.what());
-            }
-
-            // wait for bids
-            while (ok() && auct->is_running()) {
-                rate.sleep();
-                spinOnce();
-            }
-
-            // close auction
-            try {
-                // inform others
-                broadcast_result();
-
-                // if this cps didn't win, increase cost for roi
-                if (auct->get_result().winner != uuid)
-                    rois.add(auct->get_result().roi, auct->get_result().winner);
-
-                ROS_DEBUG("Auction for ROI %s won by %s", auct->get_result().roi.c_str(), auct->get_result().winner.c_str());
-            }
-            catch (const exception& e) {
-                ROS_ERROR("ROI assignment error: Failed to broadcast assignment for ROI %s: %s", selected.get_id().c_str(), e.what());
-            }
-
-            // assignment interrupted
-            if (assignment_server->isPreemptRequested()) {
-                assignment_server->setPreempted();
-                ROS_ERROR("ROI assignment preempted");
-                return;
+                ROS_ERROR("ROI assignment error: Failed to broadcast auction for ROI %s: %s", selected.get_id().c_str(), e.what());
+                continue;
             }
         }
-    }
+        catch (const exception& e) {
+            ROS_ERROR("ROI assignment error: Failed to start auction for ROI %s: %s", selected.get_id().c_str(), e.what());
+            continue;
+        }
 
-    // successfully completed assignment action
+        // wait for bids
+        while (ok() && auct->is_running() && assignment_server->isPreemptRequested() == false) {
+            rate.sleep();
+            spinOnce();
+        }
+
+        // assignment interrupted
+        if (assignment_server->isPreemptRequested()) {
+            assignment_server->setPreempted();
+            ROS_ERROR("ROI assignment preempted");
+            return;
+        }
+    }
+    while (auct->won() == false);
+
+    // completed assignment action
     try {
+        // get assigned roi coordinates
         cpswarm_msgs::RoiAssignmentResult result;
-        result.roi = rois.get_coords(auct->get_roi());
+        result.roi = rois.get_coords(auct->get_assigned());
+
+        // inform others
+        broadcast_assignment();
+
+        ROS_DEBUG("Successfully acquired ROI %s ", auct->get_assigned().c_str());
+
+        // successfully completed assignment action
         assignment_server->setSucceeded(result);
-        ROS_DEBUG("Successfully acquired ROI %s ", auct->get_roi().c_str());
     }
     catch (const exception& e) {
+        // failed to complete assignment action
         ROS_FATAL("ROI assignment failure: Failed to get result: %s", e.what());
         assignment_server->setAborted();
     }
@@ -366,6 +304,22 @@ int main (int argc, char **argv)
     // init ros node
     init(argc, argv, "roi_assignment");
     NodeHandle nh;
+
+    // retrieve rois
+    ServiceClient get_rois_client = nh.serviceClient<cpswarm_msgs::GetMultiPoints>("rois/get_all");
+    ROS_DEBUG("Waiting for ROI service...");
+    get_rois_client.waitForExistence();
+    ROS_DEBUG("ROI service available");
+    cpswarm_msgs::GetMultiPoints gmp;
+    if (get_rois_client.call(gmp)) {
+        // initialize roi data
+        rois.init(expand(gmp.response.layout, gmp.response.points));
+    }
+    // rois could not be retrieved
+    else {
+        ROS_FATAL("ROI assignment failure: Failed to get ROIs: Failed to call service 'rois/get_all");
+        return 1;
+    }
 
     // read parameters
     double loop_rate;
@@ -403,6 +357,12 @@ int main (int argc, char **argv)
     else
         rng = new random_numbers::RandomNumberGenerator();
 
+    // publisher for auction bids
+    bid_pub = nh.advertise<cpswarm_msgs::TaskAllocationEvent>("rois/assignment/bid", queue_size);
+
+    // listen to auctions in the background
+    Subscriber auction_sub = nh.subscribe("rois/assignment/auction", queue_size, auction_cb); // listen to auction openings
+    Subscriber result_sub = nh.subscribe("rois/assignment/result", queue_size, result_cb); // listen to auction closings
 
     // provide action server
     AssignmentAction assignment_action(nh, "rois/assign", boost::bind(&roi_assignment, _1, &assignment_action), false); // no autostart

@@ -5,6 +5,4 @@ dist_avoid:      10.0   # Distance between CPSs in meter below which collision a
 visualize:       true   # Whether to visualize the avoidance direction.
 repulsion_shape: linear # The shape of the repulsion function, can be sine, exp, or linear.
 excluded:               # No collision avoidance in these states.
-- Takeoff
-- IdleThreads
-- IdleThreads2
+- 89818899              # idle

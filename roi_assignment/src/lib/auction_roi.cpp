@@ -17,7 +17,7 @@ auction_roi::auction_roi (double distance, vector<geometry_msgs::Point> coords) 
         id += to_string(c.first) + "," + to_string(c.second) + " ";
 
     // calculate cost
-    cost = distance;
+    cost = distance; // TODO: normalize distance, apply cost function parameter
 }
 
 void auction_roi::add (string cps)
@@ -26,7 +26,7 @@ void auction_roi::add (string cps)
     cpss.insert(cps);
 
     // update cost
-    cost = distance * (1 + cpss.size());
+    cost = distance * (1 + cpss.size()); // TODO: normalize cpss.size, apply cost function parameter
 
 }
 

@@ -15,35 +15,30 @@ struct auction
     /**
      * @brief Constructor.
      */
-    auction () : roi(""), auctioneer(""), bid(0), winner(""), start(Time(0)), end(Time(0)) {}
-
-    /**
-     * @brief Constructor that initializes some member variables.
-     * @param roi The ID of the ROI at auction.
-     * @param auctioneer The UUID of the auctioning CPS.
-     * @param initial_bid The starting bid of the auction.
-     */
-    auction (string roi, string auctioneer, double initial_bid) : roi(roi), auctioneer(auctioneer), bid(initial_bid), winner(""), start(Time(0)), end(Time(0)) {}
+    auction () : roi(""), bid(0), winner(""), start(Time(0)), end(Time(0)) {}
 
     /**
      * @brief Constructor that initializes the member variables.
      * @param roi The ID of the ROI at auction.
-     * @param auctioneer The UUID of the auctioning CPS.
      * @param initial_bid The starting bid of the auction.
      * @param start The starting time of the auction.
      * @param end The closing time of the auction.
      */
-    auction (string roi, string auctioneer, double initial_bid, Time start, Time end) : roi(roi), auctioneer(auctioneer), bid(initial_bid), winner(""), start(start), end(end) {}
+    auction (string roi, double initial_bid, Time start, Time end) : roi(roi), bid(initial_bid), winner(""), start(start), end(end) {}
+
+    /**
+     * @brief Test whether an object represents a valid auction.
+     * @return True if all members have been initialized properly. False otherwise.
+     */
+    bool is_valid ()
+    {
+        return roi != "" && bid > 0 && start.toSec() > 0 && end.toSec() > 0;
+    }
 
     /**
      * @brief The ID of the ROI at auction.
      */
     string roi;
-
-    /**
-     * @param auctioneer The UUID of the auctioning CPS.
-     */
-    string auctioneer;
 
     /**
      * @brief The current highest bid.
