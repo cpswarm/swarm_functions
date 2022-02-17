@@ -32,11 +32,11 @@ vector<geometry_msgs::Point> auction_rois::get_coords (string roi)
     return roi_map[roi].get_coords();
 }
 
-void auction_rois::init (vector<pair<double,vector<geometry_msgs::Point>>> coords)
+void auction_rois::init (vector<pair<double,vector<geometry_msgs::Point>>> coords, double cost_param)
 {
     // populate roi map from coords
     for (auto c : coords) {
-        auction_roi roi(c.first, c.second);
+        auction_roi roi(c.first, c.second, cost_param);
         roi_map[roi.get_id()] = roi;
     }
 }

@@ -45,8 +45,9 @@ public:
     /**
      * @brief Initialize the class.
      * @param coords All ROIs, given as distance from the CPS's current position and a vector of coordinates.
+     * @param cost_param Parametrization of the ROI selection cost function [0,1]. 0: only distance matters, 1: only agent density matters.
      */
-    void init (vector<pair<double,vector<geometry_msgs::Point>>> coords);
+    void init (vector<pair<double,vector<geometry_msgs::Point>>> coords, double cost_param);
 
     /**
      * @brief Select the ROI with least cost.

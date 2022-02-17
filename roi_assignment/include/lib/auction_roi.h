@@ -24,8 +24,9 @@ public:
      *
      * @param distance The distance of the CPS to this ROI.
      * @param coords The coordinates defining the ROI.
+     * @param cost_param Parametrization of the ROI selection cost function [0,1]. 0: only distance matters, 1: only agent density matters.
      */
-    auction_roi (double distance, vector<geometry_msgs::Point> coords);
+    auction_roi (double distance, vector<geometry_msgs::Point> coords, double cost_param);
 
     /**
      * @brief Add a CPS that has been assigned to this ROI.
@@ -76,6 +77,11 @@ private:
      * @brief The distance of the CPS to this ROI.
      */
     double distance;
+
+    /**
+     * @brief Parametrization of the ROI selection cost function [0,1]. 0: only distance matters, 1: only agent density matters.
+     */
+    double cost_param;
 };
 
 #endif // AUCTION_ROI_H

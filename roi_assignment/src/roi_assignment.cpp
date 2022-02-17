@@ -305,6 +305,15 @@ int main (int argc, char **argv)
     init(argc, argv, "roi_assignment");
     NodeHandle nh;
 
+    // read parameters
+    double loop_rate;
+    nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.0);
+    Rate rate(loop_rate);
+    int queue_size;
+    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
+    double cost_param;
+    nh.param(this_node::getName() + "/loop_rate", cost_param, 0.6);
+
     // retrieve rois
     ServiceClient get_rois_client = nh.serviceClient<cpswarm_msgs::GetMultiPoints>("rois/get_all");
     ROS_DEBUG("Waiting for ROI service...");
@@ -313,20 +322,13 @@ int main (int argc, char **argv)
     cpswarm_msgs::GetMultiPoints gmp;
     if (get_rois_client.call(gmp)) {
         // initialize roi data
-        rois.init(expand(gmp.response.layout, gmp.response.points));
+        rois.init(expand(gmp.response.layout, gmp.response.points), cost_param);
     }
     // rois could not be retrieved
     else {
         ROS_FATAL("ROI assignment failure: Failed to get ROIs: Failed to call service 'rois/get_all");
         return 1;
     }
-
-    // read parameters
-    double loop_rate;
-    nh.param(this_node::getName() + "/loop_rate", loop_rate, 1.0);
-    Rate rate(loop_rate);
-    int queue_size;
-    nh.param(this_node::getName() + "/queue_size", queue_size, 1);
 
     // get position
     ROS_DEBUG("Wait for valid position...");

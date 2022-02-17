@@ -4,7 +4,7 @@ auction_roi::auction_roi ()
 {
 }
 
-auction_roi::auction_roi (double distance, vector<geometry_msgs::Point> coords) : distance(distance), coords(coords)
+auction_roi::auction_roi (double distance, vector<geometry_msgs::Point> coords, double cost_param) : distance(distance), coords(coords), cost_param(cost_param)
 {
     // sort coordinates for id generation
     set<pair<double,double>> coords_set;
@@ -17,7 +17,7 @@ auction_roi::auction_roi (double distance, vector<geometry_msgs::Point> coords) 
         id += to_string(c.first) + "," + to_string(c.second) + " ";
 
     // calculate cost
-    cost = distance; // TODO: normalize distance, apply cost function parameter
+    cost = pow(distance, 1-cost_param);
 }
 
 void auction_roi::add (string cps)
@@ -26,7 +26,7 @@ void auction_roi::add (string cps)
     cpss.insert(cps);
 
     // update cost
-    cost = distance * (1 + cpss.size()); // TODO: normalize cpss.size, apply cost function parameter
+    cost = pow(distance, 1-cost_param) * pow(1 + cpss.size(), cost_param);
 
 }
 
