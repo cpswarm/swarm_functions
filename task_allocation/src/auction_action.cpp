@@ -101,7 +101,7 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
         allocation.task_id = task_id;
         allocation.cps_id = winner;
         publisher.publish(allocation);
-        ROS_INFO("TASK_AUCTION - Task %d allocated to %s", task_id.c_str(), winner.c_str());
+        ROS_INFO("TASK_AUCTION - Task %s allocated to %s", task_id.c_str(), winner.c_str());
     }
 
     // action server has been preempted

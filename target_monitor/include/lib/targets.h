@@ -55,7 +55,7 @@ private:
      * @param event The name of the event.
      * @param id The ID of the target.
      */
-    void publish_event (string event, int id);
+    void publish_event (string event, string id);
 
     /**
      * @brief Compute the transformation between two poses.
@@ -125,12 +125,12 @@ private:
     /**
      * @brief A map holding ID and target object of all known targets.
      */
-    unordered_map<unsigned int, shared_ptr<target>> target_map;
+    unordered_map<string, shared_ptr<target>> target_map;
 
     /**
      * @brief A map holding ID and target object of simulated targets, including the ones not yet found.
      */
-    unordered_map<unsigned int, shared_ptr<target>> simulated_targets;
+    unordered_map<string, shared_ptr<target>> simulated_targets;
 
     /**
      * @brief The UUID of the CPS that owns this class instance.
