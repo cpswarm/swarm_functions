@@ -49,22 +49,32 @@ void swarm_cb (const cpswarm_msgs::ArrayOfVectors::ConstPtr& msg)
  * @brief Callback function for state updates.
  * @param msg State received from the CPS state machine.
  */
-void state_callback (const smach_msgs::SmachContainerStatus::ConstPtr& msg)
+void state_callback (const std_msgs::String::ConstPtr& msg)
 {
-    if (msg->path == "/SM_TOP/SarThreads/SarBehavior") {
-        // enable collision avoidance by default
-        active = true;
+    // enable collision avoidance by default
+    active = true;
 
-        // check if any behavior state is in the excluded list
-        for (auto state : msg->active_states) {
-            if (find(excluded.begin(), excluded.end(), state) != excluded.end()) {
-                // disable collision avoidance
+    // check each part of the behavior state path (for nested states)
+    string path = msg->data;
+    size_t pos = 0;
+    while ((pos = path.find("/")) != string::npos) {
+        if (pos > 0) {
+            // disable collision avoidance if behavior state is in the excluded list
+            if (find(excluded.begin(), excluded.end(), path.substr(0, pos)) != excluded.end()) {
                 active = false;
-                ROS_DEBUG("In state %s, disable collision avoidance", state.c_str());
-                break;
+                ROS_DEBUG("In state %s, disable collision avoidance", msg->data.c_str());
             }
         }
+        path.erase(0, pos + 1);
     }
+    // disable collision avoidance if behavior state is in the excluded list
+    if (find(excluded.begin(), excluded.end(), path) != excluded.end()) {
+        active = false;
+        ROS_DEBUG("In state %s, disable collision avoidance", msg->data.c_str());
+    }
+
+    if (active)
+        ROS_DEBUG("In state %s, enable collision avoidance", msg->data.c_str());
 }
 
 /**
@@ -107,7 +117,7 @@ int main (int argc, char **argv)
     Subscriber pos_sub = nh.subscribe("pos_provider/pose", queue_size, pos_cb);
     Subscriber vel_sub = nh.subscribe("vel_provider/velocity", queue_size, vel_cb);
     Subscriber swarm_sub = nh.subscribe("swarm_position_rel", queue_size, swarm_cb);
-    Subscriber state_sub = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
+    Subscriber state_sub = nh.subscribe("flexbe/behavior_update", queue_size, state_callback);
     Publisher pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/ca_goal_position", queue_size, true);
     Publisher vel_pub = nh.advertise<geometry_msgs::Twist>("vel_controller/ca_target_velocity", queue_size, true);
     Publisher vis_pub;

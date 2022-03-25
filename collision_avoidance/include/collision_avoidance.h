@@ -5,7 +5,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
-#include <smach_msgs/SmachContainerStatus.h>
+#include <std_msgs/String.h>
 #include <cpswarm_msgs/ArrayOfPositions.h>
 #include "lib/repulsion.h"
 
