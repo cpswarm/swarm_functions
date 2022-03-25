@@ -3,7 +3,7 @@
 
 #include <map>
 #include <ros/ros.h>
-#include <flexbe_msgs/BEStatus.h>
+#include <std_msgs/String.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
 #include <cpswarm_msgs/StateEvent.h>
 
