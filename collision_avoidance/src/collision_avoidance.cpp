@@ -28,15 +28,6 @@ void pos_cb (const geometry_msgs::PoseStamped::ConstPtr& msg)
 }
 
 /**
- * @brief Callback function to receive the current velocity of this CPS.
- * @param msg Current velocity received from the FCU.
- */
-void vel_cb (const geometry_msgs::TwistStamped::ConstPtr& msg)
-{
-    ca.set_vel(msg);
-}
-
-/**
  * @brief Callback function to receive the relative positions of the other CPSs in the swarm.
  * @param msg An array of distance and bearing of the other CPSs.
  */
@@ -115,7 +106,6 @@ int main (int argc, char **argv)
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);
     Subscriber sp_vel_sub = nh.subscribe("vel_controller/target_velocity", queue_size, sp_vel_cb);
     Subscriber pos_sub = nh.subscribe("pos_provider/pose", queue_size, pos_cb);
-    Subscriber vel_sub = nh.subscribe("vel_provider/velocity", queue_size, vel_cb);
     Subscriber swarm_sub = nh.subscribe("swarm_position_rel", queue_size, swarm_cb);
     Subscriber state_sub = nh.subscribe("flexbe/behavior_update", queue_size, state_callback);
     Publisher pos_pub = nh.advertise<geometry_msgs::PoseStamped>("pos_controller/ca_goal_position", queue_size, true);

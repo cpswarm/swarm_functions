@@ -76,12 +76,6 @@ public:
     void set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos);
 
     /**
-     * @brief Set the current velocity of this CPS.
-     * @param vel The current velocity of this CPS.
-     */
-    void set_vel (const geometry_msgs::TwistStamped::ConstPtr& vel);
-
-    /**
      * @brief Set the relative positions received from other CPSs in the swarm.
      * @param swarm An array of distance and bearing of the other CPSs.
      */
@@ -128,11 +122,6 @@ private:
      * @brief The current position of this CPS.
      */
     geometry_msgs::PoseStamped pos;
-
-    /**
-     * @brief The current velocity of this CPS.
-     */
-    geometry_msgs::Twist vel;
 
     /**
      * @brief The originally desired goal position of this CPS in case of no collision avoidance.

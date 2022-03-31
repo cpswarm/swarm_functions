@@ -81,11 +81,6 @@ void repulsion::set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
     this->pos = *pos;
 }
 
-void repulsion::set_vel (const geometry_msgs::TwistStamped::ConstPtr& vel)
-{
-    this->vel = vel->twist;
-}
-
 void repulsion::set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm)
 {
     this->swarm = swarm->vectors;
