@@ -7,6 +7,7 @@ repulsion::repulsion ()
 void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape)
 {
     setpoint = CONTROL_UNDEFINED;
+    pos_valid = false;
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
     this->repulsion_shape = repulsion_shape;
@@ -14,6 +15,14 @@ void repulsion::init (double dist_critical, double dist_avoid, string repulsion_
 
 bool repulsion::calc ()
 {
+    // no position given yet
+    if (pos_valid == false)
+        return false;
+
+    // no setpoint defined
+    if (setpoint == CONTROL_UNDEFINED)
+        return false;
+
     // repulsion from other cpss, normalized to number of neighbors
     geometry_msgs::Vector3 repulsion;
     int neighbors;
@@ -79,6 +88,7 @@ void repulsion::set_sp_vel (const geometry_msgs::Twist::ConstPtr& vel)
 void repulsion::set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     this->pos = *pos;
+    pos_valid = true;
 }
 
 void repulsion::set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm)

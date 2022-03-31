@@ -41,7 +41,7 @@ public:
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
-     * @return Whether collision avoidance is necessary.
+     * @return Whether collision avoidance is necessary. Also false if class not properly initialized.
      */
     bool calc ();
 
@@ -122,6 +122,11 @@ private:
      * @brief The current position of this CPS.
      */
     geometry_msgs::PoseStamped pos;
+
+    /**
+     * @brief Whether a position has been provided.
+     */
+    bool pos_valid;
 
     /**
      * @brief The originally desired goal position of this CPS in case of no collision avoidance.
