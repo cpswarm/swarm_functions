@@ -168,7 +168,7 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors)
                 pot = 0.5 - 0.5 * sin(M_PI / (dist_avoid - dist_critical) * (pose.vector.magnitude - 0.5 * (dist_avoid + dist_critical)));
 
             // repulsion following exp function
-            else if (repulsion_shape == "sine")
+            else if (repulsion_shape == "exp")
                 pot = exp((pose.vector.magnitude - dist_critical) * 2.0*log(0.5) / (dist_avoid - dist_critical));
 
             // repulsion following linear function
