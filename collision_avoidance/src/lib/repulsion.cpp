@@ -2,12 +2,12 @@
 
 repulsion::repulsion ()
 {
+    setpoint = CONTROL_UNDEFINED;
+    pos_valid = false;
 }
 
 void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape)
 {
-    setpoint = CONTROL_UNDEFINED;
-    pos_valid = false;
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
     this->repulsion_shape = repulsion_shape;
@@ -39,9 +39,9 @@ bool repulsion::calc ()
     // direction towards goal position, normalized
     geometry_msgs::Vector3 direction = target_direction();
 
-    // avoidance direction normalized
-    this->direction.x = (direction.x + repulsion.x / neighbors) / 2.0;
-    this->direction.y = (direction.y + repulsion.y / neighbors) / 2.0;
+    // avoidance direction normalized (each in the range [0,1])
+    this->direction.x = (direction.x + repulsion.x / double(neighbors)) / 2.0;
+    this->direction.y = (direction.y + repulsion.y / double(neighbors)) / 2.0;
 
     // avoidance magnitude, inverse to repulsion to move slower when other cpss close by
     // linear function, maximum at repulsion zero: dist_avoid, minimum at repulsion one: dist_critical
@@ -77,23 +77,39 @@ void repulsion::set_sp_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     setpoint = CONTROL_POSITION;
     goal_pos = *pos;
+
+    // reset previous results
+    int_pos = geometry_msgs::PoseStamped();
+    int_vel = geometry_msgs::Twist();
 }
 
 void repulsion::set_sp_vel (const geometry_msgs::Twist::ConstPtr& vel)
 {
     setpoint = CONTROL_VELOCITY;
     target_vel = *vel;
+
+    // reset previous results
+    int_pos = geometry_msgs::PoseStamped();
+    int_vel = geometry_msgs::Twist();
 }
 
 void repulsion::set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     this->pos = *pos;
     pos_valid = true;
+
+    // reset previous results
+    int_pos = geometry_msgs::PoseStamped();
+    int_vel = geometry_msgs::Twist();
 }
 
 void repulsion::set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm)
 {
     this->swarm = swarm->vectors;
+
+    // reset previous results
+    int_pos = geometry_msgs::PoseStamped();
+    int_vel = geometry_msgs::Twist();
 }
 
 geometry_msgs::PoseStamped repulsion::get_dir ()
@@ -185,8 +201,10 @@ geometry_msgs::Vector3 repulsion::target_direction ()
     // normalize velocity
     else if (setpoint == CONTROL_VELOCITY) {
         double mag = hypot(target_vel.linear.x, target_vel.linear.y);
-        dir.x = target_vel.linear.x / mag;
-        dir.y = target_vel.linear.y / mag;
+        if (mag > 0) {
+            dir.x = target_vel.linear.x / mag;
+            dir.y = target_vel.linear.y / mag;
+        }
     }
 
     return dir;

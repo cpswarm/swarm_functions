@@ -83,7 +83,7 @@ public:
 
     /**
      * @brief Get the direction in which to move for collision avoidance.
-     * @return The direction away from the other CPSs.
+     * @return A pose with the current position of the CPS and the direction away from the other CPSs.
      */
     geometry_msgs::PoseStamped get_dir ();
 
