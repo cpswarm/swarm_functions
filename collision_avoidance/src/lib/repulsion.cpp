@@ -6,11 +6,12 @@ repulsion::repulsion ()
     pos_valid = false;
 }
 
-void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape)
+void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape, double bias)
 {
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
     this->repulsion_shape = repulsion_shape;
+    this->bias = bias;
 }
 
 bool repulsion::calc ()
@@ -175,7 +176,7 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors)
                 pot = max(1 - (pose.vector.magnitude - dist_critical) / (dist_avoid - dist_critical), 0.0);
 
             // absolute bearing of neighbor
-            double bear = yaw + pose.vector.direction;
+            double bear = yaw + pose.vector.direction + bias;
 
             // sum up potentials as vector pointing away from neighbor
             repulsion.x += pot * -cos(bear);

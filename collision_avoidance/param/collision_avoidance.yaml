@@ -4,6 +4,7 @@ dist_critical:   8.0    # Distance between CPSs in meter below which the collisi
 dist_avoid:      12.0   # Distance between CPSs in meter below which collision avoidance is active.
 visualize:       true   # Whether to visualize the avoidance direction.
 repulsion_shape: linear # The shape of the repulsion function, can be sine, exp, or linear.
+bias:            0.1    # A bias for preferring one direction during avoidance. Value is in radian, increasing counter-clockwise.
 excluded:               # No collision avoidance in these states.
 - sleep
 - idle
