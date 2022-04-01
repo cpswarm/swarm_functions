@@ -109,6 +109,11 @@ private:
     void repulse (geometry_msgs::Vector3& repulsion, int& neighbors);
 
     /**
+     * @brief Reset calculation results.
+     */
+    void reset ();
+
+    /**
      * Calculate the direction towards the original goal during collision avoidance.
      * @return A normalized vector pointing into the direction of the goal.
      */

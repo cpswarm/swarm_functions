@@ -12,6 +12,7 @@ void repulsion::init (double dist_critical, double dist_avoid, string repulsion_
     this->dist_avoid = dist_avoid;
     this->repulsion_shape = repulsion_shape;
     this->bias = bias;
+    reset();
 }
 
 bool repulsion::calc ()
@@ -22,6 +23,10 @@ bool repulsion::calc ()
 
     // no setpoint defined
     if (setpoint == CONTROL_UNDEFINED)
+        return false;
+
+    // invalid distances
+    if (dist_avoid < dist_critical)
         return false;
 
     // repulsion from other cpss, normalized to number of neighbors
@@ -78,39 +83,27 @@ void repulsion::set_sp_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     setpoint = CONTROL_POSITION;
     goal_pos = *pos;
-
-    // reset previous results
-    int_pos = geometry_msgs::PoseStamped();
-    int_vel = geometry_msgs::Twist();
+    reset();
 }
 
 void repulsion::set_sp_vel (const geometry_msgs::Twist::ConstPtr& vel)
 {
     setpoint = CONTROL_VELOCITY;
     target_vel = *vel;
-
-    // reset previous results
-    int_pos = geometry_msgs::PoseStamped();
-    int_vel = geometry_msgs::Twist();
+    reset();
 }
 
 void repulsion::set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     this->pos = *pos;
     pos_valid = true;
-
-    // reset previous results
-    int_pos = geometry_msgs::PoseStamped();
-    int_vel = geometry_msgs::Twist();
+    reset();
 }
 
 void repulsion::set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm)
 {
     this->swarm = swarm->vectors;
-
-    // reset previous results
-    int_pos = geometry_msgs::PoseStamped();
-    int_vel = geometry_msgs::Twist();
+    reset();
 }
 
 geometry_msgs::PoseStamped repulsion::get_dir ()
@@ -183,6 +176,13 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors)
             repulsion.y += pot * -sin(bear);
         }
     }
+}
+
+void repulsion::reset ()
+{
+    int_pos = geometry_msgs::PoseStamped();
+    int_vel = geometry_msgs::Twist();
+    direction = geometry_msgs::Vector3();
 }
 
 geometry_msgs::Vector3 repulsion::target_direction ()
