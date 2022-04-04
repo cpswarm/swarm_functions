@@ -102,11 +102,12 @@ public:
 
 private:
     /**
-     * @brief Calculate repulsion from close by CPSs as pair potentials.
-     * @param repulsion Returns the repulsion vector.
+     * @brief Calculate repulsion from close by CPSs.
+     * @param repulsion Returns the repulsion vector, i.e., the sum of the vectors pointing away from the neighbors.
      * @param neighbors Returns the number of neighbors that create repulsion.
+     * @param closest Returns the distance to the closest neighbor.
      */
-    void repulse (geometry_msgs::Vector3& repulsion, int& neighbors);
+    void repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest);
 
     /**
      * @brief Reset calculation results.
