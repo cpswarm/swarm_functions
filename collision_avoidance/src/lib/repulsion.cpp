@@ -47,6 +47,12 @@ bool repulsion::calc ()
     direction.x = target.x + repulsion.x;
     direction.y = target.y + repulsion.y;
 
+    // fix if target and repulsion cancel out: only repulse
+    if (abs(direction.x) < 0.0001 && abs(direction.y) < 0.0001) {
+        direction.x = repulsion.x;
+        direction.y = repulsion.y;
+    }
+
     // normalize avoidance direction
     double avoidance_dir = atan2(direction.y, direction.x);
     direction.x = cos(avoidance_dir);
