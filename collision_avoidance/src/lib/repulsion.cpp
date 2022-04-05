@@ -207,12 +207,15 @@ geometry_msgs::Vector3 repulsion::target_direction ()
 
     // get direction towards original goal
     if (setpoint == CONTROL_POSITION) {
-        // bearing of goal
-        double bear = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
+        // valid goal given
+        if (goal_pos.pose.position.x != 0 || goal_pos.pose.position.y != 0) {
+            // bearing of goal
+            double bear = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
 
-        // velocity components in goal direction
-        dir.x = cos(bear);
-        dir.y = sin(bear);
+            // velocity components in goal direction
+            dir.x = cos(bear);
+            dir.y = sin(bear);
+        }
     }
 
     // normalize velocity
