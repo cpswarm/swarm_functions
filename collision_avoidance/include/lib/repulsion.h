@@ -36,9 +36,8 @@ public:
      * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
      * @param dist_avoid Distance between CPSs below which collision avoidance is active.
      * @param repulsion_shape The shape of the repulsion function.
-     * @param bias A bias for preferring one direction during avoidance. Value is in radian, increasing counter-clockwise.
      */
-    void init (double dist_critical, double dist_avoid, string repulsion_shape, double bias);
+    void init (double dist_critical, double dist_avoid, string repulsion_shape);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -179,11 +178,6 @@ private:
      * @brief The shape of the repulsion function.
      */
     string repulsion_shape;
-
-    /**
-     * @brief A bias for preferring one direction during avoidance. Value is in radian, increasing counter-clockwise.
-     */
-    double bias;
 };
 
 #endif // REPULSION_H

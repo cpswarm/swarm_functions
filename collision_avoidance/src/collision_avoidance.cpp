@@ -99,10 +99,8 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 3.0);
     string repulsion_shape = "linear";
     nh.param(this_node::getName() + "/repulsion_shape", repulsion_shape, repulsion_shape);
-    double bias;
-    nh.param(this_node::getName() + "/bias", bias, 0.1);
 
-    ca.init(dist_critical, dist_avoid, repulsion_shape, bias);
+    ca.init(dist_critical, dist_avoid, repulsion_shape);
 
     // ros communication
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);
