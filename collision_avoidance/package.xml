@@ -25,6 +25,7 @@
     <depend>std_msgs</depend>
     <depend>geometry_msgs</depend>
     <depend>cpswarm_msgs</depend>
+    <exec_depend>kinematics_exchanger</exec_depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>

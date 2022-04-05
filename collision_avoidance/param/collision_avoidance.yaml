@@ -2,7 +2,7 @@ loop_rate:       10.0   # The frequency in Hz at which to run the control loops.
 queue_size:      10     # The size of the message queue used for publishing and subscribing to topics.
 dist_critical:   8.0    # Distance between CPSs in meter below which the collision avoidance will work maximally.
 dist_avoid:      12.0   # Distance between CPSs in meter below which collision avoidance is active.
-visualize:       true   # Whether to visualize the avoidance direction.
+visualize:       true   # Whether to visualize the avoidance direction by publishing on a ROS topic.
 repulsion_shape: linear # The shape of the repulsion function, can be sine, exp, or linear.
 excluded:               # No collision avoidance in these states.
 - sleep
