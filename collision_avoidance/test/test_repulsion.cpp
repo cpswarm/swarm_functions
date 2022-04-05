@@ -7,7 +7,7 @@ using namespace ros;
  // quaternions calculated with https://quaternions.online/
 
 /**
- * @brief Test repulsion class getters to be equal to the provided .
+ * @brief Test repulsion class getters to be equal to the provided objects.
  * @param rep Reference to an repulsion class object.
  * @param dir Reference to a PoseStamped object containing the values expected from the get_dir function.
  * @param pos Reference to a PoseStamped object containing the values expected from the get_pos function.

@@ -194,9 +194,15 @@ target_link_libraries(
 
 if(CATKIN_ENABLE_TESTING)
   ## Test libraries
-  catkin_add_gtest(test_repulsion test/test_repulsion.cpp)
-  if(TARGET test_repulsion)
-    target_link_libraries(test_repulsion repulsion ${catkin_LIBRARIES})
+  # catkin_add_gtest(test_repulsion test/test_repulsion.cpp)
+  # if(TARGET test_repulsion)
+  #   target_link_libraries(test_repulsion repulsion ${catkin_LIBRARIES})
+  # endif()
+  ## Test ROS interface
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_collision_avoidance test/test_collision_avoidance.test test/test_collision_avoidance.cpp)
+  if(TARGET test_collision_avoidance)
+    target_link_libraries(test_collision_avoidance repulsion ${catkin_LIBRARIES})
   endif()
 endif()
 
