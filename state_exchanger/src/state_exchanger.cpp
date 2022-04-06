@@ -4,17 +4,15 @@
  * @brief Callback function for state updates.
  * @param msg State received from the CPS state machine.
  */
-void state_callback (const smach_msgs::SmachContainerStatus::ConstPtr& msg)
+void state_callback (const std_msgs::String::ConstPtr& msg)
 {
-    ROS_DEBUG("Received state machine path %s", msg->path.c_str());
+    // state received
+    state_valid = true;
 
-    if (msg->path == sm_path) {
-        // state received
-        state_valid = true;
+    // store state name
+    state = msg->data;
 
-        // store only first state in class variables
-        state = msg->active_states[0];
-    }
+    ROS_DEBUG("Started behavior %s", state.c_str());
 }
 
 /**
@@ -57,8 +55,6 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/queue_size", queue_size, 10);
     double timeout;
     nh.param(this_node::getName() + "/timeout", timeout, 20.0);
-    sm_path = "/SM_TOP";
-    nh.param(this_node::getName() + "/sm_path", sm_path, sm_path);
     nh.param(this_node::getName() + "/read_only", read_only, false);
 
     // init topic flags
@@ -67,7 +63,7 @@ int main (int argc, char **argv)
     // publishers and subscribers
     Subscriber state_subscriber;
     if (read_only == false)
-        state_subscriber = nh.subscribe("smach_server/smach/container_status", queue_size, state_callback);
+        state_subscriber = nh.subscribe("flexbe/behavior_update", queue_size, state_callback);
     Subscriber incoming_state_subscriber = nh.subscribe("bridge/events/state", queue_size, swarm_state_callback);
     Publisher outgoing_state_publisher;
     if (read_only == false)
@@ -77,7 +73,7 @@ int main (int argc, char **argv)
     // init loop rate
     Rate rate(loop_rate);
 
-    // init position and velocity
+    // init behavior state
     if (read_only == false) {
         while (ok() && state_valid == false) {
             ROS_DEBUG_ONCE("Waiting for valid state...");

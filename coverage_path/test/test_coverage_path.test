@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Increase verbosity level -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find coverage_path)/test/rosconsole.config" />
+
+    <!-- Mission area services -->
+    <node pkg="area_provider" type="ma_services" name="ma_services" output="screen" required="true">
+        <param name="pos_type" value="local" />
+        <rosparam file="$(find area_provider)/param/area.yaml" command="load" />
+        <rosparam file="$(find coverage_path)/test/ma.yaml" command="load" />
+    </node>
+
+    <!-- Coverage path ROS interface -->
+    <node pkg="coverage_path" type="coverage_path" name="coverage_path" output="screen" required="true">
+        <rosparam file="$(find coverage_path)/param/coverage_path.yaml" command="load" />
+        <rosparam file="$(find coverage_path)/test/coverage_path.yaml" command="load" />
+        <remap from="area/get_divided_map" to="area/get_map"/>
+    </node>
+
+    <!-- Node unit test coverage path -->
+    <test pkg="coverage_path" type="test_coverage_path" test-name="test_coverage_path" required="true" />
+
+</launch>

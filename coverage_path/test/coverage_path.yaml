@@ -1,0 +1,7 @@
+resolution:     0.5   # The spacing between two adjacent coverage path legs in meter.
+visualize:      false # Whether to publish the coverage path on a topic for visualization.
+divide_area:    true  # Whether to divide the area among the CPSs in the swarm before generating the path. Joining or leaving swarm members will trigger regeneration of the path.
+vertical:       true  # Whether the sweeping pattern is vertical or horizontal.
+turning_points: true  # Whether there are only waypoints at turning points of the path or also waypoints regularly spaced on straight line segments of the path.
+states:               # Only CPSs in these states are considered part of the swarm.
+- valid

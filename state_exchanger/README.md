@@ -5,12 +5,12 @@ This package exchanges behavioral states between multiple cyber physical systems
 
 ## Dependencies
 This package depends on the following message definitions:
-* [smach_msgs](https://wiki.ros.org/smach_msgs)
+* [flexbe_msgs](https://wiki.ros.org/flexbe_msgs)
 * [cpswarm_msgs](https://cpswarm.github.io/cpswarm_msgs/html/index-msg.html)
 
 The communication between CPSs is based on the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
-The state that is exchanged is read from a [SMACH](https://wiki.ros.org/smach) state machine.
+The state that is exchanged is read from a [FlexBE](https://wiki.ros.org/flexbe) state machine.
 
 Further required packages are:
 * [roscpp](https://wiki.ros.org/roscpp/)
@@ -33,11 +33,11 @@ In the `param` subdirectory there is the parameter file `state_exchanger.yaml` t
 ## Nodes
 
 ### state_exchanger
-The `state_exchanger` node publishes behavioral states of this CPS to the rest of the swarm and publishes the state received from the other swarm members locally. The state is taken from a locally running SMACH state machine. If the CPS is in multiple states, only the first one is considered.
+The `state_exchanger` node publishes behavioral states of this CPS to the rest of the swarm and publishes the state received from the other swarm members locally. The state is taken from a locally running FlexBE state machine. Each state is represented by a behavior ID, a checksum representing a specific version of a behavior.
 
 #### Subscribed Topics
-* `smach_server/smach/container_status` ([smach_msgs/SmachContainerStatus](http://docs.ros.org/api/smach_msgs/html/msg/SmachContainerStatus.html))
-  The current state of this CPS.
+* `flexbe/status` ([flexbe_msgs/BEStatus](http://docs.ros.org/en/api/flexbe_msgs/html/msg/BEStatus.html))
+  The checksum of the current state of this CPS.
 * `bridge/events/state` ([cpswarm_msgs/StateEvent](https://cpswarm.github.io/cpswarm_msgs/html/msg/StateEvent.html))
   The current state of another CPS. Messages are exchanged between CPSs using the [CPSwarm Communication Library](https://github.com/cpswarm/swarmio).
 
@@ -54,8 +54,6 @@ The `state_exchanger` node publishes behavioral states of this CPS to the rest o
   The size of the message queue used for publishing and subscribing to topics.
 * `~timeout` (real, default: `20.0`)
   The time in seconds after which another CPS is considered to have left the swarm.
-* `~sm_path` (string, default: `/SM_TOP`)
-  The path of the smach state machine whose state shall be exchanged.
 
 ## Code API
 [state_exchanger package code API documentation](https://cpswarm.github.io/swarm_functions/state_exchanger/docs/html/files.html)

@@ -146,12 +146,12 @@ nav_msgs::OccupancyGrid area_division::get_grid (nav_msgs::OccupancyGrid map, st
         for (int j=0; j<cols;j++) {
             // mark assigned cells as free
             if (A[i*cols+j] == uuid_map[cps]) {
-                assigned.data[i*cols+j] = 0;
+                assigned.data[i*cols+j] = CELL_FREE;
             }
 
             // mark cells assigned to other cpss as obstacles
             else {
-                assigned.data[i*cols+j] = 100;
+                assigned.data[i*cols+j] = CELL_OCCUPIED;
             }
         }
     }

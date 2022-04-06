@@ -7,7 +7,7 @@ add_compile_options(-std=c++11)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp tf2 geometry_msgs smach_msgs cpswarm_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp tf2 std_msgs geometry_msgs cpswarm_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -193,12 +193,17 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  #catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  #if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-  #  target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
-  #endif()
+  ## Test libraries
+  # catkin_add_gtest(test_repulsion test/test_repulsion.cpp)
+  # if(TARGET test_repulsion)
+  #   target_link_libraries(test_repulsion repulsion ${catkin_LIBRARIES})
+  # endif()
+  ## Test ROS interface
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_collision_avoidance test/test_collision_avoidance.test test/test_collision_avoidance.cpp)
+  if(TARGET test_collision_avoidance)
+    target_link_libraries(test_collision_avoidance repulsion ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests

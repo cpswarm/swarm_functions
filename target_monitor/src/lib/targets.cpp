@@ -14,9 +14,9 @@ targets::targets ()
     cps = "";
 
     // read done targets from parameter server
-    vector<int> done;
+    vector<string> done;
     nh.getParam(this_node::getNamespace() + "/targets_done", done);
-    for (int t : done) {
+    for (string t : done) {
         target_map.emplace(piecewise_construct, forward_as_tuple(t), forward_as_tuple(make_shared<target>(t, TARGET_DONE)));
     }
 
@@ -57,7 +57,7 @@ void targets::simulate ()
         new_target_pose.position.x = targets_x[i];
         new_target_pose.position.y = targets_y[i];
         new_target_pose.orientation.w = 1;
-        simulated_targets.emplace(piecewise_construct, forward_as_tuple(i), forward_as_tuple(make_shared<target>(i, TARGET_UNKNOWN, new_target_pose)));
+        simulated_targets.emplace(piecewise_construct, forward_as_tuple(to_string(i)), forward_as_tuple(make_shared<target>(to_string(i), TARGET_UNKNOWN, new_target_pose)));
     }
 }
 
@@ -83,7 +83,7 @@ void targets::update (geometry_msgs::Pose pose)
             cpswarm_msgs::TargetHelp target;
             geometry_msgs::PoseStamped ps;
             ps.pose = t.second->get_pose();
-            ps.header.frame_id = "local_origin_ned";
+            ps.header.frame_id = "map";
             target.pose = ps;
             target.header.stamp = Time::now();
             target.id = t.first;
@@ -100,7 +100,7 @@ void targets::update (geometry_msgs::Pose pose)
         // target pose
         geometry_msgs::Pose t_pose = t.second->get_pose();
 
-        ROS_DEBUG("Target %d distance %.2f < %.2f", t.first, hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y), fov);
+        ROS_DEBUG("Target %s distance %.2f < %.2f", t.first.c_str(), hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y), fov);
 
         // target is within camera fov
         if (hypot(pose.position.x - t_pose.position.x, pose.position.y - t_pose.position.y) <= fov) {
@@ -116,7 +116,7 @@ void targets::update (geometry_msgs::Pose pose)
 
 void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t state)
 {
-    ROS_DEBUG("Target %d at [%.2f, %.2f]", msg.id, msg.pose.pose.position.x, msg.pose.pose.position.y);
+    ROS_DEBUG("Target %s at [%.2f, %.2f]", msg.id.c_str(), msg.pose.pose.position.x, msg.pose.pose.position.y);
 
     // determine uuid of tracking cps
     string uuid;
@@ -171,14 +171,14 @@ void targets::update (cpswarm_msgs::TargetPositionEvent msg, target_state_t stat
     }
 }
 
-void targets::publish_event (string event, int id)
+void targets::publish_event (string event, string id)
 {
     // create target position event
     cpswarm_msgs::TargetPositionEvent target;
     geometry_msgs::PoseStamped ps;
     ps.pose = target_map[id]->get_pose();
     ps.header.stamp = Time::now();
-    ps.header.frame_id = "local_origin_ned";
+    ps.header.frame_id = "map";
     target.pose = ps;
     target.header.stamp = Time::now();
     target.swarmio.name = event;

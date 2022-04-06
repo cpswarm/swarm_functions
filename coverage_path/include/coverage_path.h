@@ -12,7 +12,7 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetPlan.h>
 #include <cpswarm_msgs/GetWaypoint.h>
-#include <cpswarm_msgs/GetPoints.h>
+#include <cpswarm_msgs/GetMap.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
 #include <cpswarm_msgs/PathGenerationAction.h>
 #include "lib/spanning_tree.h"
@@ -42,34 +42,9 @@ Publisher wp_publisher;
 Publisher mst_publisher;
 
 /**
- * @brief Service client to get the assigned area.
- */
-Subscriber map_subscriber;
-
-/**
  * @brief Subscriber to get information about other CPSs in the swarm.
  */
 Subscriber swarm_sub;
-
-/**
- * @brief Service client to get coordinates of the area to cover.
- */
-ServiceClient area_getter;
-
-/**
- * @brief The grid map representing the environment to be covered.
- */
-nav_msgs::OccupancyGrid area;
-
-/**
- * @brief Whether a valid grid map has been received.
- */
-bool map_valid;
-
-/**
- * @brief The minimum-spanning-tree (MST) that defines the coverage path.
- */
-spanning_tree tree;
 
 /**
  * @brief The coverage path.
@@ -82,7 +57,7 @@ mst_path path;
 map<string, Time> swarm;
 
 /**
- * @brief The grid map underlying the path planning will be downsampled to this resolution in meter / cell.
+ * @brief The spacing between two adjacent coverage path legs in meter.
  */
 double resolution;
 
@@ -92,7 +67,7 @@ double resolution;
 bool visualize;
 
 /**
- * @brief Whether to divide the area among the CPSs before generating the path or to generate the path on the complete map.
+ * @brief Whether to divide the area among the CPSs in the swarm before generating the path. Joining or leaving swarm members will trigger regeneration of the path.
  */
 bool divide_area;
 
@@ -105,11 +80,6 @@ bool vertical;
  * @brief Whether there are only waypoints at turning points of the path or also waypoints regularly spaced on straight line segments of the path.
  */
 bool turning_points;
-
-/**
- * @brief Whether to regnerate the path when new CPSs join or leave the swarm.
- */
-bool swarm_path;
 
 /**
  * @brief The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.

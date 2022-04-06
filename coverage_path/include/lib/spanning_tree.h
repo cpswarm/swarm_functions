@@ -27,9 +27,9 @@ public:
 
     /**
      * @brief Get the edges of the MST.
-     * @return A vector with all edges of the MST.
+     * @return A set with all edges of the MST.
      */
-    vector<edge> get_mst_edges ();
+    set<edge> get_mst_edges ();
 
     /**
      * @brief Get the generated MST for visualization.
@@ -56,7 +56,7 @@ private:
      * @param to The ending vertex.
      * @param cost The cost of the edge.
      */
-    void add_edge (int from, int to, int cost);
+    void add_edge (int from, int to, double cost);
 
     /**
      * @brief Check whether two vertices are in different sets.
@@ -79,22 +79,12 @@ private:
     /**
      * @brief Edges in Minimal-Spanning Tree.
      */
-    vector<edge> mst_edges;
+    set<edge> mst_edges;
 
     /**
      * @brief The grid map that needs to be covered by the MST.
      */
     nav_msgs::OccupancyGrid map;
-
-    /**
-     * @brief The rotation of the output tree.
-     */
-    double rotation;
-
-    /**
-     * @brief The translation of the output tree.
-     */
-    geometry_msgs::Vector3 translation;
 
     /**
      * @brief Whether the sweeping pattern is vertical or horizontal.

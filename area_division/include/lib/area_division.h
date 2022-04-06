@@ -13,6 +13,14 @@ using namespace std;
 using namespace ros;
 
 /**
+ * @brief An enumeration for grid cell values.
+ */
+typedef enum {
+    CELL_FREE = 0,      // cell value for free cells
+    CELL_OCCUPIED = 100 // cell value for occupied cells
+} cell_value_t;
+
+/**
  * @brief A class to divide the environment optimally among multiple cyber physical systems (CPSs).
  */
 class area_division

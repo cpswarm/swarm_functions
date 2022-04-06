@@ -210,12 +210,26 @@ target_link_libraries(
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ## Add gtest based cpp test target and link libraries
-  #catkin_add_gtest(${PROJECT_NAME}_test test/test_${PROJECT_NAME}.cpp)
-  #if(TARGET ${PROJECT_NAME}_test)
-    #find_package(gtest)
-  #  target_link_libraries(${PROJECT_NAME}_test {PROJECT_NAME})
-  #endif()
+  ## Test libraries
+  catkin_add_gtest(test_edge test/test_edge.cpp)
+  if(TARGET test_edge)
+    target_link_libraries(test_edge edge)
+  endif()
+  catkin_add_gtest(test_spanning_tree test/test_spanning_tree.cpp)
+  if(TARGET test_spanning_tree)
+    target_link_libraries(test_spanning_tree spanning_tree edge ${catkin_LIBRARIES})
+  endif()
+  catkin_add_gtest(test_mst_path test/test_mst_path.cpp)
+  if(TARGET test_mst_path)
+    target_link_libraries(test_mst_path mst_path spanning_tree edge ${catkin_LIBRARIES})
+  endif()
+
+  ## Test ROS interface (integration with area provider)
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_coverage_path test/test_coverage_path.test test/test_coverage_path.cpp)
+  if(TARGET test_coverage_path)
+    target_link_libraries(test_coverage_path mst_path spanning_tree ${catkin_LIBRARIES})
+  endif()
 endif()
 
 ## Add folders to be run by python nosetests

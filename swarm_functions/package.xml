@@ -22,8 +22,11 @@
     <!-- Dependencies can be catkin packages or system dependencies -->
     <buildtool_depend>catkin</buildtool_depend>
     <exec_depend>area_division</exec_depend>
+    <exec_depend>battery_exchanger</exec_depend>
+    <exec_depend>collision_avoidance</exec_depend>
     <exec_depend>coverage_path</exec_depend>
     <exec_depend>kinematics_exchanger</exec_depend>
+    <exec_depend>roi_assignment</exec_depend>
     <exec_depend>state_exchanger</exec_depend>
     <exec_depend>target_monitor</exec_depend>
     <exec_depend>task_allocation</exec_depend>

@@ -8,7 +8,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Vector3.h>
 #include <nav_msgs/OccupancyGrid.h>
-#include <nav_msgs/GetMap.h>
+#include <cpswarm_msgs/GetMap.h>
 #include <cpswarm_msgs/AreaDivisionEvent.h>
 #include <cpswarm_msgs/GetDouble.h>
 #include <cpswarm_msgs/ArrayOfStates.h>
@@ -52,11 +52,6 @@ Subscriber pose_sub;
 Subscriber swarm_sub;
 
 /**
- * @brief Subscriber to get grid map.
- */
-Subscriber map_sub;
-
-/**
  * @brief Subscriber to get area division requests from other CPSs.
  */
 Subscriber division_sub;
@@ -72,24 +67,19 @@ Publisher pos_pub;
 Publisher swarm_pub;
 
 /**
- * @brief Publisher to visualize the assigned area grid map.
+ * @brief Publisher to disseminate the divided area grid map.
  */
 Publisher area_pub;
 
 /**
- * @brief Publisher to visualize the rotated map.
+ * @brief Publisher to visualize the rotated, translated, and downsampled global map that is used for the division.
  */
-Publisher map_rot_pub;
+Publisher map_pub;
 
 /**
- * @brief Publisher to visualize the downsampled map.
+ * @brief Service to retrieve the divided map.
  */
-Publisher map_ds_pub;
-
-/**
- * @brief Service client to get the angle which the area has to be rotated by.
- */
-ServiceClient rotater_cli;
+ServiceServer map_srv;
 
 /**
  * @brief ROS rate object for controlling loop rates.
@@ -142,29 +132,30 @@ geometry_msgs::Pose pose;
 bool pose_valid;
 
 /**
- * @brief The complete grid map.
- */
-nav_msgs::OccupancyGrid global_map;
-
-/**
- * @brief Whether a valid grid map has been received.
- */
-bool map_valid;
-
-/**
  * @brief The object encapsulating the area division optimization algorithm.
  */
 area_division* division;
 
 /**
- * @brief The translation by which the area has been shifted.
+ * @brief The gridmap of the global map.
  */
-geometry_msgs::Vector3 translation;
+nav_msgs::OccupancyGrid gridmap;
 
 /**
  * @brief The grid map underlying the area division will be downsampled to this resolution in meter / cell.
  */
 double resolution;
+
+/**
+ * @brief The angle by which the grid map has been rotated, radian, counter-clockwise, starting from the x-axis.
+ *
+ */
+double rotation;
+
+/**
+ * @brief The translation by which the area has been shifted.
+ */
+geometry_msgs::Vector3 translation;
 
 /**
  * @brief The time in seconds communication in the swarm can be delayed at most. Used to wait after an area division event before starting the area division or time after which it is assumed that a swarm member has left the swarm if no position update has been received.

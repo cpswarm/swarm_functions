@@ -21,7 +21,7 @@ Publisher publisher;
 /**
  * @brief ID of the task that is auctioned.
  */
-int task_id;
+string task_id;
 
 /**
  * @brief Location of the task that is auctioned.
@@ -78,7 +78,7 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
     highest_bid = 0;
     winner = "";
     auction_open = true;
-    ROS_INFO("TASK_AUCTION - Starting task allocation auction for task %d at position (%.6f, %.6f)", task_id, task_pose.position.x, task_pose.position.y);
+    ROS_INFO("TASK_AUCTION - Starting task allocation auction for task %s at position (%.6f, %.6f)", task_id.c_str(), task_pose.position.x, task_pose.position.y);
 
     // wait for bids
     NodeHandle nh;
@@ -96,12 +96,12 @@ void auction_callback(const cpswarm_msgs::TaskAllocationGoal::ConstPtr& goal, Se
     if (winner.compare("") != 0) {
         cpswarm_msgs::TaskAllocatedEvent allocation;
         allocation.header.stamp = Time::now();
-        allocation.header.frame_id = "local_origin_ned";
+        allocation.header.frame_id = "map";
         allocation.swarmio.name = "cps_selected";
         allocation.task_id = task_id;
         allocation.cps_id = winner;
         publisher.publish(allocation);
-        ROS_INFO("TASK_AUCTION - Task %d allocated to %s", task_id, winner.c_str());
+        ROS_INFO("TASK_AUCTION - Task %s allocated to %s", task_id.c_str(), winner.c_str());
     }
 
     // action server has been preempted

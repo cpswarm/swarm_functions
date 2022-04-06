@@ -1,0 +1,19 @@
+publish_map:  false # Whether to publish a grid map, either created from the coordinates or received from a map server.
+cell_warn:    1000  # Number of grid cells in the map above which a performance warning is issued.
+resolution:   1.0   # Resolution of the grid map representing the area in meter / cell.
+wait_for_map: 2.0   # Time in seconds to wait initially for another map provider.
+
+# The area in which the mission takes place. It is a polygon specified by a list of coordinates.
+# Area coordinates given as separate lists of x-coordinates/longitudes and y-coordinates/latitudes. Make sure they are given in order.
+
+# Simulation
+area_x:
+- -10
+- 10
+- 10
+- -10
+area_y:
+- -10
+- -10
+- 10
+- 10

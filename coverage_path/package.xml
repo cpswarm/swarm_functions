@@ -26,6 +26,9 @@
     <depend>geometry_msgs</depend>
     <depend>nav_msgs</depend>
     <depend>cpswarm_msgs</depend>
+    <exec_depend>area_provider</exec_depend>
+    <exec_depend>area_division</exec_depend>
+    <exec_depend>state_exchanger</exec_depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>

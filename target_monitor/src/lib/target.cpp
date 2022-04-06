@@ -1,6 +1,6 @@
 #include "lib/target.h"
 
-target::target () : target(-1, TARGET_UNKNOWN)
+target::target () : target("", TARGET_UNKNOWN)
 {
 }
 
@@ -8,19 +8,19 @@ target::target (const target& t) : target(t.id, t.state, t.pose, t.stamp)
 {
 }
 
-target::target (unsigned int id, target_state_t state) : target(id, state, geometry_msgs::Pose())
+target::target (string id, target_state_t state) : target(id, state, geometry_msgs::Pose())
 {
 }
 
-target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose) : target(id, state, pose, Time::now())
+target::target (string id, target_state_t state, geometry_msgs::Pose pose) : target(id, state, pose, Time::now())
 {
 }
 
-target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp) : target(id, state, pose, stamp, "")
+target::target (string id, target_state_t state, geometry_msgs::Pose pose, Time stamp) : target(id, state, pose, stamp, "")
 {
 }
 
-target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp, string cps) : id(id), state(state), pose(pose), stamp(stamp)
+target::target (string id, target_state_t state, geometry_msgs::Pose pose, Time stamp, string cps) : id(id), state(state), pose(pose), stamp(stamp)
 {
     // set variables
     if (cps != "")
@@ -43,7 +43,7 @@ target::target (unsigned int id, target_state_t state, geometry_msgs::Pose pose,
     // init loop rate
     rate = new Rate(loop_rate);
 
-    ROS_INFO("Added target %d in state %d", id, state);
+    ROS_INFO("Added target %s in state %d", id.c_str(), state);
 }
 
 target::~target ()
@@ -88,11 +88,11 @@ bool target::lost ()
         // no updates received within timeout
         if (stamp + timeout < Time::now()) {
             if (state == TARGET_TRACKED)
-                ROS_INFO("Target %d: tracked --> lost", id);
+                ROS_INFO("Target %s: tracked --> lost", id.c_str());
             else if (state == TARGET_ASSIGNED)
-                ROS_INFO("Target %d: assigned --> lost", id);
+                ROS_INFO("Target %s: assigned --> lost", id.c_str());
             else
-                ROS_INFO("Target %d: lost", id);
+                ROS_INFO("Target %s: lost", id.c_str());
 
             // update target information
             state = TARGET_LOST;
@@ -123,7 +123,7 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp,
 {
     // this target has been completed already, nothing to do
     if (this->state == TARGET_DONE) {
-        ROS_DEBUG("Target %d: already done", id);
+        ROS_DEBUG("Target %s: already done", id.c_str());
         return;
     }
 
@@ -153,7 +153,7 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp,
     if (this->state == TARGET_ASSIGNED) {
         // target completed by the other cps
         if (state == TARGET_DONE) {
-            ROS_DEBUG("Target %d: assigned --> done", id);
+            ROS_DEBUG("Target %s: assigned --> done", id.c_str());
 
             this->state = state;
         }
@@ -163,7 +163,7 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp,
     else if (this->state == TARGET_TRACKED) {
         // target has been assigned to another cps
         if (state == TARGET_ASSIGNED) {
-            ROS_DEBUG("Target %d: tracked --> assigned", id);
+            ROS_DEBUG("Target %s: tracked --> assigned", id.c_str());
 
             this->state = state;
         }
@@ -173,14 +173,14 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp,
     else if (this->state == TARGET_KNOWN) {
         // target now found by this cps
         if (state == TARGET_TRACKED) {
-            ROS_DEBUG("Target %d: known --> tracked, position (%.2f,%.2f)", id, pose.position.x, pose.position.y);
+            ROS_DEBUG("Target %s: known --> tracked, position (%.2f,%.2f)", id.c_str(), pose.position.x, pose.position.y);
 
             this->state = state;
         }
 
         // target has been assigned to another cps
         else if (state == TARGET_ASSIGNED) {
-            ROS_DEBUG("Target %d: known --> assigned", id);
+            ROS_DEBUG("Target %s: known --> assigned", id.c_str());
 
             // update target information
             this->state = state;
@@ -188,7 +188,7 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp,
 
         // target has been lost by another cps
         else if (state == TARGET_LOST) {
-            ROS_DEBUG("Target %d: known --> lost", id);
+            ROS_DEBUG("Target %s: known --> lost", id.c_str());
 
             // update target information
             this->state = state;
@@ -199,31 +199,31 @@ void target::update (target_state_t state, geometry_msgs::Pose pose, Time stamp,
     else if (this->state == TARGET_LOST) {
         // target has been found by another cps
         if (state == TARGET_KNOWN) {
-            ROS_DEBUG("Target %d: lost --> known", id);
+            ROS_DEBUG("Target %s: lost --> known", id.c_str());
 
             this->state = state;
         }
 
         // target has been found by this cps
         else if (state == TARGET_TRACKED) {
-            ROS_DEBUG("Target %d: lost --> tracked", id);
+            ROS_DEBUG("Target %s: lost --> tracked", id.c_str());
 
             this->state = state;
         }
     }
 
     else {
-        ROS_ERROR("Target %d: invalid state transition %d --> %d!", id, this->state, state);
+        ROS_ERROR("Target %s: invalid state transition %d --> %d!", id.c_str(), this->state, state);
     }
 
     // target tracked long enough
     if (this->time.isZero() || this->state == TARGET_DONE) {
-        ROS_DEBUG("Target %d: tracked --> assigned", id);
+        ROS_DEBUG("Target %s: tracked --> assigned", id.c_str());
 
         this->state = TARGET_DONE;
 
         // store target id in parameter server
-        vector<int> done;
+        vector<string> done;
         nh.getParam(this_node::getNamespace() + "/targets_done", done);
         done.push_back(id);
         nh.setParam(this_node::getNamespace() + "/targets_done", done);

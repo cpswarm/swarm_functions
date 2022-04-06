@@ -3,18 +3,19 @@ authors: Micha Sende <sende@lakeside-labs.com>
 brief: ''
 bugtracker: ''
 depends:
-- nav_msgs
+- std_msgs
 - catkin
-- roscpp
 - cpswarm_msgs
-- geometry_msgs
 - tf2
-description: A package that generates an optimal path to cover a given area with a
-  cyber physical system (CPS).
+- kinematics_exchanger
+- roscpp
+- geometry_msgs
+description: A package that enables cyber physical systems (CPSs) in a swarm to avoid
+  collisions with each other.
 license: Apache License 2.0
 maintainers: Micha Sende <sende@lakeside-labs.com>
 msgs: []
 package_type: package
 repo_url: ''
 srvs: []
-url: https://wiki.ros.org/coverage_path
+url: https://wiki.ros.org/collision_avoidance

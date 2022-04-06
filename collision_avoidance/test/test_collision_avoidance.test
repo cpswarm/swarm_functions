@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!-- Increase verbosity level -->
+    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find collision_avoidance)/test/rosconsole.config" />
+
+    <!-- Collision avoidance between swarm members -->
+    <node pkg="collision_avoidance" type="collision_avoidance" name="collision_avoidance" output="screen" required="true">
+        <rosparam file="$(find collision_avoidance)/param/collision_avoidance.yaml" command="load" />
+        <rosparam file="$(find collision_avoidance)/test/collision_avoidance.yaml" command="load" />
+    </node>
+
+    <!-- Node unit test collision avoidance -->
+    <test pkg="collision_avoidance" type="test_collision_avoidance" test-name="test_collision_avoidance" required="true" />
+
+</launch>

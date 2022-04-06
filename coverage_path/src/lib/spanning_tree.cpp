@@ -4,7 +4,7 @@ spanning_tree::spanning_tree()
 {
 }
 
-vector<edge> spanning_tree::get_mst_edges ()
+set<edge> spanning_tree::get_mst_edges ()
 {
     return mst_edges;
 }
@@ -17,22 +17,26 @@ geometry_msgs::PoseArray spanning_tree::get_tree ()
 
     for (auto e : mst_edges) {
         // from
-        pose.position.x = e.from % map.info.width * map.info.resolution + map.info.origin.position.x;
-        pose.position.y = e.from / map.info.width * map.info.resolution + map.info.origin.position.y;
+        pose.position.x = e.vlow % map.info.width * map.info.resolution + map.info.origin.position.x;
+        pose.position.y = e.vlow / map.info.width * map.info.resolution + map.info.origin.position.y;
 
         // orientation
-        double dx = e.to % map.info.width * map.info.resolution + map.info.origin.position.x - pose.position.x;
-        double dy = e.to / map.info.width * map.info.resolution + map.info.origin.position.y - pose.position.y;
+        double dx = e.vhigh % map.info.width * map.info.resolution + map.info.origin.position.x - pose.position.x;
+        double dy = e.vhigh / map.info.width * map.info.resolution + map.info.origin.position.y - pose.position.y;
         tf2::Quaternion direction;
         direction.setRPY(0, 0, atan2(dy, dx));
         pose.orientation = tf2::toMsg(direction);
+
+        // offset for visualization
+        pose.position.x += 0.5 * map.info.resolution;
+        pose.position.y += 0.5 * map.info.resolution;
 
         poses.push_back(pose);
     }
 
     path.poses = poses;
     path.header.stamp = Time::now();
-    path.header.frame_id = "local_origin_ned";
+    path.header.frame_id = "map";
     return path;
 }
 
@@ -73,16 +77,16 @@ void spanning_tree::initialize_graph (nav_msgs::OccupancyGrid gridmap, bool vert
                 // check moore neighborhood for connected vertices
                 if (!connect4) {
                     if (i>0 && j>0 && map.data[(i-1)*cols+j-1] == 0) {
-                        add_edge(i*cols+j, (i-1)*cols+j-1, 1);
+                        add_edge(i*cols+j, (i-1)*cols+j-1, sqrt(2));
                     }
                     if (i<rows-1 && j<cols-1 && map.data[(i+1)*cols+j+1] == 0) {
-                        add_edge(i*cols+j, (i+1)*cols+j+1, 1);
+                        add_edge(i*cols+j, (i+1)*cols+j+1, sqrt(2));
                     }
                     if (i<rows-1 && j>0 && map.data[(i+1)*cols+j-1] == 0) {
-                        add_edge(i*cols+j, (i+1)*cols+j-1, 1);
+                        add_edge(i*cols+j, (i+1)*cols+j-1, sqrt(2));
                     }
                     if (i>0 && j<cols-1 && map.data[(i-1)*cols+j+1] == 0) {
-                        add_edge(i*cols+j, (i-1)*cols+j+1, 1);
+                        add_edge(i*cols+j, (i-1)*cols+j+1, sqrt(2));
                     }
                 }
             }
@@ -99,16 +103,16 @@ void spanning_tree::construct ()
         edge edge = edges.top();
 
         // edge connects different sets
-        if (nodes[edge.from] != nodes[edge.to]) {
+        if (nodes[edge.vlow] != nodes[edge.vhigh]) {
             // combine the two sets
-            unordered_set<int> s(nodes[edge.from].begin(), nodes[edge.from].end());
-            for (auto v : nodes[edge.to])
+            unordered_set<int> s(nodes[edge.vlow].begin(), nodes[edge.vlow].end());
+            for (auto v : nodes[edge.vhigh])
                 s.insert(v);
             for (auto v : s)
                 nodes[v] = s;
 
             // add edge to mst
-            mst_edges.push_back(edge);
+            mst_edges.insert(edge);
         }
 
         // remove edge from source tree
@@ -116,7 +120,7 @@ void spanning_tree::construct ()
     }
 }
 
-void spanning_tree::add_edge (int from, int to, int cost)
+void spanning_tree::add_edge (int from, int to, double cost)
 {
     // add edge to priority queue
     edges.push(edge(from, to, cost, vertical));

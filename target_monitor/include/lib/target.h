@@ -40,7 +40,7 @@ public:
      * @param id The target ID.
      * @param state The target state.
      */
-    target (unsigned int id, target_state_t state);
+    target (string id, target_state_t state);
 
     /**
      * @brief Constructor that initializes some private member variables.
@@ -48,7 +48,7 @@ public:
      * @param state The target state.
      * @param pose The position of the target.
      */
-    target (unsigned int id, target_state_t state, geometry_msgs::Pose pose);
+    target (string id, target_state_t state, geometry_msgs::Pose pose);
 
     /**
      * @brief Constructor that initializes some private member variables.
@@ -57,7 +57,7 @@ public:
      * @param pose The position of the target.
      * @param stamp The time stamp of target.
      */
-    target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp);
+    target (string id, target_state_t state, geometry_msgs::Pose pose, Time stamp);
 
     /**
      * @brief Constructor that initializes some private member variables.
@@ -67,7 +67,7 @@ public:
      * @param stamp The time stamp of target.
      * @param cps The CPS that is tracking the target.
      */
-    target (unsigned int id, target_state_t state, geometry_msgs::Pose pose, Time stamp, string cps);
+    target (string id, target_state_t state, geometry_msgs::Pose pose, Time stamp, string cps);
 
     /**
      * @brief Destructor that destroys all objects.
@@ -144,9 +144,9 @@ private:
     NodeHandle nh;
 
     /**
-     * @brief The ID of this target. Negative IDs are invalid.
+     * @brief The ID of this target.
      */
-    int id;
+    string id;
 
     /**
      * @brief State of the target.

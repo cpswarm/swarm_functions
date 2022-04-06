@@ -41,7 +41,7 @@ public:
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
-     * @return Whether collision avoidance is necessary.
+     * @return Whether collision avoidance is necessary. Also false if class not properly initialized.
      */
     bool calc ();
 
@@ -76,12 +76,6 @@ public:
     void set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos);
 
     /**
-     * @brief Set the current velocity of this CPS.
-     * @param vel The current velocity of this CPS.
-     */
-    void set_vel (const geometry_msgs::TwistStamped::ConstPtr& vel);
-
-    /**
      * @brief Set the relative positions received from other CPSs in the swarm.
      * @param swarm An array of distance and bearing of the other CPSs.
      */
@@ -89,7 +83,7 @@ public:
 
     /**
      * @brief Get the direction in which to move for collision avoidance.
-     * @return The direction away from the other CPSs.
+     * @return A pose with the current position of the CPS and the direction away from the other CPSs.
      */
     geometry_msgs::PoseStamped get_dir ();
 
@@ -107,11 +101,17 @@ public:
 
 private:
     /**
-     * @brief Calculate repulsion from close by CPSs as pair potentials.
-     * @param repulsion Returns the repulsion vector.
+     * @brief Calculate repulsion from close by CPSs.
+     * @param repulsion Returns the repulsion vector, i.e., the sum of the vectors pointing away from the neighbors.
      * @param neighbors Returns the number of neighbors that create repulsion.
+     * @param closest Returns the distance to the closest neighbor.
      */
-    void repulse (geometry_msgs::Vector3& repulsion, int& neighbors);
+    void repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest);
+
+    /**
+     * @brief Reset calculation results.
+     */
+    void reset ();
 
     /**
      * Calculate the direction towards the original goal during collision avoidance.
@@ -130,9 +130,9 @@ private:
     geometry_msgs::PoseStamped pos;
 
     /**
-     * @brief The current velocity of this CPS.
+     * @brief Whether a position has been provided.
      */
-    geometry_msgs::Twist vel;
+    bool pos_valid;
 
     /**
      * @brief The originally desired goal position of this CPS in case of no collision avoidance.

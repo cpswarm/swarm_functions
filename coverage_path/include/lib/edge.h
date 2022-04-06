@@ -4,19 +4,19 @@
 using namespace std;
 
 /**
- * @brief A class for representing edges.
+ * @brief A class for representing undirected edges.
  */
 class edge
 {
 public:
     /**
      * @brief Constructor that initializes the private member variables.
-     * @param f The starting vertex.
-     * @param t The ending vertex.
+     * @param v1 The first vertex.
+     * @param v2 The second vertex.
      * @param c The cost of the edge.
      * @param v Whether the sweeping pattern is vertical or horizontal. Default horizontal.
      */
-    edge(int f, int t, int c, bool v = false);
+    edge(int v1, int v2, double c, bool v = false);
 
     /**
      * @brief Compare this edge to another one.
@@ -26,19 +26,26 @@ public:
     bool operator== (const edge &e) const;
 
     /**
-     * @brief The starting vertex of the edge.
+     * @brief Compare this edge to another one.
+     * @param e The other edge to compare.
+     * @return True, if the cost of the first edge is lower than of the second edge. If both edges have the same cost, true if the difference between the vertex indexes of the first edge is lower than of the second edge. If both edges have the same cost and vertex index difference, true if the vertex indexes of the first edge are lower than of the second edge. False otherwise.
      */
-    int from;
+    bool operator< (const edge &e) const;
 
     /**
-     * @brief The ending vertex of the edge.
+     * @brief The lower vertex of the edge.
      */
-    int to;
+    int vlow;
 
     /**
-     * @brief The cost of the edge, i.e., length.
+     * @brief The higher vertex of the edge.
      */
-    int cost;
+    int vhigh;
+
+    /**
+     * @brief The cost of the edge, e.g., length.
+     */
+    double cost;
 
     /**
      * @brief Whether the sweeping pattern is vertical or horizontal.
@@ -47,7 +54,7 @@ public:
 };
 
 /**
- * @brief A struct that provides the comparison of edge objects. It allows sorting of edges for priority queues. The sorting follows three rules: First, edges are sorted by ascending cost. Edges with the same cost are sorted preferring horizontal/vertical edges. Edges with same cost and orientation are sorted ascending by vertical/horizontal position.
+ * @brief A struct that provides the comparison of edge objects. It allows sorting of edges for priority queues. The sorting follows three rules: First, edges are sorted by ascending cost. Edges with the same cost are sorted preferring horizontal/vertical edges. Edges with same cost and orientation are sorted ascending by index position, i.e., first bottom to top, then left to right.
  */
 struct compare_edge
 {
@@ -55,7 +62,7 @@ struct compare_edge
      * @brief Compare two edge objects. Edges are compared in terms of cost, orientation, and the position.
      * @param a First edge.
      * @param b Second edge.
-     * @return True, if the cost of the first edge is lower than of the second edge. If both edges have the same cost, it differentiates between horizontal or vertical sweeping patterns. If horizontal/vertical, true if the difference between the vertex indexes of the first edge is greater/lower or equal than of the second edge. If both edges have the same cost and vertex index difference, true if the vertex index of first edge is lower than of the second edge. False otherwise.
+     * @return True, if the first edge is greater than the second edge. False otherwise.
      */
     bool operator() (const edge& a, const edge& b) const;
 };
