@@ -8,10 +8,15 @@ repulsion::repulsion ()
 
 void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape)
 {
+    // initialize parameters
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
     this->repulsion_shape = repulsion_shape;
-    reset();
+
+    // reset variables
+    int_pos = geometry_msgs::PoseStamped();
+    int_vel = geometry_msgs::Twist();
+    direction = geometry_msgs::Vector3();
 }
 
 bool repulsion::calc ()
@@ -39,8 +44,14 @@ bool repulsion::calc ()
         return false;
     }
 
-    // direction towards goal position, normalized to [0,1]
-    geometry_msgs::Vector3 target = target_direction();
+    // target magnitude, inverse to repulsion to repulse more with other cpss close by
+    // linear function of cps distance f(d)
+    // minimum at d<=dist_critical: f(d)=0
+    // maximum at d>=dist_avoid:    f(d)=1
+    double target_mag = min(1.0, max(0.0, 1.0/(dist_avoid-dist_critical)*closest-(dist_critical/(dist_avoid-dist_critical))));
+
+    // direction towards goal position
+    geometry_msgs::Vector3 target = target_direction(target_mag);
 
     // avoidance direction (class variable) as sum of all repulsions and target direction
     direction.x = target.x + repulsion.x;
@@ -67,9 +78,17 @@ bool repulsion::calc ()
 
     // avoidance displacement
     if (setpoint == CONTROL_POSITION) {
+        int_pos.header = pos.header;
+
+        // avoidance position
         int_pos.pose.position.x = pos.pose.position.x + direction.x * avoidance_mag;
         int_pos.pose.position.y = pos.pose.position.y + direction.y * avoidance_mag;
         int_pos.pose.position.z = goal_pos.pose.position.z;
+
+        // face original goal
+        tf2::Quaternion orientation;
+        orientation.setRPY(0, 0, atan2(target.y, target.x));
+        int_pos.pose.orientation = tf2::toMsg(orientation);
     }
 
     // avoidance velocity
@@ -95,41 +114,28 @@ void repulsion::set_sp_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     setpoint = CONTROL_POSITION;
     goal_pos = *pos;
-    reset();
 }
 
 void repulsion::set_sp_vel (const geometry_msgs::Twist::ConstPtr& vel)
 {
     setpoint = CONTROL_VELOCITY;
     target_vel = *vel;
-    reset();
 }
 
 void repulsion::set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
 {
     this->pos = *pos;
     pos_valid = true;
-    reset();
 }
 
 void repulsion::set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm)
 {
     this->swarm = swarm->vectors;
-    reset();
 }
 
-geometry_msgs::PoseStamped repulsion::get_dir ()
+geometry_msgs::Vector3 repulsion::get_dir ()
 {
-    // use position of cps
-    geometry_msgs::PoseStamped dir;
-    dir = pos;
-
-    // calculate orientation
-    tf2::Quaternion orientation;
-    orientation.setRPY(0, 0, atan2(direction.y, direction.x));
-    dir.pose.orientation = tf2::toMsg(orientation);
-
-    return dir;
+    return direction;
 }
 
 geometry_msgs::PoseStamped repulsion::get_pos ()
@@ -196,38 +202,26 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
     }
 }
 
-void repulsion::reset ()
-{
-    int_pos = geometry_msgs::PoseStamped();
-    int_vel = geometry_msgs::Twist();
-    direction = geometry_msgs::Vector3();
-}
-
-geometry_msgs::Vector3 repulsion::target_direction ()
+geometry_msgs::Vector3 repulsion::target_direction (double magnitude)
 {
     geometry_msgs::Vector3 dir;
+    double head;
 
-    // get direction towards original goal
-    if (setpoint == CONTROL_POSITION) {
-        // valid goal given
-        if (goal_pos.pose.position.x != 0 || goal_pos.pose.position.y != 0) {
-            // bearing of goal
-            double bear = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
+    // heading towards original goal
+    if (setpoint == CONTROL_POSITION && (goal_pos.pose.position.x != 0 || goal_pos.pose.position.y != 0))
+        head = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
 
-            // velocity components in goal direction
-            dir.x = cos(bear);
-            dir.y = sin(bear);
-        }
-    }
+    // velocity heading
+    else if (setpoint == CONTROL_VELOCITY && (target_vel.linear.x != 0 || target_vel.linear.y != 0))
+        head = atan2(target_vel.linear.y, target_vel.linear.x);
 
-    // normalize velocity
-    else if (setpoint == CONTROL_VELOCITY) {
-        double mag = hypot(target_vel.linear.x, target_vel.linear.y);
-        if (mag > 0) {
-            dir.x = target_vel.linear.x / mag;
-            dir.y = target_vel.linear.y / mag;
-        }
-    }
+    // no valid setpoint
+    else
+        return dir;
+
+    // target direction components
+    dir.x = magnitude * cos(head);
+    dir.y = magnitude * sin(head);
 
     return dir;
 }

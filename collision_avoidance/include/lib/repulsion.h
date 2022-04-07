@@ -85,7 +85,7 @@ public:
      * @brief Get the direction in which to move for collision avoidance.
      * @return A pose with the current position of the CPS and the direction away from the other CPSs.
      */
-    geometry_msgs::PoseStamped get_dir ();
+    geometry_msgs::Vector3 get_dir ();
 
     /**
      * @brief Get the intermediate goal position during collision avoidance.
@@ -109,15 +109,11 @@ private:
     void repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest);
 
     /**
-     * @brief Reset calculation results.
-     */
-    void reset ();
-
-    /**
      * Calculate the direction towards the original goal during collision avoidance.
-     * @return A normalized vector pointing into the direction of the goal.
+     * @param magnitude The magnitude for the resulting vector.
+     * @return A vector pointing into the direction of the goal with the given magnitude.
      */
-    geometry_msgs::Vector3 target_direction ();
+    geometry_msgs::Vector3 target_direction (double magnitude);
 
     /**
      * @brief The type of CPS control.

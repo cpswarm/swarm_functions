@@ -132,9 +132,9 @@ int main (int argc, char **argv)
             // perform collision avoidance if necessary
             if (avoid) {
                 // using position setpoint
+                geometry_msgs::PoseStamped pos = ca.get_pos();
+                pos.header.stamp = Time::now();
                 if (ca.sp_pos()) {
-                    geometry_msgs::PoseStamped pos = ca.get_pos();
-                    pos.header.stamp = Time::now();
                     pos_pub.publish(pos);
                 }
 
@@ -151,7 +151,12 @@ int main (int argc, char **argv)
 
                 // visualization
                 if (visualize) {
-                    vis_pub.publish(ca.get_dir());
+                    geometry_msgs::PoseStamped dir;
+                    dir = pos;
+                    tf2::Quaternion orientation;
+                    orientation.setRPY(0, 0, atan2(ca.get_dir().y, ca.get_dir().x));
+                    dir.pose.orientation = tf2::toMsg(orientation);
+                    vis_pub.publish(dir);
                 }
             }
         }
