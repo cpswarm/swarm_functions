@@ -47,15 +47,17 @@ bool repulsion::calc ()
     direction.y = target.y + repulsion.y;
 
     // fix if target and repulsion cancel out: only repulse
-    if (abs(direction.x) < 0.0001 && abs(direction.y) < 0.0001) {
+    if (abs(direction.x) < 0.01 && abs(direction.y) < 0.01) {
         direction.x = repulsion.x;
         direction.y = repulsion.y;
     }
 
-    // normalize avoidance direction
-    double avoidance_dir = atan2(direction.y, direction.x);
-    direction.x = cos(avoidance_dir);
-    direction.y = sin(avoidance_dir);
+    // normalize avoidance direction if larger than 1
+    if (hypot(direction.y, direction.x) > 1) {
+        double avoidance_dir = atan2(direction.y, direction.x);
+        direction.x = cos(avoidance_dir);
+        direction.y = sin(avoidance_dir);
+    }
 
     // avoidance magnitude, inverse to repulsion to move slower when other cpss close by
     // linear function of cps distance f(d)
