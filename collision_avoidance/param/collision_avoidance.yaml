@@ -3,7 +3,8 @@ queue_size:      10     # The size of the message queue used for publishing and 
 dist_critical:   5.0    # Distance between CPSs in meter below which the collision avoidance will work maximally.
 dist_avoid:      10.0   # Distance between CPSs in meter below which collision avoidance is active.
 visualize:       true   # Whether to visualize the avoidance direction by publishing on a ROS topic.
-repulsion_shape: linear # The shape of the repulsion function, can be sine, exp, or linear.
+repulsion_shape: sin    # The shape of the repulsion function, can be lin, li2, sin, log, or exp. Default is a constant value.
+attraction_shape: lin   # The shape of the attraction function, can be lin, li2, sin, log, or exp. Default is a constant value.
 excluded:               # No collision avoidance in these states.
 - sleep
 - idle

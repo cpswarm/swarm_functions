@@ -97,10 +97,12 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/dist_critical", dist_critical, 1.0);
     double dist_avoid;
     nh.param(this_node::getName() + "/dist_avoid", dist_avoid, 3.0);
-    string repulsion_shape = "linear";
+    string repulsion_shape;
     nh.param(this_node::getName() + "/repulsion_shape", repulsion_shape, repulsion_shape);
+    string attraction_shape;
+    nh.param(this_node::getName() + "/attraction_shape", attraction_shape, attraction_shape);
 
-    ca.init(dist_critical, dist_avoid, repulsion_shape);
+    ca.init(dist_critical, dist_avoid, repulsion_shape, attraction_shape);
 
     // ros communication
     Subscriber sp_pos_sub = nh.subscribe("pos_controller/goal_position", queue_size, sp_pos_cb);

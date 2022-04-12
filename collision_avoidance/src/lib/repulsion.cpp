@@ -6,12 +6,13 @@ repulsion::repulsion ()
     pos_valid = false;
 }
 
-void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape)
+void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape, string attraction_shape)
 {
     // initialize parameters
     this->dist_critical = dist_critical;
     this->dist_avoid = dist_avoid;
     this->repulsion_shape = repulsion_shape;
+    this->attraction_shape = attraction_shape;
 
     // reset variables
     int_pos = geometry_msgs::PoseStamped();
@@ -44,26 +45,15 @@ bool repulsion::calc ()
         return false;
     }
 
-    // target magnitude, inverse to repulsion to repulse more with other cpss close by
-    // linear function of cps distance f(d)
-    // minimum at d<=dist_critical: f(d)=0
-    // maximum at d>=dist_avoid:    f(d)=1
-    double target_mag = min(1.0, max(0.0, 1.0/(dist_avoid-dist_critical)*closest-(dist_critical/(dist_avoid-dist_critical))));
+    // attraction towards goal position
+    geometry_msgs::Vector3 attraction;
+    attract(attraction, closest);
 
-    // direction towards goal position
-    geometry_msgs::Vector3 target = target_direction(target_mag);
+    // avoidance direction (class variable) as sum of all repulsions and attraction
+    direction.x = attraction.x + repulsion.x;
+    direction.y = attraction.y + repulsion.y;
 
-    // avoidance direction (class variable) as sum of all repulsions and target direction
-    direction.x = target.x + repulsion.x;
-    direction.y = target.y + repulsion.y;
-
-    // fix if target and repulsion cancel out: only repulse
-    if (abs(direction.x) < 0.01 && abs(direction.y) < 0.01) {
-        direction.x = repulsion.x;
-        direction.y = repulsion.y;
-    }
-
-    // normalize avoidance direction if larger than 1
+    // limit magnitude of avoidance direction vector to 1
     if (hypot(direction.y, direction.x) > 1) {
         double avoidance_dir = atan2(direction.y, direction.x);
         direction.x = cos(avoidance_dir);
@@ -87,7 +77,7 @@ bool repulsion::calc ()
 
         // face original goal
         tf2::Quaternion orientation;
-        orientation.setRPY(0, 0, atan2(target.y, target.x));
+        orientation.setRPY(0, 0, atan2(attraction.y, attraction.x));
         int_pos.pose.orientation = tf2::toMsg(orientation);
     }
 
@@ -178,19 +168,31 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
 
             // maximum repulsion
             if (pose.vector.magnitude < dist_critical)
-                pot = 1;
+                pot = 1.0;
 
-            // repulsion following sine function
+            // linear function
+            else if (repulsion_shape == "lin")
+                pot = max(0.0, 1 - (pose.vector.magnitude - dist_critical) / (dist_avoid - dist_critical));
+
+            // linear function with double slope
+            else if (repulsion_shape == "li2")
+                pot = min(1.0, max(0.0, -pose.vector.magnitude * 2.0 / (dist_avoid - dist_critical) + 2.0 * dist_avoid / (dist_avoid - dist_critical)));
+
+            // sine function
             else if (repulsion_shape == "sine")
                 pot = 0.5 - 0.5 * sin(M_PI / (dist_avoid - dist_critical) * (pose.vector.magnitude - 0.5 * (dist_avoid + dist_critical)));
 
-            // repulsion following exp function
+            // logarithmic function
+            else if (repulsion_shape == "log")
+                pot = min(0.0, 1 - exp((pose.vector.magnitude - dist_avoid) * dist_critical/2.0));
+
+            // exponential function
             else if (repulsion_shape == "exp")
                 pot = exp((pose.vector.magnitude - dist_critical) * 2.0*log(0.5) / (dist_avoid - dist_critical));
 
-            // repulsion following linear function
+            // constant repulsion
             else
-                pot = max(1 - (pose.vector.magnitude - dist_critical) / (dist_avoid - dist_critical), 0.0);
+                pot = 1;
 
             // absolute bearing of neighbor
             double bear = yaw + pose.vector.direction;
@@ -202,7 +204,7 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
     }
 }
 
-geometry_msgs::Vector3 repulsion::target_direction (double magnitude)
+void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
 {
     geometry_msgs::Vector3 dir;
     double head;
@@ -217,11 +219,40 @@ geometry_msgs::Vector3 repulsion::target_direction (double magnitude)
 
     // no valid setpoint
     else
-        return dir;
+        return;
 
-    // target direction components
-    dir.x = magnitude * cos(head);
-    dir.y = magnitude * sin(head);
+    // magnitude, decrease with other cpss close by
+    double magnitude;
 
-    return dir;
+    // no attraction
+    if (closest < dist_critical)
+        magnitude = 0.0;
+
+    // linear function
+    else if (attraction_shape == "lin")
+        magnitude = min(1.0, max(0.0, 1.0 / (dist_avoid - dist_critical) * closest - (dist_critical / (dist_avoid - dist_critical))));
+
+    // linear function with double slope
+    else if (attraction_shape == "li2")
+        magnitude = min(1.0, max(0.0, closest * 2.0/(dist_avoid - dist_critical) - (dist_avoid + dist_critical) / (dist_avoid - dist_critical)));
+
+    // sine function
+    else if (attraction_shape == "sin")
+        magnitude = 0.5 * sin(2.0*M_PI / (2.0 * (dist_avoid - dist_critical)) * (closest - (dist_critical + dist_avoid) / 2.0)) + 0.5;
+
+    // logarithmic function
+    else if (attraction_shape == "log")
+        magnitude = log(closest - dist_critical + 1) / exp(1);
+
+    // exponential function
+    else if (attraction_shape == "exp")
+        magnitude = max(0.0, exp((closest - dist_avoid) * dist_critical/2.0));
+
+    // constant
+    else
+        magnitude = 1.0;
+
+    // calculate goal direction components
+    attraction.x = magnitude * cos(head);
+    attraction.y = magnitude * sin(head);
 }
