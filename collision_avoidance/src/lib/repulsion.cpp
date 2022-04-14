@@ -34,7 +34,7 @@ bool repulsion::calc ()
     if (dist_avoid < dist_critical)
         return false;
 
-    // repulsion from other cpss, normalized to [0,neighbors]
+    // repulsion from other cpss [0,neighbors]
     geometry_msgs::Vector3 repulsion;
     int neighbors;
     double closest;
@@ -45,11 +45,11 @@ bool repulsion::calc ()
         return false;
     }
 
-    // attraction towards goal position
+    // attraction towards goal position [0,1]
     geometry_msgs::Vector3 attraction;
     attract(attraction, closest);
 
-    // avoidance direction (class variable) as sum of all repulsions and attraction
+    // avoidance direction (class variable) as sum of attraction and all repulsions
     direction.x = attraction.x + repulsion.x;
     direction.y = attraction.y + repulsion.y;
 
@@ -60,8 +60,8 @@ bool repulsion::calc ()
         direction.y = sin(avoidance_dir);
     }
 
-    // avoidance magnitude, inverse to repulsion to move slower when other cpss close by
-    // linear function of cps distance f(d)
+    // avoidance magnitude, inverse to distance of closest cps, move slower when other cpss close by
+    // linear function f of distance d
     // minimum at d<=dist_critical: f(d)=dist_critical / 2
     // maximum at d>=dist_avoid:    f(d)=dist_avoid / 2
     double avoidance_mag = min(0.5*dist_avoid, max(0.5*dist_critical, 0.5*closest));
@@ -172,11 +172,11 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
 
             // linear function
             else if (repulsion_shape == "lin")
-                pot = max(0.0, 1 - (pose.vector.magnitude - dist_critical) / (dist_avoid - dist_critical));
+                pot = (dist_avoid - pose.vector.magnitude) / (dist_avoid - dist_critical);
 
             // linear function with double slope
             else if (repulsion_shape == "li2")
-                pot = min(1.0, max(0.0, -pose.vector.magnitude * 2.0 / (dist_avoid - dist_critical) + 2.0 * dist_avoid / (dist_avoid - dist_critical)));
+                pot = 2.0 * (dist_avoid - pose.vector.magnitude) / (dist_avoid - dist_critical);
 
             // sine function
             else if (repulsion_shape == "sine")
@@ -184,11 +184,11 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
 
             // logarithmic function
             else if (repulsion_shape == "log")
-                pot = min(0.0, 1 - exp((pose.vector.magnitude - dist_avoid) * dist_critical/2.0));
+                pot = log((1.0 - exp(1.0)) / (dist_avoid - dist_critical) * (pose.vector.magnitude - dist_critical) + exp(1.0));
 
             // exponential function
             else if (repulsion_shape == "exp")
-                pot = exp((pose.vector.magnitude - dist_critical) * 2.0*log(0.5) / (dist_avoid - dist_critical));
+                pot = 1.0 / exp(log(0.5) * (dist_avoid - pose.vector.magnitude) / (dist_avoid - dist_critical)) - 1.0;
 
             // constant repulsion
             else
@@ -230,23 +230,23 @@ void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
 
     // linear function
     else if (attraction_shape == "lin")
-        magnitude = min(1.0, max(0.0, 1.0 / (dist_avoid - dist_critical) * closest - (dist_critical / (dist_avoid - dist_critical))));
+        magnitude = (closest - dist_critical) / (dist_avoid - dist_critical);
 
     // linear function with double slope
     else if (attraction_shape == "li2")
-        magnitude = min(1.0, max(0.0, closest * 2.0/(dist_avoid - dist_critical) - (dist_avoid + dist_critical) / (dist_avoid - dist_critical)));
+        magnitude = (2.0 * closest - dist_avoid - dist_critical) / (dist_avoid - dist_critical);
 
     // sine function
     else if (attraction_shape == "sin")
-        magnitude = 0.5 * sin(2.0*M_PI / (2.0 * (dist_avoid - dist_critical)) * (closest - (dist_critical + dist_avoid) / 2.0)) + 0.5;
+        magnitude = 0.5 + 0.5 * sin(M_PI / (dist_avoid - dist_critical) * (closest - 0.5 * (dist_critical + dist_avoid)));
 
     // logarithmic function
     else if (attraction_shape == "log")
-        magnitude = log(closest - dist_critical + 1) / exp(1);
+        magnitude = log(1.0 + (exp(1.0) - 1.0) * (closest - dist_critical) / (dist_avoid - dist_critical));
 
     // exponential function
     else if (attraction_shape == "exp")
-        magnitude = max(0.0, exp((closest - dist_avoid) * dist_critical/2.0));
+        magnitude = exp(log(2.0) * (closest - dist_critical) / (dist_avoid - dist_critical)) - 1.0;
 
     // constant
     else
