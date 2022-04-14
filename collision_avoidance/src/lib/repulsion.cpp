@@ -6,13 +6,14 @@ repulsion::repulsion ()
     pos_valid = false;
 }
 
-void repulsion::init (double dist_critical, double dist_avoid, string repulsion_shape, string attraction_shape)
+void repulsion::init (double dist_critical, double dist_attract, double dist_repulse, string attraction_shape, string repulsion_shape)
 {
     // initialize parameters
     this->dist_critical = dist_critical;
-    this->dist_avoid = dist_avoid;
-    this->repulsion_shape = repulsion_shape;
+    this->dist_attract = dist_attract;
+    this->dist_repulse = dist_repulse;
     this->attraction_shape = attraction_shape;
+    this->repulsion_shape = repulsion_shape;
 
     // reset variables
     int_pos = geometry_msgs::PoseStamped();
@@ -31,7 +32,7 @@ bool repulsion::calc ()
         return false;
 
     // invalid distances
-    if (dist_avoid < dist_critical)
+    if (dist_attract < dist_critical || dist_repulse < dist_critical)
         return false;
 
     // repulsion from other cpss [0,neighbors]
@@ -63,8 +64,8 @@ bool repulsion::calc ()
     // avoidance magnitude, inverse to distance of closest cps, move slower when other cpss close by
     // linear function f of distance d
     // minimum at d<=dist_critical: f(d)=dist_critical / 2
-    // maximum at d>=dist_avoid:    f(d)=dist_avoid / 2
-    double avoidance_mag = min(0.5*dist_avoid, max(0.5*dist_critical, 0.5*closest));
+    // maximum at d>=dist_repulse:    f(d)=dist_repulse / 2
+    double avoidance_mag = min(0.5*dist_repulse, max(0.5*dist_critical, 0.5*closest));
 
     // avoidance displacement
     if (setpoint == CONTROL_POSITION) {
@@ -138,72 +139,6 @@ geometry_msgs::Twist repulsion::get_vel ()
     return int_vel;
 }
 
-void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest)
-{
-    // init repulsion
-    repulsion.x = 0;
-    repulsion.y = 0;
-    neighbors = 0;
-    closest = -1;
-
-    // yaw of this cps
-    tf2::Quaternion orientation;
-    tf2::fromMsg(pos.pose.orientation, orientation);
-    double yaw = tf2::getYaw(orientation);
-
-    // compute pair potentials for all neighbors
-    for (auto pose : swarm) {
-        // measure closest neighbor
-        if (pose.vector.magnitude < closest || closest < 0) {
-            closest = pose.vector.magnitude;
-        }
-
-        // repulsion only from close neighbors
-        if (pose.vector.magnitude < dist_avoid) {
-            // count neighbors to repulse from
-            ++neighbors;
-
-            // pair potential
-            double pot;
-
-            // maximum repulsion
-            if (pose.vector.magnitude < dist_critical)
-                pot = 1.0;
-
-            // linear function
-            else if (repulsion_shape == "lin")
-                pot = (dist_avoid - pose.vector.magnitude) / (dist_avoid - dist_critical);
-
-            // linear function with double slope
-            else if (repulsion_shape == "li2")
-                pot = 2.0 * (dist_avoid - pose.vector.magnitude) / (dist_avoid - dist_critical);
-
-            // sine function
-            else if (repulsion_shape == "sine")
-                pot = 0.5 - 0.5 * sin(M_PI / (dist_avoid - dist_critical) * (pose.vector.magnitude - 0.5 * (dist_avoid + dist_critical)));
-
-            // logarithmic function
-            else if (repulsion_shape == "log")
-                pot = log((1.0 - exp(1.0)) / (dist_avoid - dist_critical) * (pose.vector.magnitude - dist_critical) + exp(1.0));
-
-            // exponential function
-            else if (repulsion_shape == "exp")
-                pot = 1.0 / exp(log(0.5) * (dist_avoid - pose.vector.magnitude) / (dist_avoid - dist_critical)) - 1.0;
-
-            // constant repulsion
-            else
-                pot = 1;
-
-            // absolute bearing of neighbor
-            double bear = yaw + pose.vector.direction;
-
-            // sum up potentials as vector pointing away from neighbor
-            repulsion.x += pot * -cos(bear);
-            repulsion.y += pot * -sin(bear);
-        }
-    }
-}
-
 void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
 {
     geometry_msgs::Vector3 dir;
@@ -228,25 +163,29 @@ void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
     if (closest < dist_critical)
         magnitude = 0.0;
 
+    // maximum attraction
+    else if (closest > dist_attract)
+        magnitude = 1.0;
+
     // linear function
     else if (attraction_shape == "lin")
-        magnitude = (closest - dist_critical) / (dist_avoid - dist_critical);
+        magnitude = (closest - dist_critical) / (dist_attract - dist_critical);
 
     // linear function with double slope
     else if (attraction_shape == "li2")
-        magnitude = (2.0 * closest - dist_avoid - dist_critical) / (dist_avoid - dist_critical);
+        magnitude = (2.0 * closest - dist_attract - dist_critical) / (dist_attract - dist_critical);
 
     // sine function
     else if (attraction_shape == "sin")
-        magnitude = 0.5 + 0.5 * sin(M_PI / (dist_avoid - dist_critical) * (closest - 0.5 * (dist_critical + dist_avoid)));
+        magnitude = 0.5 + 0.5 * sin(M_PI / (dist_attract - dist_critical) * (closest - 0.5 * (dist_critical + dist_attract)));
 
     // logarithmic function
     else if (attraction_shape == "log")
-        magnitude = log(1.0 + (exp(1.0) - 1.0) * (closest - dist_critical) / (dist_avoid - dist_critical));
+        magnitude = log(1.0 + (exp(1.0) - 1.0) * (closest - dist_critical) / (dist_attract - dist_critical));
 
     // exponential function
     else if (attraction_shape == "exp")
-        magnitude = exp(log(2.0) * (closest - dist_critical) / (dist_avoid - dist_critical)) - 1.0;
+        magnitude = exp(log(2.0) * (closest - dist_critical) / (dist_attract - dist_critical)) - 1.0;
 
     // constant
     else
@@ -255,4 +194,70 @@ void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
     // calculate goal direction components
     attraction.x = magnitude * cos(head);
     attraction.y = magnitude * sin(head);
+}
+
+void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest)
+{
+    // init repulsion
+    repulsion.x = 0;
+    repulsion.y = 0;
+    neighbors = 0;
+    closest = -1;
+
+    // yaw of this cps
+    tf2::Quaternion orientation;
+    tf2::fromMsg(pos.pose.orientation, orientation);
+    double yaw = tf2::getYaw(orientation);
+
+    // compute pair potentials for all neighbors
+    for (auto pose : swarm) {
+        // measure closest neighbor
+        if (pose.vector.magnitude < closest || closest < 0) {
+            closest = pose.vector.magnitude;
+        }
+
+        // repulsion only from close neighbors
+        if (pose.vector.magnitude < dist_repulse) {
+            // count neighbors to repulse from
+            ++neighbors;
+
+            // pair potential
+            double pot;
+
+            // maximum repulsion
+            if (pose.vector.magnitude < dist_critical)
+                pot = 1.0;
+
+            // linear function
+            else if (repulsion_shape == "lin")
+                pot = (dist_repulse - pose.vector.magnitude) / (dist_repulse - dist_critical);
+
+            // linear function with double slope
+            else if (repulsion_shape == "li2")
+                pot = 2.0 * (dist_repulse - pose.vector.magnitude) / (dist_repulse - dist_critical);
+
+            // sine function
+            else if (repulsion_shape == "sine")
+                pot = 0.5 - 0.5 * sin(M_PI / (dist_repulse - dist_critical) * (pose.vector.magnitude - 0.5 * (dist_repulse + dist_critical)));
+
+            // logarithmic function
+            else if (repulsion_shape == "log")
+                pot = log((1.0 - exp(1.0)) / (dist_repulse - dist_critical) * (pose.vector.magnitude - dist_critical) + exp(1.0));
+
+            // exponential function
+            else if (repulsion_shape == "exp")
+                pot = 1.0 / exp(log(0.5) * (dist_repulse - pose.vector.magnitude) / (dist_repulse - dist_critical)) - 1.0;
+
+            // constant repulsion
+            else
+                pot = 1;
+
+            // absolute bearing of neighbor
+            double bear = yaw + pose.vector.direction;
+
+            // sum up potentials as vector pointing away from neighbor
+            repulsion.x += pot * -cos(bear);
+            repulsion.y += pot * -sin(bear);
+        }
+    }
 }
