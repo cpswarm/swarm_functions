@@ -37,18 +37,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35743605ad70d30f8e4c0a907da77d4e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a> ()</td></tr>
 <tr class="memdesc:a35743605ad70d30f8e4c0a907da77d4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether collision avoidance is necessary and calculate respective position or velocity.  <a href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">More...</a><br /></td></tr>
 <tr class="separator:a35743605ad70d30f8e4c0a907da77d4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad792365ffdae8c5320029796a86b9289"><td class="memItemLeft" align="right" valign="top">geometry_msgs::PoseStamped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a> ()</td></tr>
-<tr class="memdesc:ad792365ffdae8c5320029796a86b9289"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the direction in which to move for collision avoidance.  <a href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">More...</a><br /></td></tr>
-<tr class="separator:ad792365ffdae8c5320029796a86b9289"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4050cc2be0d62770971d058ee18ef74f"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a> ()</td></tr>
+<tr class="memdesc:a4050cc2be0d62770971d058ee18ef74f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the direction in which to move for collision avoidance.  <a href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">More...</a><br /></td></tr>
+<tr class="separator:a4050cc2be0d62770971d058ee18ef74f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36fd36308a9ceca4cb2fdc85d98aee99"><td class="memItemLeft" align="right" valign="top">geometry_msgs::PoseStamped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a36fd36308a9ceca4cb2fdc85d98aee99">get_pos</a> ()</td></tr>
 <tr class="memdesc:a36fd36308a9ceca4cb2fdc85d98aee99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the intermediate goal position during collision avoidance.  <a href="classrepulsion.html#a36fd36308a9ceca4cb2fdc85d98aee99">More...</a><br /></td></tr>
 <tr class="separator:a36fd36308a9ceca4cb2fdc85d98aee99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a240b4ca6b3a707e69fba047dfb5484af"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Twist&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a240b4ca6b3a707e69fba047dfb5484af">get_vel</a> ()</td></tr>
 <tr class="memdesc:a240b4ca6b3a707e69fba047dfb5484af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the intermediate target velocity during collision avoidance.  <a href="classrepulsion.html#a240b4ca6b3a707e69fba047dfb5484af">More...</a><br /></td></tr>
 <tr class="separator:a240b4ca6b3a707e69fba047dfb5484af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa42846dcedd6569d671323c0832cd127"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a> (double <a class="el" href="classrepulsion.html#a4aa5075ed09ff869d8a4543ee52c6b07">dist_critical</a>, double <a class="el" href="classrepulsion.html#a252db388524b5b1bb7950dfd69d050aa">dist_avoid</a>, string <a class="el" href="classrepulsion.html#ab8d8832dacfd6784712c0cfd5dbde826">repulsion_shape</a>)</td></tr>
-<tr class="memdesc:aa42846dcedd6569d671323c0832cd127"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure the repulsion behavior through parameters.  <a href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">More...</a><br /></td></tr>
-<tr class="separator:aa42846dcedd6569d671323c0832cd127"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6c460d8572ea862343bb675ee745779"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a> (double <a class="el" href="classrepulsion.html#a4aa5075ed09ff869d8a4543ee52c6b07">dist_critical</a>, double <a class="el" href="classrepulsion.html#a969a8d5319410389131c4368101f7e45">dist_attract</a>, double <a class="el" href="classrepulsion.html#a295ad455d0cf2ca8b863563e9479c811">dist_repulse</a>, string <a class="el" href="classrepulsion.html#afb439cac93da4baa5504419a82cad906">attraction_shape</a>, string <a class="el" href="classrepulsion.html#ab8d8832dacfd6784712c0cfd5dbde826">repulsion_shape</a>)</td></tr>
+<tr class="memdesc:ac6c460d8572ea862343bb675ee745779"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure the repulsion behavior through parameters.  <a href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">More...</a><br /></td></tr>
+<tr class="separator:ac6c460d8572ea862343bb675ee745779"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68aa3ceee4e976291a560bdcff3ecbb3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a68aa3ceee4e976291a560bdcff3ecbb3">repulsion</a> ()</td></tr>
 <tr class="memdesc:a68aa3ceee4e976291a560bdcff3ecbb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classrepulsion.html#a68aa3ceee4e976291a560bdcff3ecbb3">More...</a><br /></td></tr>
 <tr class="separator:a68aa3ceee4e976291a560bdcff3ecbb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -73,26 +73,29 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
 Private Member Functions</h2></td></tr>
+<tr class="memitem:a620ae16ee8bbc4b73a6aa46c6df2b876"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a620ae16ee8bbc4b73a6aa46c6df2b876">attract</a> (geometry_msgs::Vector3 &amp;attraction, double closest)</td></tr>
+<tr class="separator:a620ae16ee8bbc4b73a6aa46c6df2b876"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2c47b57572c82c5ac99d696b5b985a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#af2c47b57572c82c5ac99d696b5b985a0">repulse</a> (geometry_msgs::Vector3 &amp;<a class="el" href="classrepulsion.html">repulsion</a>, int &amp;neighbors, double &amp;closest)</td></tr>
 <tr class="memdesc:af2c47b57572c82c5ac99d696b5b985a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate repulsion from close by CPSs.  <a href="classrepulsion.html#af2c47b57572c82c5ac99d696b5b985a0">More...</a><br /></td></tr>
 <tr class="separator:af2c47b57572c82c5ac99d696b5b985a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac64dffd70914342e06bf6179f5f4d9b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#ac64dffd70914342e06bf6179f5f4d9b0">reset</a> ()</td></tr>
-<tr class="memdesc:ac64dffd70914342e06bf6179f5f4d9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset calculation results.  <a href="classrepulsion.html#ac64dffd70914342e06bf6179f5f4d9b0">More...</a><br /></td></tr>
-<tr class="separator:ac64dffd70914342e06bf6179f5f4d9b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0c618505d4978a2b02c2e8237b638eb"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#ab0c618505d4978a2b02c2e8237b638eb">target_direction</a> ()</td></tr>
-<tr class="separator:ab0c618505d4978a2b02c2e8237b638eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
+<tr class="memitem:afb439cac93da4baa5504419a82cad906"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#afb439cac93da4baa5504419a82cad906">attraction_shape</a></td></tr>
+<tr class="memdesc:afb439cac93da4baa5504419a82cad906"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shape of the attraction function.  <a href="classrepulsion.html#afb439cac93da4baa5504419a82cad906">More...</a><br /></td></tr>
+<tr class="separator:afb439cac93da4baa5504419a82cad906"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a955b87e4ff9d0f6772eaf1e9bb7674f1"><td class="memItemLeft" align="right" valign="top">geometry_msgs::Vector3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a955b87e4ff9d0f6772eaf1e9bb7674f1">direction</a></td></tr>
 <tr class="memdesc:a955b87e4ff9d0f6772eaf1e9bb7674f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The direction of avoidance.  <a href="classrepulsion.html#a955b87e4ff9d0f6772eaf1e9bb7674f1">More...</a><br /></td></tr>
 <tr class="separator:a955b87e4ff9d0f6772eaf1e9bb7674f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a252db388524b5b1bb7950dfd69d050aa"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a252db388524b5b1bb7950dfd69d050aa">dist_avoid</a></td></tr>
-<tr class="memdesc:a252db388524b5b1bb7950dfd69d050aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between CPSs below which collision avoidance is active.  <a href="classrepulsion.html#a252db388524b5b1bb7950dfd69d050aa">More...</a><br /></td></tr>
-<tr class="separator:a252db388524b5b1bb7950dfd69d050aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a969a8d5319410389131c4368101f7e45"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a969a8d5319410389131c4368101f7e45">dist_attract</a></td></tr>
+<tr class="memdesc:a969a8d5319410389131c4368101f7e45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between CPSs in meter below which attraction starts to decrease. Must be greater than dist_critical.  <a href="classrepulsion.html#a969a8d5319410389131c4368101f7e45">More...</a><br /></td></tr>
+<tr class="separator:a969a8d5319410389131c4368101f7e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aa5075ed09ff869d8a4543ee52c6b07"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a4aa5075ed09ff869d8a4543ee52c6b07">dist_critical</a></td></tr>
-<tr class="memdesc:a4aa5075ed09ff869d8a4543ee52c6b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between CPSs below which the collision avoidance will work maximally.  <a href="classrepulsion.html#a4aa5075ed09ff869d8a4543ee52c6b07">More...</a><br /></td></tr>
+<tr class="memdesc:a4aa5075ed09ff869d8a4543ee52c6b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between CPSs in meter below which the collision avoidance will work maximally, i.e., maximum repulsion, no attraction.  <a href="classrepulsion.html#a4aa5075ed09ff869d8a4543ee52c6b07">More...</a><br /></td></tr>
 <tr class="separator:a4aa5075ed09ff869d8a4543ee52c6b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a295ad455d0cf2ca8b863563e9479c811"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#a295ad455d0cf2ca8b863563e9479c811">dist_repulse</a></td></tr>
+<tr class="memdesc:a295ad455d0cf2ca8b863563e9479c811"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance between CPSs in meter below which repulsion starts to increase. Must be greater than dist_critical.  <a href="classrepulsion.html#a295ad455d0cf2ca8b863563e9479c811">More...</a><br /></td></tr>
+<tr class="separator:a295ad455d0cf2ca8b863563e9479c811"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4b02fd680e0200a5f71c4b8c1d67b17"><td class="memItemLeft" align="right" valign="top">geometry_msgs::PoseStamped&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrepulsion.html#ae4b02fd680e0200a5f71c4b8c1d67b17">goal_pos</a></td></tr>
 <tr class="memdesc:ae4b02fd680e0200a5f71c4b8c1d67b17"><td class="mdescLeft">&#160;</td><td class="mdescRight">The originally desired goal position of this CPS in case of no collision avoidance.  <a href="classrepulsion.html#ae4b02fd680e0200a5f71c4b8c1d67b17">More...</a><br /></td></tr>
 <tr class="separator:ae4b02fd680e0200a5f71c4b8c1d67b17"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -148,6 +151,51 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a620ae16ee8bbc4b73a6aa46c6df2b876"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a620ae16ee8bbc4b73a6aa46c6df2b876">&#9670;&nbsp;</a></span>attract()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void repulsion::attract </td>
+          <td>(</td>
+          <td class="paramtype">geometry_msgs::Vector3 &amp;&#160;</td>
+          <td class="paramname"><em>attraction</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>closest</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Calculate the direction towards the original goal during collision avoidance. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">attraction</td><td>Returns the attraction vector, i.e., the direction of the goal with the magnitude calculated from the closest CPS distance. </td></tr>
+    <tr><td class="paramname">closest</td><td>The distance to the closest CPS. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00142">142</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a35743605ad70d30f8e4c0a907da77d4e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a35743605ad70d30f8e4c0a907da77d4e">&#9670;&nbsp;</a></span>calc()</h2>
 
@@ -166,18 +214,18 @@ Private Attributes</h2></td></tr>
 <p>Check whether collision avoidance is necessary and calculate respective position or velocity. </p>
 <dl class="section return"><dt>Returns</dt><dd>Whether collision avoidance is necessary. Also false if class not properly initialized. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00017">17</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00024">24</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ad792365ffdae8c5320029796a86b9289"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad792365ffdae8c5320029796a86b9289">&#9670;&nbsp;</a></span>get_dir()</h2>
+<a id="a4050cc2be0d62770971d058ee18ef74f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4050cc2be0d62770971d058ee18ef74f">&#9670;&nbsp;</a></span>get_dir()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">geometry_msgs::PoseStamped repulsion::get_dir </td>
+          <td class="memname">geometry_msgs::Vector3 repulsion::get_dir </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -188,7 +236,7 @@ Private Attributes</h2></td></tr>
 <p>Get the direction in which to move for collision avoidance. </p>
 <dl class="section return"><dt>Returns</dt><dd>A pose with the current position of the CPS and the direction away from the other CPSs. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00119">119</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00127">127</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -210,7 +258,7 @@ Private Attributes</h2></td></tr>
 <p>Get the intermediate goal position during collision avoidance. </p>
 <dl class="section return"><dt>Returns</dt><dd>The pose where the CPS shall move to for avoiding a collision. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00133">133</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00132">132</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -232,12 +280,12 @@ Private Attributes</h2></td></tr>
 <p>Get the intermediate target velocity during collision avoidance. </p>
 <dl class="section return"><dt>Returns</dt><dd>The velocity at which the CPS shall move for avoiding a collision. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00138">138</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00137">137</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
-<a id="aa42846dcedd6569d671323c0832cd127"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa42846dcedd6569d671323c0832cd127">&#9670;&nbsp;</a></span>init()</h2>
+<a id="ac6c460d8572ea862343bb675ee745779"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6c460d8572ea862343bb675ee745779">&#9670;&nbsp;</a></span>init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +300,19 @@ Private Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>dist_avoid</em>, </td>
+          <td class="paramname"><em>dist_attract</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dist_repulse</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>attraction_shape</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -271,8 +331,10 @@ Private Attributes</h2></td></tr>
 <p>Configure the repulsion behavior through parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">dist_critical</td><td>Distance between CPSs below which the collision avoidance will work maximally. </td></tr>
-    <tr><td class="paramname">dist_avoid</td><td>Distance between CPSs below which collision avoidance is active. </td></tr>
+    <tr><td class="paramname">dist_critical</td><td>Distance between CPSs in meter below which the collision avoidance will work maximally, i.e., maximum repulsion, no attraction. </td></tr>
+    <tr><td class="paramname">dist_attract</td><td>Distance between CPSs in meter below which attraction starts to decrease. Must be greater than dist_critical. </td></tr>
+    <tr><td class="paramname">dist_repulse</td><td>Distance between CPSs in meter below which repulsion starts to increase. Must be greater than dist_critical. </td></tr>
+    <tr><td class="paramname">attraction_shape</td><td>The shape of the attraction function. </td></tr>
     <tr><td class="paramname">repulsion_shape</td><td>The shape of the repulsion function. </td></tr>
   </table>
   </dd>
@@ -332,36 +394,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00143">143</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
-
-</div>
-</div>
-<a id="ac64dffd70914342e06bf6179f5f4d9b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac64dffd70914342e06bf6179f5f4d9b0">&#9670;&nbsp;</a></span>reset()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void repulsion::reset </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Reset calculation results. </p>
-
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00197">197</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00199">199</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -389,7 +422,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00106">106</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00116">116</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -417,7 +450,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00092">92</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00104">104</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -445,7 +478,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00099">99</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00110">110</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -473,7 +506,7 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00113">113</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00122">122</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -495,7 +528,7 @@ Private Attributes</h2></td></tr>
 <p>Check whether position setpoint is used. </p>
 <dl class="section return"><dt>Returns</dt><dd>True when the CPS is controlled with position setpoints. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00082">82</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00094">94</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
@@ -517,12 +550,13 @@ Private Attributes</h2></td></tr>
 <p>Check whether position setpoint is used. </p>
 <dl class="section return"><dt>Returns</dt><dd>True when the CPS is controlled with position setpoints. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00087">87</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00099">99</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ab0c618505d4978a2b02c2e8237b638eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0c618505d4978a2b02c2e8237b638eb">&#9670;&nbsp;</a></span>target_direction()</h2>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="afb439cac93da4baa5504419a82cad906"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb439cac93da4baa5504419a82cad906">&#9670;&nbsp;</a></span>attraction_shape</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -531,10 +565,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">geometry_msgs::Vector3 repulsion::target_direction </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td class="memname">string repulsion::attraction_shape</td>
         </tr>
       </table>
   </td>
@@ -543,13 +574,13 @@ Private Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Calculate the direction towards the original goal during collision avoidance. </p><dl class="section return"><dt>Returns</dt><dd>A normalized vector pointing into the direction of the goal. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8cpp_source.html#l00204">204</a> of file <a class="el" href="repulsion_8cpp_source.html">repulsion.cpp</a>.</p>
+<p>The shape of the attraction function. </p>
+
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00183">183</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
 <a id="a955b87e4ff9d0f6772eaf1e9bb7674f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a955b87e4ff9d0f6772eaf1e9bb7674f1">&#9670;&nbsp;</a></span>direction</h2>
 
@@ -572,12 +603,12 @@ Private Attributes</h2></td></tr>
 
 <p>The direction of avoidance. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00155">155</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00153">153</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
-<a id="a252db388524b5b1bb7950dfd69d050aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a252db388524b5b1bb7950dfd69d050aa">&#9670;&nbsp;</a></span>dist_avoid</h2>
+<a id="a969a8d5319410389131c4368101f7e45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a969a8d5319410389131c4368101f7e45">&#9670;&nbsp;</a></span>dist_attract</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -586,7 +617,7 @@ Private Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double repulsion::dist_avoid</td>
+          <td class="memname">double repulsion::dist_attract</td>
         </tr>
       </table>
   </td>
@@ -596,9 +627,9 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Distance between CPSs below which collision avoidance is active. </p>
+<p>Distance between CPSs in meter below which attraction starts to decrease. Must be greater than dist_critical. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00175">175</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00173">173</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -622,9 +653,35 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Distance between CPSs below which the collision avoidance will work maximally. </p>
+<p>Distance between CPSs in meter below which the collision avoidance will work maximally, i.e., maximum repulsion, no attraction. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00170">170</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00168">168</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+
+</div>
+</div>
+<a id="a295ad455d0cf2ca8b863563e9479c811"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a295ad455d0cf2ca8b863563e9479c811">&#9670;&nbsp;</a></span>dist_repulse</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double repulsion::dist_repulse</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Distance between CPSs in meter below which repulsion starts to increase. Must be greater than dist_critical. </p>
+
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00178">178</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -650,7 +707,7 @@ Private Attributes</h2></td></tr>
 
 <p>The originally desired goal position of this CPS in case of no collision avoidance. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00140">140</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00138">138</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -676,7 +733,7 @@ Private Attributes</h2></td></tr>
 
 <p>The intermediate goal position where the CPS shall move to during collision avoidance. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00160">160</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00158">158</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -702,7 +759,7 @@ Private Attributes</h2></td></tr>
 
 <p>The intermediate target velocity which the CPS shall move at during collision avoidance. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00165">165</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00163">163</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -728,7 +785,7 @@ Private Attributes</h2></td></tr>
 
 <p>The current position of this CPS. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00130">130</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00128">128</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -754,7 +811,7 @@ Private Attributes</h2></td></tr>
 
 <p>Whether a position has been provided. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00135">135</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00133">133</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -780,7 +837,7 @@ Private Attributes</h2></td></tr>
 
 <p>The shape of the repulsion function. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00180">180</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00188">188</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -806,7 +863,7 @@ Private Attributes</h2></td></tr>
 
 <p>The type of CPS control. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00125">125</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00123">123</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -832,7 +889,7 @@ Private Attributes</h2></td></tr>
 
 <p>The relative positions of the other swarm members (distance and bearing). </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00150">150</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00148">148</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -858,7 +915,7 @@ Private Attributes</h2></td></tr>
 
 <p>The originally desired target velocity of this CPS in case of no collision avoidance. </p>
 
-<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00145">145</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="repulsion_8h_source.html#l00143">143</a> of file <a class="el" href="repulsion_8h_source.html">repulsion.h</a>.</p>
 
 </div>
 </div>
@@ -872,7 +929,7 @@ Private Attributes</h2></td></tr>
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/collision_avoidance">collision_avoidance</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Tue Apr 5 2022 15:46:14</small>
+<small>autogenerated on Thu Apr 14 2022 11:00:01</small>
 </div>
 </body>
 </html>

@@ -35,16 +35,16 @@ $(function() {
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00016"></a><span class="lineno"><a class="line" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">   16</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a> (<a class="code" href="classrepulsion.html">repulsion</a>&amp; rep, geometry_msgs::PoseStamped&amp; dir, geometry_msgs::PoseStamped&amp; pos, geometry_msgs::Twist&amp; vel)</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    EXPECT_EQ(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().header.seq, dir.header.seq);</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().header.stamp.toSec(), dir.header.stamp.toSec(), 0.001);</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    EXPECT_EQ(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().header.frame_id, dir.header.frame_id);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.position.x, dir.pose.position.x, 0.001);</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.position.y, dir.pose.position.y, 0.001);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.position.z, dir.pose.position.z, 0.001);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.orientation.x, dir.pose.orientation.x, 0.001);</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.orientation.y, dir.pose.orientation.y, 0.001);</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.orientation.z, dir.pose.orientation.z, 0.001);</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">get_dir</a>().pose.orientation.w, dir.pose.orientation.w, 0.001);</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    EXPECT_EQ(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().header.seq, dir.header.seq);</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().header.stamp.toSec(), dir.header.stamp.toSec(), 0.001);</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    EXPECT_EQ(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().header.frame_id, dir.header.frame_id);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.position.x, dir.pose.position.x, 0.001);</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.position.y, dir.pose.position.y, 0.001);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.position.z, dir.pose.position.z, 0.001);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.orientation.x, dir.pose.orientation.x, 0.001);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.orientation.y, dir.pose.orientation.y, 0.001);</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.orientation.z, dir.pose.orientation.z, 0.001);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">get_dir</a>().pose.orientation.w, dir.pose.orientation.w, 0.001);</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    EXPECT_EQ(rep.<a class="code" href="classrepulsion.html#a36fd36308a9ceca4cb2fdc85d98aee99">get_pos</a>().header.seq, pos.header.seq);</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    EXPECT_NEAR(rep.<a class="code" href="classrepulsion.html#a36fd36308a9ceca4cb2fdc85d98aee99">get_pos</a>().header.stamp.toSec(), pos.header.stamp.toSec(), 0.001);</div>
@@ -92,7 +92,7 @@ $(function() {
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    geometry_msgs::Twist vel;</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="comment">// test without calculation</span></div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <a class="code" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a>(rep, dir, pos, vel);</div>
@@ -175,7 +175,7 @@ $(function() {
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    geometry_msgs::Twist vel;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="comment">// add swarm with one agent close by</span></div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    cpswarm_msgs::ArrayOfVectors swarm;</div>
@@ -230,7 +230,7 @@ $(function() {
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    EXPECT_TRUE(rep.<a class="code" href="classrepulsion.html#a74a628fef32b5a3121162186e48ab995">sp_vel</a>());</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160; </div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160; </div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="comment">// add swarm with one agent close by</span></div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    cpswarm_msgs::ArrayOfVectors swarm;</div>
@@ -266,7 +266,7 @@ $(function() {
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <a class="code" href="classrepulsion.html">repulsion</a> rep;</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160; </div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="comment">// create result objects</span></div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    geometry_msgs::PoseStamped dir;</div>
@@ -362,7 +362,7 @@ $(function() {
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <a class="code" href="classrepulsion.html">repulsion</a> rep;</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160; </div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="comment">// create result objects</span></div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    geometry_msgs::PoseStamped dir;</div>
@@ -453,7 +453,7 @@ $(function() {
 <div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <a class="code" href="classrepulsion.html">repulsion</a> rep;</div>
 <div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160; </div>
 <div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160; </div>
 <div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    <span class="comment">// create result objects</span></div>
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    geometry_msgs::PoseStamped dir;</div>
@@ -545,7 +545,7 @@ $(function() {
 <div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    <a class="code" href="classrepulsion.html">repulsion</a> rep;</div>
 <div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160; </div>
 <div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160; </div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;    <span class="comment">// create result objects</span></div>
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    geometry_msgs::PoseStamped dir;</div>
@@ -665,7 +665,7 @@ $(function() {
 <div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;    rep.<a class="code" href="classrepulsion.html#a292e4b3340a6c8e3d92e4ab9c055ed91">set_sp_pos</a>(pos_p);</div>
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160; </div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    <span class="comment">// initialize repulsion with linear function</span></div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160; </div>
 <div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;    <span class="comment">// calculate repulsion</span></div>
 <div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    EXPECT_TRUE(rep.<a class="code" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a>());</div>
@@ -681,7 +681,7 @@ $(function() {
 <div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    <a class="code" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a>(rep, dir, pos, vel);</div>
 <div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160; </div>
 <div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;    <span class="comment">// initialize repulsion with sine function</span></div>
-<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;sine&quot;</span>, 0);</div>
+<div class="line"><a name="l00691"></a><span class="lineno">  691</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;sine&quot;</span>, 0);</div>
 <div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160; </div>
 <div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;    <span class="comment">// calculate repulsion</span></div>
 <div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;    EXPECT_TRUE(rep.<a class="code" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a>());</div>
@@ -697,7 +697,7 @@ $(function() {
 <div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    <a class="code" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a>(rep, dir, pos, vel);</div>
 <div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160; </div>
 <div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    <span class="comment">// initialize repulsion with sine function</span></div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;exp&quot;</span>, 0);</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;exp&quot;</span>, 0);</div>
 <div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160; </div>
 <div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;    <span class="comment">// calculate repulsion</span></div>
 <div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    EXPECT_TRUE(rep.<a class="code" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a>());</div>
@@ -746,7 +746,7 @@ $(function() {
 <div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    rep.<a class="code" href="classrepulsion.html#a292e4b3340a6c8e3d92e4ab9c055ed91">set_sp_pos</a>(pos_p);</div>
 <div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160; </div>
 <div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;    <span class="comment">// initialize repulsion with invalid distances</span></div>
-<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(10, 5, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(10, 5, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00760"></a><span class="lineno">  760</span>&#160; </div>
 <div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    <span class="comment">// calculate repulsion</span></div>
 <div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;    EXPECT_FALSE(rep.<a class="code" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a>());</div>
@@ -756,14 +756,14 @@ $(function() {
 <div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    <a class="code" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a>(rep, dir, pos, vel);</div>
 <div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160; </div>
 <div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    <span class="comment">// initialize repulsion with equal distances, agent far away</span></div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(1, 1, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(1, 1, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160; </div>
 <div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;    <span class="comment">// calculate repulsion</span></div>
 <div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;    EXPECT_FALSE(rep.<a class="code" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a>());</div>
 <div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;    <a class="code" href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a>(rep, dir, pos, vel);</div>
 <div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160; </div>
 <div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    <span class="comment">// initialize repulsion with equal distances, agent critically close</span></div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(10, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(10, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160; </div>
 <div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;    <span class="comment">// calculate repulsion</span></div>
 <div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;    EXPECT_TRUE(rep.<a class="code" href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">calc</a>());</div>
@@ -843,7 +843,7 @@ $(function() {
 <div class="line"><a name="l00856"></a><span class="lineno">  856</span>&#160;    <a class="code" href="classrepulsion.html">repulsion</a> rep;</div>
 <div class="line"><a name="l00857"></a><span class="lineno">  857</span>&#160; </div>
 <div class="line"><a name="l00858"></a><span class="lineno">  858</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l00859"></a><span class="lineno">  859</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l00860"></a><span class="lineno">  860</span>&#160; </div>
 <div class="line"><a name="l00861"></a><span class="lineno">  861</span>&#160;    <span class="comment">// create result objects</span></div>
 <div class="line"><a name="l00862"></a><span class="lineno">  862</span>&#160;    geometry_msgs::PoseStamped dir;</div>
@@ -1034,7 +1034,7 @@ $(function() {
 <div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;    <a class="code" href="classrepulsion.html">repulsion</a> rep;</div>
 <div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160; </div>
 <div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;    <span class="comment">// initialize repulsion</span></div>
-<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;    rep.<a class="code" href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
+<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;    rep.<a class="code" href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">init</a>(5, 10, <span class="stringliteral">&quot;linear&quot;</span>, 0);</div>
 <div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160; </div>
 <div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;    <span class="comment">// create result objects</span></div>
 <div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;    geometry_msgs::PoseStamped dir;</div>
@@ -1127,27 +1127,27 @@ $(function() {
 <div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;}</div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="atest__repulsion_8cpp_html_afbf50e677de131ef3eeeffe69e236af1"><div class="ttname"><a href="test__repulsion_8cpp.html#afbf50e677de131ef3eeeffe69e236af1">test_getters</a></div><div class="ttdeci">void test_getters(repulsion &amp;rep, geometry_msgs::PoseStamped &amp;dir, geometry_msgs::PoseStamped &amp;pos, geometry_msgs::Twist &amp;vel)</div><div class="ttdoc">Test repulsion class getters to be equal to the provided objects.</div><div class="ttdef"><b>Definition:</b> <a href="test__repulsion_8cpp_source.html#l00016">test_repulsion.cpp:16</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_aa42846dcedd6569d671323c0832cd127"><div class="ttname"><a href="classrepulsion.html#aa42846dcedd6569d671323c0832cd127">repulsion::init</a></div><div class="ttdeci">void init(double dist_critical, double dist_avoid, string repulsion_shape)</div><div class="ttdoc">Configure the repulsion behavior through parameters.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00009">repulsion.cpp:9</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_ac3377f5b5ad935ea211de2fd2764687e"><div class="ttname"><a href="classrepulsion.html#ac3377f5b5ad935ea211de2fd2764687e">repulsion::sp_pos</a></div><div class="ttdeci">bool sp_pos()</div><div class="ttdoc">Check whether position setpoint is used.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00082">repulsion.cpp:82</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_ac3377f5b5ad935ea211de2fd2764687e"><div class="ttname"><a href="classrepulsion.html#ac3377f5b5ad935ea211de2fd2764687e">repulsion::sp_pos</a></div><div class="ttdeci">bool sp_pos()</div><div class="ttdoc">Check whether position setpoint is used.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00094">repulsion.cpp:94</a></div></div>
 <div class="ttc" id="aclassrepulsion_html"><div class="ttname"><a href="classrepulsion.html">repulsion</a></div><div class="ttdoc">A class that calculates the repulsive forces between CPSs.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8h_source.html#l00026">repulsion.h:26</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_ad792365ffdae8c5320029796a86b9289"><div class="ttname"><a href="classrepulsion.html#ad792365ffdae8c5320029796a86b9289">repulsion::get_dir</a></div><div class="ttdeci">geometry_msgs::PoseStamped get_dir()</div><div class="ttdoc">Get the direction in which to move for collision avoidance.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00119">repulsion.cpp:119</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_a240b4ca6b3a707e69fba047dfb5484af"><div class="ttname"><a href="classrepulsion.html#a240b4ca6b3a707e69fba047dfb5484af">repulsion::get_vel</a></div><div class="ttdeci">geometry_msgs::Twist get_vel()</div><div class="ttdoc">Get the intermediate target velocity during collision avoidance.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00138">repulsion.cpp:138</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_a292e4b3340a6c8e3d92e4ab9c055ed91"><div class="ttname"><a href="classrepulsion.html#a292e4b3340a6c8e3d92e4ab9c055ed91">repulsion::set_sp_pos</a></div><div class="ttdeci">void set_sp_pos(const geometry_msgs::PoseStamped::ConstPtr &amp;pos)</div><div class="ttdoc">Set the original goal position for this CPS.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00092">repulsion.cpp:92</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_aa3e60012290242f2bf66cd2ac9b53f99"><div class="ttname"><a href="classrepulsion.html#aa3e60012290242f2bf66cd2ac9b53f99">repulsion::set_sp_vel</a></div><div class="ttdeci">void set_sp_vel(const geometry_msgs::Twist::ConstPtr &amp;vel)</div><div class="ttdoc">Set the original target velocity for this CPS.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00099">repulsion.cpp:99</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_a52c332985c81e6393c5c66d8c7f1c432"><div class="ttname"><a href="classrepulsion.html#a52c332985c81e6393c5c66d8c7f1c432">repulsion::set_pos</a></div><div class="ttdeci">void set_pos(const geometry_msgs::PoseStamped::ConstPtr &amp;pos)</div><div class="ttdoc">Set the current position of this CPS.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00106">repulsion.cpp:106</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a240b4ca6b3a707e69fba047dfb5484af"><div class="ttname"><a href="classrepulsion.html#a240b4ca6b3a707e69fba047dfb5484af">repulsion::get_vel</a></div><div class="ttdeci">geometry_msgs::Twist get_vel()</div><div class="ttdoc">Get the intermediate target velocity during collision avoidance.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00137">repulsion.cpp:137</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a292e4b3340a6c8e3d92e4ab9c055ed91"><div class="ttname"><a href="classrepulsion.html#a292e4b3340a6c8e3d92e4ab9c055ed91">repulsion::set_sp_pos</a></div><div class="ttdeci">void set_sp_pos(const geometry_msgs::PoseStamped::ConstPtr &amp;pos)</div><div class="ttdoc">Set the original goal position for this CPS.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00104">repulsion.cpp:104</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_aa3e60012290242f2bf66cd2ac9b53f99"><div class="ttname"><a href="classrepulsion.html#aa3e60012290242f2bf66cd2ac9b53f99">repulsion::set_sp_vel</a></div><div class="ttdeci">void set_sp_vel(const geometry_msgs::Twist::ConstPtr &amp;vel)</div><div class="ttdoc">Set the original target velocity for this CPS.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00110">repulsion.cpp:110</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_ac6c460d8572ea862343bb675ee745779"><div class="ttname"><a href="classrepulsion.html#ac6c460d8572ea862343bb675ee745779">repulsion::init</a></div><div class="ttdeci">void init(double dist_critical, double dist_attract, double dist_repulse, string attraction_shape, string repulsion_shape)</div><div class="ttdoc">Configure the repulsion behavior through parameters.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00009">repulsion.cpp:9</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a4050cc2be0d62770971d058ee18ef74f"><div class="ttname"><a href="classrepulsion.html#a4050cc2be0d62770971d058ee18ef74f">repulsion::get_dir</a></div><div class="ttdeci">geometry_msgs::Vector3 get_dir()</div><div class="ttdoc">Get the direction in which to move for collision avoidance.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00127">repulsion.cpp:127</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a52c332985c81e6393c5c66d8c7f1c432"><div class="ttname"><a href="classrepulsion.html#a52c332985c81e6393c5c66d8c7f1c432">repulsion::set_pos</a></div><div class="ttdeci">void set_pos(const geometry_msgs::PoseStamped::ConstPtr &amp;pos)</div><div class="ttdoc">Set the current position of this CPS.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00116">repulsion.cpp:116</a></div></div>
 <div class="ttc" id="atest__repulsion_8cpp_html_a3c04138a5bfe5d72780bb7e82a18e627"><div class="ttname"><a href="test__repulsion_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a></div><div class="ttdeci">int main(int argc, char **argv)</div><div class="ttdoc">Main function that runs all tests that were declared with TEST().</div><div class="ttdef"><b>Definition:</b> <a href="test__repulsion_8cpp_source.html#l01143">test_repulsion.cpp:1143</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_ac59ff34940d6170a2962689d9febe487"><div class="ttname"><a href="classrepulsion.html#ac59ff34940d6170a2962689d9febe487">repulsion::set_swarm</a></div><div class="ttdeci">void set_swarm(const cpswarm_msgs::ArrayOfVectors::ConstPtr &amp;swarm)</div><div class="ttdoc">Set the relative positions received from other CPSs in the swarm.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00113">repulsion.cpp:113</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_a36fd36308a9ceca4cb2fdc85d98aee99"><div class="ttname"><a href="classrepulsion.html#a36fd36308a9ceca4cb2fdc85d98aee99">repulsion::get_pos</a></div><div class="ttdeci">geometry_msgs::PoseStamped get_pos()</div><div class="ttdoc">Get the intermediate goal position during collision avoidance.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00133">repulsion.cpp:133</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_ac59ff34940d6170a2962689d9febe487"><div class="ttname"><a href="classrepulsion.html#ac59ff34940d6170a2962689d9febe487">repulsion::set_swarm</a></div><div class="ttdeci">void set_swarm(const cpswarm_msgs::ArrayOfVectors::ConstPtr &amp;swarm)</div><div class="ttdoc">Set the relative positions received from other CPSs in the swarm.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00122">repulsion.cpp:122</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a36fd36308a9ceca4cb2fdc85d98aee99"><div class="ttname"><a href="classrepulsion.html#a36fd36308a9ceca4cb2fdc85d98aee99">repulsion::get_pos</a></div><div class="ttdeci">geometry_msgs::PoseStamped get_pos()</div><div class="ttdoc">Get the intermediate goal position during collision avoidance.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00132">repulsion.cpp:132</a></div></div>
 <div class="ttc" id="atest__repulsion_8cpp_html_ac018f30aa87a1a9fbca5d63d1c4b241e"><div class="ttname"><a href="test__repulsion_8cpp.html#ac018f30aa87a1a9fbca5d63d1c4b241e">TEST</a></div><div class="ttdeci">TEST(UnitTestRepulsion, testUninitialized)</div><div class="ttdoc">Test the uninitialized repulsion class.</div><div class="ttdef"><b>Definition:</b> <a href="test__repulsion_8cpp_source.html#l00051">test_repulsion.cpp:51</a></div></div>
 <div class="ttc" id="arepulsion_8h_html"><div class="ttname"><a href="repulsion_8h.html">repulsion.h</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_a35743605ad70d30f8e4c0a907da77d4e"><div class="ttname"><a href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">repulsion::calc</a></div><div class="ttdeci">bool calc()</div><div class="ttdoc">Check whether collision avoidance is necessary and calculate respective position or velocity.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00017">repulsion.cpp:17</a></div></div>
-<div class="ttc" id="aclassrepulsion_html_a74a628fef32b5a3121162186e48ab995"><div class="ttname"><a href="classrepulsion.html#a74a628fef32b5a3121162186e48ab995">repulsion::sp_vel</a></div><div class="ttdeci">bool sp_vel()</div><div class="ttdoc">Check whether position setpoint is used.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00087">repulsion.cpp:87</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a35743605ad70d30f8e4c0a907da77d4e"><div class="ttname"><a href="classrepulsion.html#a35743605ad70d30f8e4c0a907da77d4e">repulsion::calc</a></div><div class="ttdeci">bool calc()</div><div class="ttdoc">Check whether collision avoidance is necessary and calculate respective position or velocity.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00024">repulsion.cpp:24</a></div></div>
+<div class="ttc" id="aclassrepulsion_html_a74a628fef32b5a3121162186e48ab995"><div class="ttname"><a href="classrepulsion.html#a74a628fef32b5a3121162186e48ab995">repulsion::sp_vel</a></div><div class="ttdeci">bool sp_vel()</div><div class="ttdoc">Check whether position setpoint is used.</div><div class="ttdef"><b>Definition:</b> <a href="repulsion_8cpp_source.html#l00099">repulsion.cpp:99</a></div></div>
 
 <br clear="all" />
 <hr size="1"><div style="align: right;">
 <a href="http://wiki.ros.org/collision_avoidance">collision_avoidance</a><br />
 Author(s): Micha Sende <sende@lakeside-labs.com></br />
-<small>autogenerated on Tue Apr 5 2022 15:46:14</small>
+<small>autogenerated on Thu Apr 14 2022 11:00:01</small>
 </div>
 </body>
 </html>
