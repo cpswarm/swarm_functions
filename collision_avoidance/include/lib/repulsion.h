@@ -33,11 +33,13 @@ public:
 
     /**
      * @brief Configure the repulsion behavior through parameters.
-     * @param dist_critical Distance between CPSs below which the collision avoidance will work maximally.
-     * @param dist_avoid Distance between CPSs below which collision avoidance is active.
+     * @param dist_critical Distance between CPSs in meter below which the collision avoidance will work maximally, i.e., maximum repulsion, no attraction.
+     * @param dist_attract Distance between CPSs in meter below which attraction starts to decrease. Must be greater than dist_critical.
+     * @param dist_repulse Distance between CPSs in meter below which repulsion starts to increase. Must be greater than dist_critical.
+     * @param attraction_shape The shape of the attraction function.
      * @param repulsion_shape The shape of the repulsion function.
      */
-    void init (double dist_critical, double dist_avoid, string repulsion_shape);
+    void init (double dist_critical, double dist_attract, double dist_repulse, string attraction_shape, string repulsion_shape);
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
@@ -101,19 +103,19 @@ public:
 
 private:
     /**
+     * Calculate the direction towards the original goal during collision avoidance.
+     * @param attraction Returns the attraction vector, i.e., the direction of the goal with the magnitude calculated from the closest CPS distance.
+     * @param closest The distance to the closest CPS.
+     */
+    void attract (geometry_msgs::Vector3& attraction, double closest);
+
+    /**
      * @brief Calculate repulsion from close by CPSs.
      * @param repulsion Returns the repulsion vector, i.e., the sum of the vectors pointing away from the neighbors.
      * @param neighbors Returns the number of neighbors that create repulsion.
      * @param closest Returns the distance to the closest neighbor.
      */
     void repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest);
-
-    /**
-     * Calculate the direction towards the original goal during collision avoidance.
-     * @param magnitude The magnitude for the resulting vector.
-     * @return A vector pointing into the direction of the goal with the given magnitude.
-     */
-    geometry_msgs::Vector3 target_direction (double magnitude);
 
     /**
      * @brief The type of CPS control.
@@ -161,14 +163,24 @@ private:
     geometry_msgs::Twist int_vel;
 
     /**
-     * @brief Distance between CPSs below which the collision avoidance will work maximally.
+     * @brief Distance between CPSs in meter below which the collision avoidance will work maximally, i.e., maximum repulsion, no attraction.
      */
     double dist_critical;
 
     /**
-     * @brief Distance between CPSs below which collision avoidance is active.
+     * @brief Distance between CPSs in meter below which attraction starts to decrease. Must be greater than dist_critical.
      */
-    double dist_avoid;
+    double dist_attract;
+
+    /**
+     * @brief Distance between CPSs in meter below which repulsion starts to increase. Must be greater than dist_critical.
+     */
+    double dist_repulse;
+
+    /**
+     * @brief The shape of the attraction function.
+     */
+    string attraction_shape;
 
     /**
      * @brief The shape of the repulsion function.

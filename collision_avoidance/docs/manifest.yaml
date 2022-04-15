@@ -3,13 +3,13 @@ authors: Micha Sende <sende@lakeside-labs.com>
 brief: ''
 bugtracker: ''
 depends:
-- std_msgs
 - catkin
 - cpswarm_msgs
-- tf2
-- kinematics_exchanger
 - roscpp
+- std_msgs
+- kinematics_exchanger
 - geometry_msgs
+- tf2
 description: A package that enables cyber physical systems (CPSs) in a swarm to avoid
   collisions with each other.
 license: Apache License 2.0
