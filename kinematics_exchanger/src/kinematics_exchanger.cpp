@@ -101,6 +101,7 @@ void swarm_position_callback (cpswarm_msgs::Position msg) {
         cartesian_vector_t data;
         data.uuid = uuid;
         swarm_positions.emplace(uuid, data);
+        ROS_DEBUG("Add %s", uuid.c_str());
     }
     if (swarm_positions_rel.count(uuid) <= 0) {
         polar_vector_t data;
@@ -283,6 +284,7 @@ int main (int argc, char **argv)
         for (auto member=swarm_positions.begin(); member!=swarm_positions.end();) {
             // delete members that haven't updated their position lately
             if ((Time::now() - member->second.stamp) > Duration(timeout)) {
+                ROS_DEBUG("Remove %s", member->first.c_str());
                 member = swarm_positions.erase(member);
                 continue;
             }
