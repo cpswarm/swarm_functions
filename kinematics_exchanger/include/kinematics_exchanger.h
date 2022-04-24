@@ -12,6 +12,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <cpswarm_msgs/ArrayOfPositions.h>
 #include <swarmros/String.h>
+#include <swarmros/NodeInfo.h>
 #include <cpswarm_msgs/Position.h>
 #include <cpswarm_msgs/Velocity.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
@@ -91,6 +92,11 @@ map<string, polar_vector_t> swarm_positions_rel;
  * @brief The velocities of all known swarm members.
  */
 map<string, polar_vector_t> swarm_velocities;
+
+/**
+ * @brief The node names of all known swarm members.
+ */
+map<string, swarmros::NodeInfo> swarm_nodes;
 
 /**
  * @brief The number of data samples to average over for reliable results.
