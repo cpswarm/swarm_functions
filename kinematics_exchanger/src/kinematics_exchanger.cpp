@@ -101,6 +101,11 @@ void swarm_position_callback (cpswarm_msgs::Position msg) {
         cartesian_vector_t data;
         data.uuid = uuid;
         swarm_positions.emplace(uuid, data);
+        // debug info
+        if (swarm_nodes.count(uuid) > 0)
+            ROS_DEBUG("Add %s %s (%s)", swarm_nodes[uuid].deviceClass.c_str(), swarm_nodes[uuid].name.c_str(), uuid.c_str());
+        else
+            ROS_DEBUG("Add %s", uuid.c_str());
     }
     if (swarm_positions_rel.count(uuid) <= 0) {
         polar_vector_t data;
@@ -185,6 +190,15 @@ void uuid_callback (const swarmros::String::ConstPtr& msg)
 }
 
 /**
+ * @brief Callback function to receive the information about nodes in the swarm.
+ * @param msg The node UUID, name, device class and status.
+ */
+void node_info_callback (const swarmros::NodeInfo::ConstPtr& msg)
+{
+    swarm_nodes[msg->uuid] = *msg;
+}
+
+/**
  * @brief A ROS node that exchanges relative kinematics between CPSs in a swarm.
  * @param argc Number of command line arguments.
  * @param argv Array of command line arguments.
@@ -223,6 +237,7 @@ int main (int argc, char **argv)
     Subscriber incoming_position_subscriber = nh.subscribe("bridge/events/position", queue_size, swarm_position_callback);
     Subscriber incoming_velocity_subscriber = nh.subscribe("bridge/events/velocity", queue_size, swarm_velocity_callback);
     Subscriber uuid_subscriber = nh.subscribe("bridge/uuid", queue_size, uuid_callback);
+    Subscriber node_info_subscriber = nh.subscribe("bridge/nodes", queue_size, node_info_callback);
 
     // publishers
     Publisher outgoing_position_publisher, outgoing_velocity_publisher;
@@ -283,6 +298,11 @@ int main (int argc, char **argv)
         for (auto member=swarm_positions.begin(); member!=swarm_positions.end();) {
             // delete members that haven't updated their position lately
             if ((Time::now() - member->second.stamp) > Duration(timeout)) {
+                // debug info
+                if (swarm_nodes.count(member->first) > 0)
+                    ROS_DEBUG("Remove %s %s (%s)", swarm_nodes[member->first].deviceClass.c_str(), swarm_nodes[member->first].name.c_str(), member->first.c_str());
+                else
+                    ROS_DEBUG("Remove %s", member->first.c_str());
                 member = swarm_positions.erase(member);
                 continue;
             }

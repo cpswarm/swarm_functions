@@ -1,5 +1,5 @@
 loop_rate:      10.0  # The frequency in Hz at which to run the control loops.
 queue_size:     10    # The size of the message queue used for publishing and subscribing to topics.
-timeout:        20.0  # The time in seconds after which another CPS is considered to have left the swarm.
+timeout:        1.0  # The time in seconds after which another CPS is considered to have left the swarm.
 sample_size:    5     # The number of data samples to average over for reliable results.
 init:           30    # The number of messages to ignore during initialization. This is because the first messages are inaccurate.
