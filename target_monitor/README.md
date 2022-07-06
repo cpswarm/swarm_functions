@@ -3,6 +3,8 @@
 
 This package manages information about targets in a swarm of cyber physical systems (CPSs).
 
+******TODO***: UPDATE DOCUMENTATION
+
 ## Dependencies
 This package depends on the following message definitions:
 * [geometry_msgs](https://wiki.ros.org/geometry_msgs)
