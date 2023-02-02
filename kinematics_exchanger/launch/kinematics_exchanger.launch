@@ -6,9 +6,6 @@
     <arg name="read_only" default="false" />
     <arg name="output" default="screen" />
 
-    <!-- Console verbosity level -->
-    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find fgpg_collision_avoidance)/param/rosconsole.config" />
-
     <!-- Swarm kinematics exchanging node -->
     <node pkg="kinematics_exchanger" type="kinematics_exchanger" name="kinematics_exchanger_$(arg id)" output="$(arg output)" required="true">
         <param name="pos_type" value="$(arg pos_type)" />
