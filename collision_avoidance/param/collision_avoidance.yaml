@@ -13,7 +13,14 @@ excluded:               # No collision avoidance in these states.
 - get_starting_point
 - compute_path
 - ready
+- prepare_sensor
 - take_off
+- start_sensor
+- stop_sensor
+- emergency_stop_sensor
+- shutdown_sensor
+- emergency_shutdown_sensor
 - land
 - emergency_land
 - roi_assignment
+- success
