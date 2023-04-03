@@ -131,10 +131,13 @@ int main (int argc, char **argv)
         // only perform collision avoidance in desired behavior states
         if (active) {
             // calculate avoidance position / velocity
-            bool avoid = ca.calc();
+            int neighbors = ca.calc();
 
             // perform collision avoidance if necessary
-            if (avoid) {
+            if (neighbors > 0) {
+                // debug output
+                ROS_ERROR_THROTTLE(1, "Avoiding %d neighbors!", neighbors);
+
                 // using position setpoint
                 geometry_msgs::PoseStamped pos = ca.get_pos();
                 pos.header.stamp = Time::now();

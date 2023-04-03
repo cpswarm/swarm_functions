@@ -43,9 +43,9 @@ public:
 
     /**
      * @brief Check whether collision avoidance is necessary and calculate respective position or velocity.
-     * @return Whether collision avoidance is necessary. Also false if class not properly initialized.
+     * @return The number of CPSs that this CPS is avoiding collisions with. Returns zero if the class is not properly initialized.
      */
-    bool calc ();
+    int calc ();
 
     /**
      * @brief Check whether position setpoint is used.

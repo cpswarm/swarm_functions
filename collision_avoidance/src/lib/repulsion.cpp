@@ -21,19 +21,19 @@ void repulsion::init (double dist_critical, double dist_attract, double dist_rep
     direction = geometry_msgs::Vector3();
 }
 
-bool repulsion::calc ()
+int repulsion::calc ()
 {
     // no position given yet
     if (pos_valid == false)
-        return false;
+        return 0;
 
     // no setpoint defined
     if (setpoint == CONTROL_UNDEFINED)
-        return false;
+        return 0;
 
     // invalid distances
     if (dist_attract < dist_critical || dist_repulse < dist_critical)
-        return false;
+        return 0;
 
     // repulsion from other cpss [0,neighbors]
     geometry_msgs::Vector3 repulsion;
@@ -43,7 +43,7 @@ bool repulsion::calc ()
 
     // no avoidance necessary
     if (neighbors <= 0) {
-        return false;
+        return 0;
     }
 
     // attraction towards goal position [0,1]
@@ -88,7 +88,7 @@ bool repulsion::calc ()
         int_vel.linear.y = direction.y * avoidance_mag;
     }
 
-    return true;
+    return neighbors;
 }
 
 bool repulsion::sp_pos ()
