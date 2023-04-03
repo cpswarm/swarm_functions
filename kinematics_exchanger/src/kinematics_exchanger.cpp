@@ -103,9 +103,9 @@ void swarm_position_callback (cpswarm_msgs::Position msg) {
         swarm_positions.emplace(uuid, data);
         // debug info
         if (swarm_nodes.count(uuid) > 0)
-            ROS_DEBUG("Add %s %s (%s)", swarm_nodes[uuid].deviceClass.c_str(), swarm_nodes[uuid].name.c_str(), uuid.c_str());
+            ROS_WARN("Connected to %s %s (%s)", swarm_nodes[uuid].deviceClass.c_str(), swarm_nodes[uuid].name.c_str(), uuid.c_str());
         else
-            ROS_DEBUG("Add %s", uuid.c_str());
+            ROS_WARN("Connected to %s", uuid.c_str());
     }
     if (swarm_positions_rel.count(uuid) <= 0) {
         polar_vector_t data;
@@ -300,9 +300,9 @@ int main (int argc, char **argv)
             if ((Time::now() - member->second.stamp) > Duration(timeout)) {
                 // debug info
                 if (swarm_nodes.count(member->first) > 0)
-                    ROS_DEBUG("Remove %s %s (%s)", swarm_nodes[member->first].deviceClass.c_str(), swarm_nodes[member->first].name.c_str(), member->first.c_str());
+                    ROS_WARN("Disconnected from %s %s (%s)", swarm_nodes[member->first].deviceClass.c_str(), swarm_nodes[member->first].name.c_str(), member->first.c_str());
                 else
-                    ROS_DEBUG("Remove %s", member->first.c_str());
+                    ROS_WARN("Disconnected from %s", member->first.c_str());
                 member = swarm_positions.erase(member);
                 continue;
             }
