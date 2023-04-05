@@ -1,6 +1,11 @@
-dist_critical:   8.0    # Distance between CPSs in meter below which the collision avoidance will work maximally.
-dist_avoid:      12.0   # Distance between CPSs in meter below which collision avoidance is active.
+dist_critical:   3.0    # Distance between CPSs in meter below which the collision avoidance will work maximally, i.e., maximum repulsion, no attraction.
+dist_attract:    6.0    # Distance between CPSs in meter below which attraction starts to decrease. Must be greater than dist_critical.
+dist_repulse:    12.0   # Distance between CPSs in meter below which repulsion starts to increase. Must be greater than dist_critical.
+# dist_critical:   8.0    # Distance between CPSs in meter below which the collision avoidance will work maximally.
+# dist_avoid:      12.0   # Distance between CPSs in meter below which collision avoidance is active.
 visualize:       true   # Whether to visualize the avoidance direction.
-repulsion_shape: linear # The shape of the repulsion function, can be sine, exp, or linear.
+# Function shapes can be lin, li2, sin, log, or exp. Default is a constant value.
+attraction_shape: lin   # The shape of the attraction function.
+repulsion_shape: lin    # The shape of the repulsion function.
 excluded:               # No collision avoidance in these states.
 - bar

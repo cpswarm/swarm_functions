@@ -130,8 +130,8 @@ TEST (NodeTestCollisionAvoidance, testPositionSetpoint)
     // publish relative swarm position
     Publisher swarm_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_position_rel", 1, true); // latched
     cpswarm_msgs::VectorStamped agent;
-    agent.vector.magnitude = 8;
-    agent.vector.direction = M_PI / 2;
+    agent.vector.magnitude = 3; // critical distance
+    agent.vector.direction = M_PI / 2; // left
     cpswarm_msgs::ArrayOfVectors swarm;
     swarm.vectors.push_back(agent);
     swarm_publisher.publish(swarm);
@@ -153,7 +153,7 @@ TEST (NodeTestCollisionAvoidance, testPositionSetpoint)
     spinOnce();
     test_results(pos, vel, dir);
 
-    // publish empty position
+    // publish empty position: at origin, facing east (neighbor at north)
     Publisher pos_publisher = nh.advertise<geometry_msgs::PoseStamped>("pos_provider/pose", 1, true); // latched
     geometry_msgs::PoseStamped pose;
     pos_publisher.publish(pose);
@@ -162,23 +162,39 @@ TEST (NodeTestCollisionAvoidance, testPositionSetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    pos.pose.position.y = -4;
-    dir.pose.orientation.z = -0.707;
+    pos.pose.position.y = -1.5;
+    pos.pose.orientation.w = 1; // empty setpoint
+    dir.pose.position.y = -1.5;
+    dir.pose.orientation.z = -0.707; // south
     dir.pose.orientation.w = 0.707;
     test_results(pos, vel, dir);
 
-    // publish position setpoint
-    sp_pos.pose.position.x = -10;
+    // publish position setpoint, moving west (backwards)
+    sp_pos.pose.position.x = -6;
     sp_pos_publisher.publish(sp_pos);
     Duration(1).sleep();
 
     // test collision avoidance result
     reset_results();
     spinOnce();
-    pos.pose.position.x = -4 / sqrt(2);
-    pos.pose.position.y = -4 / sqrt(2);
-    dir.pose.orientation.z = -0.924;
-    dir.pose.orientation.w = 0.383;
+    pos.pose.orientation.z = 1; // west, towards goal
+    pos.pose.orientation.w = 0;
+    test_results(pos, vel, dir); // same as before, no attraction
+
+    // update relative swarm position
+    swarm.vectors[0].vector.magnitude = 6; // attraction distance
+    swarm_publisher.publish(swarm);
+    Duration(1).sleep();
+
+    // test collision avoidance result
+    reset_results();
+    spinOnce();
+    pos.pose.position.x = -9 / sqrt(13); // attract west mag 3/3, movement mag 3
+    pos.pose.position.y = -6 / sqrt(13); // repulse south mag 2/3
+    dir.pose.position.x = pos.pose.position.x;
+    dir.pose.position.y = pos.pose.position.y;
+    dir.pose.orientation.z = -0.957; // south west, atan2(x=-1,y=-2/3)
+    dir.pose.orientation.w = 0.290;
     test_results(pos, vel, dir);
 
     // publish behavior state without collision avoidance
@@ -201,11 +217,14 @@ TEST (NodeTestCollisionAvoidance, testPositionSetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    pos.pose.position.x = -4 / sqrt(2);
-    pos.pose.position.y = -4 / sqrt(2);
-    dir.pose.orientation.z = -0.924;
-    dir.pose.orientation.w = 0.383;
-    test_results(pos, vel, dir);
+    pos.pose.position.x = -9 / sqrt(13);
+    pos.pose.position.y = -6 / sqrt(13);
+    pos.pose.orientation.z = 1;
+    dir.pose.position.x = pos.pose.position.x;
+    dir.pose.position.y = pos.pose.position.y;
+    dir.pose.orientation.z = -0.957;
+    dir.pose.orientation.w = 0.290;
+    test_results(pos, vel, dir); // same as before
 }
 
 /**
@@ -235,17 +254,20 @@ TEST (NodeTestCollisionAvoidance, testVelocitySetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    pos.pose.position.x = -4 / sqrt(2);
-    pos.pose.position.y = -4 / sqrt(2);
-    dir.pose.orientation.z = -0.924;
-    dir.pose.orientation.w = 0.383;
-    test_results(pos, vel, dir);
+    pos.pose.position.x = -9 / sqrt(13);
+    pos.pose.position.y = -6 / sqrt(13);
+    pos.pose.orientation.z = 1;
+    dir.pose.position.x = pos.pose.position.x;
+    dir.pose.position.y = pos.pose.position.y;
+    dir.pose.orientation.z = -0.957;
+    dir.pose.orientation.w = 0.290;
+    test_results(pos, vel, dir); // same as before
 
     // publish relative swarm position
     Publisher swarm_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_position_rel", 1, true); // latched
     cpswarm_msgs::VectorStamped agent;
-    agent.vector.magnitude = 8;
-    agent.vector.direction = M_PI / 2;
+    agent.vector.magnitude = 6; // attraction distance
+    agent.vector.direction = M_PI / 2; // left
     cpswarm_msgs::ArrayOfVectors swarm;
     swarm.vectors.push_back(agent);
     swarm_publisher.publish(swarm);
@@ -254,7 +276,7 @@ TEST (NodeTestCollisionAvoidance, testVelocitySetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    test_results(pos, vel, dir);
+    test_results(pos, vel, dir); // same as before
 
     // publish empty velocity setpoint
     Publisher sp_vel_publisher = nh.advertise<geometry_msgs::Twist>("vel_controller/target_velocity", 1, true); // latched
@@ -265,8 +287,9 @@ TEST (NodeTestCollisionAvoidance, testVelocitySetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    vel.linear.y = -4;
-    dir.pose.orientation.z = -0.707;
+    vel.linear.x = 0; // no attraction
+    vel.linear.y = -2; // only repulsion
+    dir.pose.orientation.z = -0.707; // south
     dir.pose.orientation.w = 0.707;
     test_results(pos, vel, dir); // old pos is still in the queue
 
@@ -290,11 +313,11 @@ TEST (NodeTestCollisionAvoidance, testVelocitySetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    vel.linear.x = -4 / sqrt(2);
-    vel.linear.y = -4 / sqrt(2);
-    dir.pose.orientation.z = -0.924;
-    dir.pose.orientation.w = 0.383;
-    test_results(pos, vel, dir);
+    vel.linear.x = -9 / sqrt(13);
+    vel.linear.y = -6 / sqrt(13);
+    dir.pose.orientation.z = -0.957;
+    dir.pose.orientation.w = 0.290;
+    test_results(pos, vel, dir); // south west, see above
 
     // publish behavior state without collision avoidance
     state.data = "bar";
@@ -316,11 +339,13 @@ TEST (NodeTestCollisionAvoidance, testVelocitySetpoint)
     // test collision avoidance result
     reset_results();
     spinOnce();
-    vel.linear.x = -4 / sqrt(2);
-    vel.linear.y = -4 / sqrt(2);
-    dir.pose.orientation.z = -0.924;
-    dir.pose.orientation.w = 0.383;
-    test_results(pos, vel, dir);
+    vel.linear.x = -9 / sqrt(13);
+    vel.linear.y = -6 / sqrt(13);
+    dir.pose.position.x = vel.linear.x;
+    dir.pose.position.y = vel.linear.y;
+    dir.pose.orientation.z = -0.957;
+    dir.pose.orientation.w = 0.290;
+    test_results(pos, vel, dir); // same as before
 }
 
 /**
