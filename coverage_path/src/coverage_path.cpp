@@ -58,28 +58,51 @@ bool generate_path (geometry_msgs::Point start, const vector<geometry_msgs::Poin
 
     ROS_DEBUG("Starting at (%.2f,%.2f)", start.x, start.y);
 
-    // get area to cover
+    // get map of area to cover
     cpswarm_msgs::GetMap get_map;
     get_map.request.rotate = true;
     get_map.request.translate = true;
-    get_map.request.resolution = resolution * 2; // two paths in each cell
+    double altitude = 0;
     ServiceClient area_getter;
+
     // get a roi
     if (roi != nullptr && roi->size() > 2) {
+        ROS_DEBUG("Get map of ROI...");
         get_map.request.coords = *roi;
+        altitude = roi->at(0).z; // use altitude of first point
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("rois/get_map");
         swarm_sub.shutdown(); // rois are not divided, stop listening to swarm changes
     }
+
     // get area divided among swarm
     else if (divide_area) {
+        ROS_DEBUG("Get map of divided area...");
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_divided_map");
         int queue_size;
         nh.param(this_node::getName() + "/queue_size", queue_size, 1);
         swarm_sub = nh.subscribe("swarm_state", queue_size, swarm_state_callback); // using divided map, start listening to swarm changes
     }
+
     // get complete area
-    else
+    else {
+        ROS_DEBUG("Get map of complete area...");
         area_getter = nh.serviceClient<cpswarm_msgs::GetMap>("area/get_map");
+    }
+
+    // calculate path resolution (distance between path legs)
+    if (resolution == 0) {
+        double fov, overlap;
+        nh.param(this_node::getName() + "/fov", fov, 45.0);
+        nh.param(this_node::getName() + "/overlap", overlap, 0.3);
+        if (altitude == 0)
+            nh.param(this_node::getName() + "/altitude", altitude, 50.0);
+        double width = 2 * altitude * tan(fov * M_PI / 180.0 / 2.0);
+        resolution = width * (1 - overlap);
+    }
+    get_map.request.resolution = resolution * 2; // two paths in each cell
+    ROS_DEBUG("Map resolution: %.2f", resolution);
+
+    // call map service
     area_getter.waitForExistence();
     if (area_getter.call(get_map) == false) {
         ROS_ERROR("Failed to get area coordinates!");

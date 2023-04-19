@@ -1,5 +1,8 @@
 queue_size:     1     # The size of the message queue used for publishing and subscribing to topics.
-resolution:     2.0   # The spacing between two adjacent coverage path legs in meter.
+resolution:     0.0   # The spacing between two adjacent coverage path legs in meter. Set to 0 to compute automatically from camera parameters.
+fov:            15    # Field of view of the camera in degrees. Used to compute the spacing of coverage path legs, only if resolution is set to 0.
+overlap:        0.3   # Relative overlap between two coverage path legs, range: [0,1). Only used if resolution is set to 0.
+altitude:       50    # Altitude over ground level in meter. Used to compute the spacing of coverage path legs, only if resolution is set to 0 and altitude not given by action goal.
 visualize:      true  # Whether to publish the coverage path on a topic for visualization.
 divide_area:    false # Whether to divide the area among the CPSs in the swarm before generating the path. Joining or leaving swarm members will trigger regeneration of the path.
 vertical:       false # Whether the sweeping pattern is vertical or horizontal.
