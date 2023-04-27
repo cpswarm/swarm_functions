@@ -21,8 +21,7 @@ bool mst_path::generate_path (geometry_msgs::Point start)
         start_rt.y -= 0.1;
     // starting point outside map
     if (start_rt.x < 0 || map.info.width < start_rt.x || start_rt.y < 0 || map.info.height < start_rt.y) {
-        ROS_ERROR("Could not generate coverage path: start point (%.2f,%.2f) out of map!", start.x, start.y);
-        return false;
+        ROS_WARN("Start point (%.2f,%.2f) out of map!", start.x, start.y);
     }
     // convert start point to cell index
     int start_idx = round(2 * round2idx(start_rt.y) * 2*map.info.width + 2 * round2idx(start_rt.x));
