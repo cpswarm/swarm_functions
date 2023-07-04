@@ -14,7 +14,6 @@
 #include <swarmros/String.h>
 #include <swarmros/NodeInfo.h>
 #include <cpswarm_msgs/Position.h>
-#include <cpswarm_msgs/Velocity.h>
 #include <cpswarm_msgs/ArrayOfVectors.h>
 #include <cpswarm_msgs/VectorStamped.h>
 #include <cpswarm_msgs/PoseToGeo.h>
@@ -28,8 +27,9 @@ using namespace ros;
  */
 typedef struct polar_vector_t {
     string uuid;
-    vector<float> mag;
-    vector<float> dir;
+    vector<float> r;
+    vector<float> theta;
+    vector<float> phi;
     Time stamp;
 } polar_vector_t;
 
@@ -40,6 +40,7 @@ typedef struct cartesian_vector_t {
     string uuid;
     vector<float> x;
     vector<float> y;
+    vector<float> z;
     Time stamp;
 } cartesian_vector_t;
 
@@ -64,16 +65,6 @@ geometry_msgs::Pose pose;
 bool pose_valid;
 
 /**
- * @brief Current velocity of the CPS.
- */
-geometry_msgs::Twist velo;
-
-/**
- * @brief Whether a valid velocity has been received.
- */
-bool vel_valid;
-
-/**
  * @brief UUID of this CPS.
  */
 string this_uuid;
@@ -89,11 +80,6 @@ map<string, cartesian_vector_t> swarm_positions;
 map<string, polar_vector_t> swarm_positions_rel;
 
 /**
- * @brief The velocities of all known swarm members.
- */
-map<string, polar_vector_t> swarm_velocities;
-
-/**
  * @brief The node names of all known swarm members.
  */
 map<string, swarmros::NodeInfo> swarm_nodes;
@@ -107,11 +93,6 @@ int sample_size;
  * @brief The number of position messages to ignore during initialization. This is because the first messages are inaccurate.
  */
 int pos_init;
-
-/**
- * @brief The number of velocity messages to ignore during initialization. This is because the first messages are inaccurate.
- */
-int vel_init;
 
 /**
  * @brief Whether to only listen or also send data.
