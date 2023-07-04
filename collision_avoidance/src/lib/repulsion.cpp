@@ -53,12 +53,15 @@ int repulsion::calc ()
     // avoidance direction (class variable) as sum of attraction and all repulsions
     direction.x = attraction.x + repulsion.x;
     direction.y = attraction.y + repulsion.y;
+    direction.z = attraction.z + repulsion.z;
 
     // limit magnitude of avoidance direction vector to 1
-    if (hypot(direction.y, direction.x) > 1) {
-        double avoidance_dir = atan2(direction.y, direction.x);
-        direction.x = cos(avoidance_dir);
-        direction.y = sin(avoidance_dir);
+    if (hypot(direction.x, direction.y, direction.z) > 1) {
+        double avoidance_theta = atan2(hypot(direction.x, direction.y), direction.z);
+        double avoidance_phi = atan2(direction.y, direction.x);
+        direction.x = sin(avoidance_theta) * cos(avoidance_phi);
+        direction.y = sin(avoidance_theta) * sin(avoidance_phi);
+        direction.z = cos(avoidance_theta);
     }
 
     // avoidance magnitude, inverse to distance of closest cps, move slower when other cpss close by
@@ -74,7 +77,7 @@ int repulsion::calc ()
         // avoidance position
         int_pos.pose.position.x = pos.pose.position.x + direction.x * avoidance_mag;
         int_pos.pose.position.y = pos.pose.position.y + direction.y * avoidance_mag;
-        int_pos.pose.position.z = goal_pos.pose.position.z;
+        int_pos.pose.position.z = pos.pose.position.z + direction.z * avoidance_mag;
 
         // face original goal
         tf2::Quaternion orientation;
@@ -86,6 +89,7 @@ int repulsion::calc ()
     else if (setpoint == CONTROL_VELOCITY) {
         int_vel.linear.x = direction.x * avoidance_mag;
         int_vel.linear.y = direction.y * avoidance_mag;
+        int_vel.linear.z = direction.z * avoidance_mag;
     }
 
     return neighbors;
@@ -142,15 +146,25 @@ geometry_msgs::Twist repulsion::get_vel ()
 void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
 {
     geometry_msgs::Vector3 dir;
-    double head;
+    double theta,phi;
 
     // heading towards original goal
-    if (setpoint == CONTROL_POSITION && (goal_pos.pose.position.x != 0 || goal_pos.pose.position.y != 0))
-        head = atan2(goal_pos.pose.position.y - pos.pose.position.y, goal_pos.pose.position.x - pos.pose.position.x);
+    if (setpoint == CONTROL_POSITION && (goal_pos.pose.position.x != 0 || goal_pos.pose.position.y != 0 || goal_pos.pose.position.z != 0)) {
+        double dx = goal_pos.pose.position.x - pos.pose.position.x;
+        double dy = goal_pos.pose.position.y - pos.pose.position.y;
+        double dz = goal_pos.pose.position.z - pos.pose.position.z;
+        theta = atan2(hypot(dx, dy), dz);
+        phi = atan2(dy, dx);
+    }
 
     // velocity heading
-    else if (setpoint == CONTROL_VELOCITY && (target_vel.linear.x != 0 || target_vel.linear.y != 0))
-        head = atan2(target_vel.linear.y, target_vel.linear.x);
+    else if (setpoint == CONTROL_VELOCITY && (target_vel.linear.x != 0 || target_vel.linear.y != 0 || target_vel.linear.z != 0)) {
+        double dx = target_vel.linear.x;
+        double dy = target_vel.linear.y;
+        double dz = target_vel.linear.z;
+        theta = atan2(hypot(dx, dy), dz);
+        phi = atan2(dy, dx);
+    }
 
     // no valid setpoint
     else
@@ -192,8 +206,9 @@ void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
         magnitude = 1.0;
 
     // calculate goal direction components
-    attraction.x = magnitude * cos(head);
-    attraction.y = magnitude * sin(head);
+    attraction.x = magnitude * sin(theta) * cos(phi);
+    attraction.y = magnitude * sin(theta) * sin(phi);
+    attraction.z = magnitude * sin(theta);
 }
 
 void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest)
@@ -201,6 +216,7 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
     // init repulsion
     repulsion.x = 0;
     repulsion.y = 0;
+    repulsion.z = 0;
     neighbors = 0;
     closest = -1;
 
@@ -212,12 +228,12 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
     // compute pair potentials for all neighbors
     for (auto pose : swarm) {
         // measure closest neighbor
-        if (pose.vector.magnitude < closest || closest < 0) {
-            closest = pose.vector.magnitude;
+        if (pose.vector.r < closest || closest < 0) {
+            closest = pose.vector.r;
         }
 
         // repulsion only from close neighbors
-        if (pose.vector.magnitude < dist_repulse) {
+        if (pose.vector.r < dist_repulse) {
             // count neighbors to repulse from
             ++neighbors;
 
@@ -225,39 +241,37 @@ void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, doub
             double pot;
 
             // maximum repulsion
-            if (pose.vector.magnitude < dist_critical)
+            if (pose.vector.r < dist_critical)
                 pot = 1.0;
 
             // linear function
             else if (repulsion_shape == "lin")
-                pot = (dist_repulse - pose.vector.magnitude) / (dist_repulse - dist_critical);
+                pot = (dist_repulse - pose.vector.r) / (dist_repulse - dist_critical);
 
             // linear function with double slope
             else if (repulsion_shape == "li2")
-                pot = 2.0 * (dist_repulse - pose.vector.magnitude) / (dist_repulse - dist_critical);
+                pot = 2.0 * (dist_repulse - pose.vector.r) / (dist_repulse - dist_critical);
 
             // sine function
             else if (repulsion_shape == "sine")
-                pot = 0.5 - 0.5 * sin(M_PI / (dist_repulse - dist_critical) * (pose.vector.magnitude - 0.5 * (dist_repulse + dist_critical)));
+                pot = 0.5 - 0.5 * sin(M_PI / (dist_repulse - dist_critical) * (pose.vector.r - 0.5 * (dist_repulse + dist_critical)));
 
             // logarithmic function
             else if (repulsion_shape == "log")
-                pot = log((1.0 - exp(1.0)) / (dist_repulse - dist_critical) * (pose.vector.magnitude - dist_critical) + exp(1.0));
+                pot = log((1.0 - exp(1.0)) / (dist_repulse - dist_critical) * (pose.vector.r - dist_critical) + exp(1.0));
 
             // exponential function
             else if (repulsion_shape == "exp")
-                pot = 1.0 / exp(log(0.5) * (dist_repulse - pose.vector.magnitude) / (dist_repulse - dist_critical)) - 1.0;
+                pot = 1.0 / exp(log(0.5) * (dist_repulse - pose.vector.r) / (dist_repulse - dist_critical)) - 1.0;
 
             // constant repulsion
             else
                 pot = 1;
 
-            // absolute bearing of neighbor
-            double bear = yaw + pose.vector.direction;
-
             // sum up potentials as vector pointing away from neighbor
-            repulsion.x += pot * -cos(bear);
-            repulsion.y += pot * -sin(bear);
+            repulsion.x -= pot * sin(pose.vector.theta) * cos(pose.vector.phi + yaw); // add yaw to use absolute bearing of neighbor, ignoring own yaw
+            repulsion.y -= pot * sin(pose.vector.theta) * sin(pose.vector.phi + yaw);
+            repulsion.z -= pot * cos(pose.vector.theta);
         }
     }
 }
