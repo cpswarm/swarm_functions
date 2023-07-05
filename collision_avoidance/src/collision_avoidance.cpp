@@ -160,9 +160,9 @@ int main (int argc, char **argv)
                 if (visualize) {
                     geometry_msgs::PoseStamped dir;
                     dir = pos;
-                    tf2::Quaternion orientation;
-                    orientation.setRPY(0, 0, atan2(ca.get_dir().y, ca.get_dir().x));
-                    dir.pose.orientation = tf2::toMsg(orientation);
+                    // tf2::Quaternion orientation;
+                    // orientation.setRPY(0, atan2(ca.get_dir().z, ca.get_dir().x), atan2(ca.get_dir().y, ca.get_dir().x));
+                    // dir.pose.orientation = tf2::toMsg(orientation);
                     vis_pub.publish(dir);
                 }
             }
