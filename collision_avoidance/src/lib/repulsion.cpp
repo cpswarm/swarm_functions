@@ -208,7 +208,7 @@ void repulsion::attract (geometry_msgs::Vector3& attraction, double closest)
     // calculate goal direction components
     attraction.x = magnitude * sin(theta) * cos(phi);
     attraction.y = magnitude * sin(theta) * sin(phi);
-    attraction.z = magnitude * sin(theta);
+    attraction.z = magnitude * cos(theta);
 }
 
 void repulsion::repulse (geometry_msgs::Vector3& repulsion, int& neighbors, double& closest)
