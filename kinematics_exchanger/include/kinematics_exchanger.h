@@ -14,8 +14,8 @@
 #include <swarmros/String.h>
 #include <swarmros/NodeInfo.h>
 #include <cpswarm_msgs/Position.h>
-#include <cpswarm_msgs/ArrayOfVectors.h>
-#include <cpswarm_msgs/VectorStamped.h>
+#include <cpswarm_msgs/ArrayOf3dVectors.h>
+#include <cpswarm_msgs/Vector3dStamped.h>
 #include <cpswarm_msgs/PoseToGeo.h>
 #include <cpswarm_msgs/GeoToPose.h>
 

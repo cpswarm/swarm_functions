@@ -6,8 +6,8 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/Vector3.h>
-#include <cpswarm_msgs/ArrayOfVectors.h>
-#include <cpswarm_msgs/VectorStamped.h>
+#include <cpswarm_msgs/ArrayOf3dVectors.h>
+#include <cpswarm_msgs/Vector3dStamped.h>
 
 using namespace std;
 
@@ -81,7 +81,7 @@ public:
      * @brief Set the relative positions received from other CPSs in the swarm.
      * @param swarm An array of distance and bearing of the other CPSs.
      */
-    void set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm);
+    void set_swarm (const cpswarm_msgs::ArrayOf3dVectors::ConstPtr& swarm);
 
     /**
      * @brief Get the direction in which to move for collision avoidance.
@@ -145,7 +145,7 @@ private:
     /**
      * @brief The relative positions of the other swarm members (distance and bearing).
      */
-    vector<cpswarm_msgs::VectorStamped> swarm;
+    vector<cpswarm_msgs::Vector3dStamped> swarm;
 
     /**
      * @brief The direction of avoidance.

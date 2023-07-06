@@ -123,7 +123,7 @@ void repulsion::set_pos (const geometry_msgs::PoseStamped::ConstPtr& pos)
     pos_valid = true;
 }
 
-void repulsion::set_swarm (const cpswarm_msgs::ArrayOfVectors::ConstPtr& swarm)
+void repulsion::set_swarm (const cpswarm_msgs::ArrayOf3dVectors::ConstPtr& swarm)
 {
     this->swarm = swarm->vectors;
 }

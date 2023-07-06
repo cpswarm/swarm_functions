@@ -31,7 +31,7 @@ void pos_cb (const geometry_msgs::PoseStamped::ConstPtr& msg)
  * @brief Callback function to receive the relative positions of the other CPSs in the swarm.
  * @param msg An array of distance and bearing of the other CPSs.
  */
-void swarm_cb (const cpswarm_msgs::ArrayOfVectors::ConstPtr& msg)
+void swarm_cb (const cpswarm_msgs::ArrayOf3dVectors::ConstPtr& msg)
 {
     ca.set_swarm(msg);
 }

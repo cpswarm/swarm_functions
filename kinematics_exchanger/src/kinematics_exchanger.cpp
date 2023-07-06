@@ -180,7 +180,7 @@ int main (int argc, char **argv)
         outgoing_position_publisher = nh.advertise<cpswarm_msgs::Position>("position", queue_size);
     }
     Publisher incoming_position_publisher = nh.advertise<cpswarm_msgs::ArrayOfPositions>("swarm_position", queue_size);
-    Publisher incoming_rel_position_publisher = nh.advertise<cpswarm_msgs::ArrayOfVectors>("swarm_position_rel", queue_size);
+    Publisher incoming_rel_position_publisher = nh.advertise<cpswarm_msgs::ArrayOf3dVectors>("swarm_position_rel", queue_size);
 
     // service clients
     if (global) {
@@ -216,7 +216,7 @@ int main (int argc, char **argv)
 
     // init swarm kinematics messages
     cpswarm_msgs::ArrayOfPositions swarm_position;
-    cpswarm_msgs::ArrayOfVectors swarm_position_rel;
+    cpswarm_msgs::ArrayOf3dVectors swarm_position_rel;
 
     // continuously exchange kinematics between swarm members
     while (ok()) {
@@ -268,7 +268,7 @@ int main (int argc, char **argv)
             // only consider members with enough samples
             if (member->second.r.size() >= sample_size) {
                 // calculate average of swarm member position data
-                cpswarm_msgs::VectorStamped position;
+                cpswarm_msgs::Vector3dStamped position;
                 position.header.stamp = Time::now();
                 position.swarmio.node = member->first;
 
