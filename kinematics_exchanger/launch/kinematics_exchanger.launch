@@ -4,12 +4,14 @@
     <arg name="id" default="1" />
     <arg name="pos_type" default="local" />
     <arg name="read_only" default="false" />
+    <arg name="publish_tf" default="false" />
     <arg name="output" default="screen" />
 
     <!-- Swarm kinematics exchanging node -->
     <node pkg="kinematics_exchanger" type="kinematics_exchanger" name="kinematics_exchanger_$(arg id)" output="$(arg output)" required="true">
         <param name="pos_type" value="$(arg pos_type)" />
         <param name="read_only" value="$(arg read_only)" />
+        <param name="publish_tf" value="$(arg publish_tf)" />
         <rosparam file="$(find kinematics_exchanger)/param/kinematics_exchanger.yaml" command="load" />
     </node>
 

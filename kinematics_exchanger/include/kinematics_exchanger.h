@@ -6,10 +6,12 @@
 #include <numeric>
 #include <ros/ros.h>
 #include <tf2/utils.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
+#include <geometry_msgs/TransformStamped.h>
 #include <cpswarm_msgs/ArrayOfPositions.h>
 #include <swarmros/String.h>
 #include <swarmros/NodeInfo.h>

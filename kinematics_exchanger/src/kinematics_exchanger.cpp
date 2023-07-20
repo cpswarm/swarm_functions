@@ -161,6 +161,8 @@ int main (int argc, char **argv)
     nh.param(this_node::getName() + "/sample_size", sample_size, 5);
     nh.param(this_node::getName() + "/init", pos_init, 30);
     nh.param(this_node::getName() + "/read_only", read_only, false);
+    bool publish_tf = false;
+    nh.param(this_node::getName() + "/publish_tf", publish_tf, false);
 
     // init uuid
     this_uuid = "";
@@ -191,6 +193,9 @@ int main (int argc, char **argv)
         geo_to_pose_client = nh.serviceClient<cpswarm_msgs::GeoToPose>("gps/geo_to_pose");
         geo_to_pose_client.waitForExistence();
     }
+
+    // transform broadcaster
+    tf2_ros::TransformBroadcaster tf_bc;
 
     // init loop rate
     Rate rate(loop_rate);
@@ -251,6 +256,19 @@ int main (int argc, char **argv)
 
                 // store averaged position of swarm member
                 swarm_position.positions.push_back(position);
+
+                // broadcast transform to swarm member locally
+                if (publish_tf) {
+                    geometry_msgs::TransformStamped tf;
+                    tf.header.stamp = ros::Time::now();
+                    tf.header.frame_id = this_uuid;
+                    tf.child_frame_id = member->first;
+                    tf.transform.translation.x = position.pose.position.x;
+                    tf.transform.translation.y = position.pose.position.y;
+                    tf.transform.translation.z = position.pose.position.z;
+                    tf.transform.rotation.w = 1; // rotation unkown
+                    tf_bc.sendTransform(tf);
+                }
             }
 
             // next member
